@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CareerMentor</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Recharts for charts -->
+    <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+    <style>
+        :root {
+            --green: #007a5e;
+            --red: #ce1126;
+            --yellow: #fcd116;
+            --dark-green: #00593e;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 16rem;
+            height: 100vh;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            position: fixed;
+            z-index: 10;
+        }
+        
+        .sidebar.collapsed {
+            left: -16rem;
+        }
+        
+        .main-content {
+            margin-left: 16rem;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s;
+        }
+        
+        .main-content.expanded {
+            margin-left: 0;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: #4b5563;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-link:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .sidebar-link.active {
+            border-left: 4px solid var(--green);
+            color: var(--green);
+        }
+        
+        .sidebar-link .icon {
+            margin-right: 0.75rem;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+        
+        .stat-card-title {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .stat-card-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        
+        .progress-track {
+            height: 0.25rem;
+            background-color: #e5e7eb;
+            border-radius: 0.25rem;
+            width: 100%;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 0.25rem;
+            width: 70%;
+        }
+        
+        .chart-container {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            height: 20rem;
+        }
+        
+        .table-container {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+        }
+        
+        .status-active {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-inactive {
+            background-color: #f3f4f6;
+            color: #4b5563;
+        }
+        
+        .mobile-menu-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 20;
+            display: none;
+        }
+        
+        @media (max-width: 992px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                left: -16rem;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Mobile menu toggle -->
+        <button class="mobile-menu-toggle btn btn-light shadow-sm p-2 rounded" id="menuToggle">
+            <i data-lucide="menu"></i>
+        </button>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Logo -->
+            <div class="p-4 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem; background-color: var(--green);">
+                        <span class="text-white fw-bold">CM</span>
+                    </div>
+                    <span class="ms-2 fs-5 fw-semibold">CareerMentor</span>
+                </div>
+            </div>
+            
+            <!-- Navigation Links -->
+            <nav class="mt-3">
+                <a href="#" class="sidebar-link active">
+                    <i data-lucide="home" class="icon"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i data-lucide="users" class="icon"></i>
+                    <span>Manage Students</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i data-lucide="user-check" class="icon"></i>
+                    <span>Manage Mentors</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i data-lucide="briefcase" class="icon"></i>
+                    <span>Manage Careers</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i data-lucide="bar-chart-2" class="icon"></i>
+                    <span>Job Statistics</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i data-lucide="settings" class="icon"></i>
+                    <span>Site Settings</span>
+                </a>
+            </nav>
+            
+            <!-- Admin Profile -->
+            <div class="position-absolute bottom-0 w-100 p-4 border-top">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">
+                        <i data-lucide="user" class="text-secondary"></i>
+                    </div>
+                    <div class="ms-3">
+                        <p class="fw-medium mb-0 small">Admin User</p>
+                        <p class="text-muted small mb-0">admin@careermentor.cm</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Top Header -->
+            <header class="bg-white shadow-sm p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="position-relative" style="width: 16rem;">
+                        <input type="text" placeholder="Search..." class="form-control ps-4 pe-3 py-2">
+                        <i data-lucide="search" class="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                    </div>
+                    
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn position-relative p-2">
+                            <i data-lucide="bell"></i>
+                            <span class="position-absolute top-0 end-0 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                        </button>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 2rem; height: 2rem;">
+                                <i data-lucide="user" class="text-secondary" style="width: 1rem;"></i>
+                            </div>
+                            <span class="small fw-medium">Admin</span>
+                            <i data-lucide="chevron-down" style="width: 1rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Dashboard Content -->
+            <div class="p-4 p-lg-5">
+                <!-- Welcome Section -->
+                <div class="mb-5">
+                    <h1 class="h2 fw-bold">Welcome, Admin!</h1>
+                    <p class="text-muted">Here's what's happening with your platform today.</p>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="row g-4 mb-5">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="stat-card">
+                            <h3 class="stat-card-title">Total Students</h3>
+                            <p class="stat-card-value" style="color: var(--green);">1,234</p>
+                            <div class="progress-track">
+                                <div class="progress-bar" style="background-color: var(--green);"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="stat-card">
+                            <h3 class="stat-card-title">Total Mentors</h3>
+                            <p class="stat-card-value" style="color: var(--yellow);">85</p>
+                            <div class="progress-track">
+                                <div class="progress-bar" style="background-color: var(--yellow);"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="stat-card">
+                            <h3 class="stat-card-title">Active Jobs</h3>
+                            <p class="stat-card-value" style="color: var(--red);">47</p>
+                            <div class="progress-track">
+                                <div class="progress-bar" style="background-color: var(--red);"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="stat-card">
+                            <h3 class="stat-card-title">Career Paths</h3>
+                            <p class="stat-card-value" style="color: var(--green);">28</p>
+                            <div class="progress-track">
+                                <div class="progress-bar" style="background-color: var(--green);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts & Tables Section -->
+                <div class="row g-4 mb-5">
+                    <!-- Career Distribution Chart -->
+                    <div class="col-12 col-lg-6">
+                        <div class="chart-container">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="h5 fw-semibold">Career Distribution</h2>
+                            </div>
+                            <div id="careerChart" style="height: 16rem;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Users Table -->
+                    <div class="col-12 col-lg-6">
+                        <div class="table-container">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h2 class="h5 fw-semibold">Recent Users</h2>
+                                <a href="#" class="small" style="color: var(--green);">View All</a>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="small text-muted">Name</th>
+                                            <th class="small text-muted">Role</th>
+                                            <th class="small text-muted">Status</th>
+                                            <th class="small text-muted">Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="small">Issa Ndoye</td>
+                                            <td class="small">Student</td>
+                                            <td class="small"><span class="status-badge status-active">Active</span></td>
+                                            <td class="small text-muted">2025-05-01</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="small">Aminata Diop</td>
+                                            <td class="small">Mentor</td>
+                                            <td class="small"><span class="status-badge status-active">Active</span></td>
+                                            <td class="small text-muted">2025-04-28</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="small">Paul Biya</td>
+                                            <td class="small">Student</td>
+                                            <td class="small"><span class="status-badge status-inactive">Inactive</span></td>
+                                            <td class="small text-muted">2025-04-25</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="small">Françoise Mbango</td>
+                                            <td class="small">Mentor</td>
+                                            <td class="small"><span class="status-badge status-active">Active</span></td>
+                                            <td class="small text-muted">2025-04-22</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Active Jobs Table -->
+                <div class="table-container">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="h5 fw-semibold">Active Job Listings</h2>
+                        <a href="#" class="small" style="color: var(--green);">Manage Jobs</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="small text-muted">Job Title</th>
+                                    <th class="small text-muted">Company</th>
+                                    <th class="small text-muted">Applications</th>
+                                    <th class="small text-muted">Deadline</th>
+                                    <th class="small text-muted">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="small fw-medium">Software Developer</td>
+                                    <td class="small">Tech Innovations</td>
+                                    <td class="small">24</td>
+                                    <td class="small text-muted">2025-05-15</td>
+                                    <td class="small">
+                                        <a href="#" class="text-primary me-2">Edit</a>
+                                        <a href="#" class="text-danger">Remove</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="small fw-medium">Marketing Specialist</td>
+                                    <td class="small">Global Media</td>
+                                    <td class="small">18</td>
+                                    <td class="small text-muted">2025-05-20</td>
+                                    <td class="small">
+                                        <a href="#" class="text-primary me-2">Edit</a>
+                                        <a href="#" class="text-danger">Remove</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="small fw-medium">Project Manager</td>
+                                    <td class="small">Construction Plus</td>
+                                    <td class="small">12</td>
+                                    <td class="small text-muted">2025-05-25</td>
+                                    <td class="small">
+                                        <a href="#" class="text-primary me-2">Edit</a>
+                                        <a href="#" class="text-danger">Remove</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Recharts initialization -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Toggle sidebar
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('expanded');
+            
+            // Change icon based on state
+            const icon = menuToggle.querySelector('i');
+            if (sidebar.classList.contains('open')) {
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            lucide.createIcons();
+        });
+        
+        // Initialize chart (this is a placeholder - you'd need to implement the actual chart)
+        // In a real implementation, you would use Recharts or another charting library
+        document.getElementById('careerChart').innerHTML = `
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; color: #6b7280;">
+                [Career Distribution Chart - Would be rendered with Recharts]
+            </div>
+        `;
+    </script>
+</body>
+</html>

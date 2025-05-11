@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Student Profile | CareerMentor</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <style>
+        :root {
+            --green: #007a5e;
+            --red: #ce1126;
+            --yellow: #fcd116;
+            --dark-green: #00593e;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f8f9fa;
+        }
+        
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .profile-card {
+            max-width: 40rem;
+            width: 100%;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-header {
+            background-color: var(--green);
+            padding: 2rem 2rem 1.5rem;
+        }
+        
+        .profile-body {
+            padding: 2rem;
+        }
+        
+        .input-group-icon {
+            display: flex;
+            align-items: center;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .input-group-icon:focus-within {
+            border-color: var(--green);
+        }
+        
+        .input-group-icon .icon {
+            color: #9ca3af;
+            margin-right: 0.75rem;
+        }
+        
+        .form-control-custom {
+            border: none;
+            outline: none;
+            width: 100%;
+            padding: 0.5rem 0;
+        }
+        
+        .btn-submit {
+            background-color: var(--green);
+            color: white;
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-submit:hover {
+            background-color: var(--dark-green);
+        }
+        
+        .alert-message {
+            display: none;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .alert-error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+        
+        .alert-success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-white shadow-sm py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="bg-success text-white fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">CM</div>
+                <span class="ms-2 fs-4 fw-bold text-dark">CareerMentor</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="profile-card bg-white">
+            <div class="profile-header text-center">
+                <h2 class="text-white fw-bold mb-2">Complete Your Student Profile</h2>
+                <p class="text-white mb-0">Help us personalize your experience</p>
+            </div>
+            
+            <div class="profile-body">
+                <!-- Alert messages -->
+                <div id="errorMessage" class="alert-message alert-error"></div>
+                <div id="successMessage" class="alert-message alert-success"></div>
+
+                <form id="profileForm">
+                    <div class="mb-3">
+                        <div class="input-group-icon">
+                            <i data-lucide="user" class="icon"></i>
+                            <input type="text" id="fullName" class="form-control-custom" placeholder="Full Name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="input-group-icon">
+                            <i data-lucide="calendar" class="icon"></i>
+                            <input type="date" id="dob" class="form-control-custom" placeholder="Date of Birth" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="input-group-icon">
+                            <i data-lucide="phone" class="icon"></i>
+                            <input type="tel" id="phone" class="form-control-custom" placeholder="Phone Number" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="input-group-icon">
+                            <i data-lucide="map-pin" class="icon"></i>
+                            <input type="text" id="address" class="form-control-custom" placeholder="Address" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="input-group-icon">
+                            <i data-lucide="bookmark" class="icon"></i>
+                            <select id="educationalLevel" class="form-control-custom" required>
+                                <option value="" disabled selected>Educational Level</option>
+                                <option value="high-school">High School</option>
+                                <option value="undergraduate">Undergraduate</option>
+                                <option value="graduate">Graduate</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="input-group-icon">
+                            <i data-lucide="school" class="icon"></i>
+                            <input type="text" id="institution" class="form-control-custom" placeholder="Current Institution" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="input-group-icon">
+                            <i data-lucide="book-open" class="icon"></i>
+                            <input type="text" id="major" class="form-control-custom" placeholder="Major/Field of Study" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="input-group-icon">
+                            <i data-lucide="message-square" class="icon"></i>
+                            <textarea id="bio" class="form-control-custom" placeholder="Brief bio about yourself" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit mb-3" id="submitButton">
+                        <span id="submitText">Complete Profile</span>
+                        <span id="submitSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <div class="mb-3 mb-md-0">
+                    <div class="footer-logo mb-1">
+                        <div class="footer-logo-box">CM</div>
+                        <span class="ms-2 fs-5 fw-bold">CareerMentor</span>
+                    </div>
+                    <p class="small text-gray-300 mb-0">Empowering careers across Cameroon</p>
+                </div>
+                <div class="d-flex gap-4">
+                    <a href="#" class="footer-link">About</a>
+                    <a href="#" class="footer-link">Privacy</a>
+                    <a href="#" class="footer-link">Terms</a>
+                    <a href="#" class="footer-link">Contact</a>
+                </div>
+            </div>
+            <div class="mt-4 text-center small text-gray-400">
+                © <span id="currentYear"></span> CareerMentor. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyBnaxztu3L7DBn4T5s_j_vXaBl_etTbyxQ",
+        authDomain: "career-path-c89ed.firebaseapp.com",
+        databaseURL: "https://career-path-c89ed-default-rtdb.firebaseio.com",
+        projectId: "career-path-c89ed",
+        storageBucket: "career-path-c89ed.appspot.com",
+        messagingSenderId: "157237328572",
+        appId: "1:157237328572:web:7c1fbe078f33e5c48b2eb9",
+        measurementId: "G-P3N70T5RY2"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+    
+    // Get UID from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const uid = urlParams.get('uid');
+    
+    if (!uid) {
+        window.location.href = 'sign-up.html';
+        throw new Error("No UID found in URL");
+    }
+
+    // Form submission with enhanced error handling
+    document.getElementById('profileForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Show loading state
+        document.getElementById('submitText').style.display = 'none';
+        document.getElementById('submitSpinner').style.display = 'inline-block';
+        document.getElementById('submitButton').disabled = true;
+        
+        // Hide any previous messages
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'none';
+        
+        try {
+            // Validate form data first
+            const fullName = document.getElementById('fullName').value.trim();
+            const dob = document.getElementById('dob').value;
+            const phone = document.getElementById('phone').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const educationalLevel = document.getElementById('educationalLevel').value;
+            const institution = document.getElementById('institution').value.trim();
+            const major = document.getElementById('major').value.trim();
+            const bio = document.getElementById('bio').value.trim();
+
+            if (!fullName || !dob || !phone || !address || !educationalLevel || !institution || !major || !bio) {
+                throw new Error("All fields are required");
+            }
+
+            // Prepare profile data
+            const profileData = {
+                fullName,
+                dob,
+                phone,
+                address,
+                educationalLevel,
+                institution,
+                major,
+                bio,
+                role: 'student',
+                profileCompleted: true,
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
+                messagingId: generateMessagingId(),
+                lastUpdated: Date.now()
+            };
+            
+            // Verify user is authenticated
+            const user = auth.currentUser;
+            if (!user || user.uid !== uid) {
+                throw new Error("Authentication failed");
+            }
+            
+            // Check if user already has a role (prevent role switching)
+            const existingProfile = await database.ref('users/' + uid).once('value');
+            if (existingProfile.exists() && existingProfile.val().role !== 'student') {
+                throw new Error("Account already registered as " + existingProfile.val().role);
+            }
+            
+            // Save to database - using transaction to ensure atomic update
+            await database.ref('users/' + uid).transaction((currentData) => {
+                if (currentData && currentData.role && currentData.role !== 'student') {
+                    return currentData; // Abort transaction if role exists and isn't student
+                }
+                return profileData;
+            });
+            
+            // Create messaging node
+            await database.ref('messaging/' + profileData.messagingId).set({
+                userId: uid,
+                role: 'student',
+                createdAt: firebase.database.ServerValue.TIMESTAMP,
+                displayName: fullName
+            });
+            
+            // Show success message and redirect
+            showSuccess('Profile completed successfully! Redirecting...');
+            setTimeout(() => {
+                window.location.href = 'student-dashboard.html';
+            }, 2000);
+            
+        } catch (error) {
+            console.error('Profile save error:', error);
+            
+            let errorMessage = 'Error saving profile. Please try again.';
+            if (error.message.includes("permission_denied")) {
+                errorMessage = "Database permission denied. Check your security rules.";
+            } else if (error.message.includes("Account already registered")) {
+                errorMessage = error.message;
+            } else if (error.message.includes("All fields are required")) {
+                errorMessage = error.message;
+            }
+            
+            showError(errorMessage);
+            
+            // Reset loading state
+            document.getElementById('submitText').style.display = 'inline';
+            document.getElementById('submitSpinner').style.display = 'none';
+            document.getElementById('submitButton').disabled = false;
+        }
+    });
+
+    // Generate unique messaging ID
+    function generateMessagingId() {
+        return 'msg-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now();
+    }
+    
+    function showError(message) {
+        const errorElement = document.getElementById('errorMessage');
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+        // Scroll to error message
+        errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    
+    function showSuccess(message) {
+        const successElement = document.getElementById('successMessage');
+        successElement.textContent = message;
+        successElement.style.display = 'block';
+    }
+</script>
+</body>
+</html>
