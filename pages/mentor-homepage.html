@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Dashboard - CareerMentor</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <style>
+        :root {
+            --green: #007a5e;
+            --red: #ce1126;
+            --yellow: #fcd116;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --dark-green: #00593e;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-500: #adb5bd;
+            --gray-700: #495057;
+            --gray-900: #212529;
+        }
+        
+        body {
+            background-color: var(--gray-100);
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        /* Improved Sidebar */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: fixed;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar.collapsed {
+            left: -260px;
+        }
+        
+        .main-content {
+            margin-left: 260px;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .main-content.expanded {
+            margin-left: 0;
+        }
+        
+        /* Sidebar Links */
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            font-weight: 500;
+        }
+        
+        .sidebar-link:hover {
+            background-color: var(--gray-100);
+            color: var(--green);
+        }
+        
+        .sidebar-link.active {
+            border-left: 3px solid var(--green);
+            background-color: rgba(0, 122, 94, 0.05);
+            color: var(--green);
+        }
+        
+        .sidebar-link .icon {
+            margin-right: 0.75rem;
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Cards */
+        .feature-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            border-color: rgba(0, 122, 94, 0.2);
+        }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--green) 0%, var(--dark-green) 100%);
+            color: white;
+            border-radius: 0.75rem;
+            padding: 3rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section h2 {
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        .hero-section p {
+            opacity: 0.9;
+        }
+        
+        /* Student Cards */
+        .student-card {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            border: 1px solid var(--gray-200);
+            background-color: white;
+        }
+        
+        .student-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            border-color: rgba(0, 122, 94, 0.2);
+        }
+        
+        .student-card-img {
+            height: 140px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .student-card-body {
+            padding: 1.5rem;
+        }
+        
+        .badge-pill {
+            padding: 0.35em 0.65em;
+            font-size: 0.75em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Chatbot Section */
+        .chatbot-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--purple);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        /* Header */
+        .dashboard-header {
+            background-color: white;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 20;
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+        }
+        
+        /* User Profile */
+        .user-profile {
+            padding: 1rem;
+            border-top: 1px solid var(--gray-200);
+            margin-top: auto;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-700);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .mobile-menu-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .sidebar {
+                left: -260px;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--green);
+            border-color: var(--green);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--dark-green);
+            border-color: var(--dark-green);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-500);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-700);
+        }
+        
+        /* Mentor specific styles */
+        .expertise-tag {
+            background-color: rgba(0, 122, 94, 0.1);
+            color: var(--green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            display: inline-block;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .availability-badge {
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .rating-stars {
+            color: var(--yellow);
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Mobile menu toggle -->
+        <button class="mobile-menu-toggle btn btn-light shadow-sm" id="menuToggle">
+            <i data-lucide="menu"></i>
+        </button>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Logo -->
+            <div class="p-4 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem; background-color: var(--green);">
+                        <span class="text-white font-bold">CM</span>
+                    </div>
+                    <span class="ms-2 fs-5 fw-semibold">CareerMentor</span>
+                </div>
+            </div>
+            
+            <!-- Navigation Links -->
+            <nav class="mt-3">
+                <a href="mentor-homepage.html" class="sidebar-link active">
+                    <i data-lucide="home" class="icon"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="mentor-student-request.html" class="sidebar-link">
+                    <i data-lucide="users" class="icon"></i>
+                    <span>Student Request</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i data-lucide="calendar" class="icon"></i>
+                    <span>Sessions</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i data-lucide="bookmark" class="icon"></i>
+                    <span>Resources</span>
+                </a>
+                <a href="mentor-message.html" class="sidebar-link">
+                    <i data-lucide="mail" class="icon"></i>
+                    <span>Messages</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i data-lucide="message-square" class="icon"></i>
+                    <span>Discussion Forum</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i data-lucide="bar-chart-2" class="icon"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="mentor-profile.html" class="sidebar-link">
+                    <i data-lucide="user" class="icon"></i>
+                    <span>Profile</span>
+                </a>
+            </nav>
+            
+            <!-- Mentor Profile -->
+            <div class="user-profile">
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar me-3">
+                        <i data-lucide="user" class="text-secondary"></i>
+                    </div>
+                    <div>
+                        <p class="fw-medium mb-0" id="userName">Loading...</p>
+                        <p class="text-muted small mb-0" id="userProfession">Mentor</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Top Header -->
+            <header class="dashboard-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="h4 mb-0 fw-semibold">Mentor Dashboard</h1>
+                    
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn position-relative p-2">
+                            <i data-lucide="bell"></i>
+                            <span class="position-absolute top-0 end-0 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Dashboard Content -->
+            <div class="p-4 p-lg-5">
+                <!-- Hero Section -->
+                <div class="hero-section mb-5">
+                    <div class="row align-items-center">
+                        <div class="col-lg-7 position-relative z-1">
+                            <h2 class="fw-bold mb-3">Welcome Back, <span id="greetingName">Mentor</span>!</h2>
+                            <p class="mb-4">You have <strong>3 upcoming sessions</strong> this week. Help shape the future of students by sharing your expertise and experience.</p>
+                            <button class="btn btn-light" style="color: var(--green); font-weight: 500;">
+                                View Schedule <i data-lucide="calendar" class="ms-2"></i>
+                            </button>
+                        </div>
+                        <div class="col-lg-5 d-none d-lg-block position-relative z-1">
+                            <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" 
+                                 alt="Mentor guiding students" 
+                                 class="img-fluid rounded floating">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Features Section -->
+                <div class="row g-4 mb-5">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-card">
+                            <div class="feature-icon" style="background-color: rgba(59, 130, 246, 0.1); color: var(--blue);">
+                                <i data-lucide="users"></i>
+                            </div>
+                            <h3 class="h5 fw-bold mb-2">My Students</h3>
+                            <p class="text-muted small">View and manage your current mentees and their progress.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-card">
+                            <div class="feature-icon" style="background-color: rgba(252, 209, 22, 0.1); color: var(--yellow);">
+                                <i data-lucide="calendar-clock"></i>
+                            </div>
+                            <h3 class="h5 fw-bold mb-2">Session Management</h3>
+                            <p class="text-muted small">Schedule and track your mentoring sessions.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-card">
+                            <div class="feature-icon" style="background-color: rgba(139, 92, 246, 0.1); color: var(--purple);">
+                                <i data-lucide="book-open"></i>
+                            </div>
+                            <h3 class="h5 fw-bold mb-2">Resources</h3>
+                            <p class="text-muted small">Access and share career resources with your mentees.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-card">
+                            <div class="feature-icon" style="background-color: rgba(0, 122, 94, 0.1); color: var(--green);">
+                                <i data-lucide="bar-chart-2"></i>
+                            </div>
+                            <h3 class="h5 fw-bold mb-2">Performance</h3>
+                            <p class="text-muted small">Track your mentoring impact and feedback.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Students Needing Mentorship Section -->
+                <div class="mb-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="h4 fw-semibold">Students Seeking Mentorship</h2>
+                        <a href="#" class="small fw-medium" style="color: var(--green);">View All <i data-lucide="chevron-right" class="ms-1" width="14"></i></a>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="student-card">
+                                <div class="student-card-img" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80');"></div>
+                                <div class="student-card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h3 class="h6 fw-semibold mb-0">John M.</h3>
+                                        <span class="badge bg-success bg-opacity-10 text-success availability-badge">Available</span>
+                                    </div>
+                                    <p class="small text-muted mb-2">Computer Science Student</p>
+                                    <div class="mb-2">
+                                        <span class="expertise-tag">Software Dev</span>
+                                        <span class="expertise-tag">AI</span>
+                                        <span class="expertise-tag">Web Dev</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="small rating-stars">
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" width="14"></i>
+                                            <span class="text-muted ms-1">4.0</span>
+                                        </span>
+                                        <button class="btn btn-sm" style="background-color: var(--green); color: white;">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="student-card">
+                                <div class="student-card-img" style="background-image: url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80');"></div>
+                                <div class="student-card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h3 class="h6 fw-semibold mb-0">Sarah K.</h3>
+                                        <span class="badge bg-success bg-opacity-10 text-success availability-badge">Available</span>
+                                    </div>
+                                    <p class="small text-muted mb-2">Business Administration</p>
+                                    <div class="mb-2">
+                                        <span class="expertise-tag">Marketing</span>
+                                        <span class="expertise-tag">Management</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="small rating-stars">
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <span class="text-muted ms-1">5.0</span>
+                                        </span>
+                                        <button class="btn btn-sm" style="background-color: var(--green); color: white;">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="student-card">
+                                <div class="student-card-img" style="background-image: url('https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80');"></div>
+                                <div class="student-card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h3 class="h6 fw-semibold mb-0">David L.</h3>
+                                        <span class="badge bg-warning bg-opacity-10 text-warning availability-badge">Limited</span>
+                                    </div>
+                                    <p class="small text-muted mb-2">Engineering Student</p>
+                                    <div class="mb-2">
+                                        <span class="expertise-tag">Mechanical</span>
+                                        <span class="expertise-tag">CAD</span>
+                                        <span class="expertise-tag">Robotics</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="small rating-stars">
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" width="14"></i>
+                                            <i data-lucide="star" width="14"></i>
+                                            <span class="text-muted ms-1">3.0</span>
+                                        </span>
+                                        <button class="btn btn-sm" style="background-color: var(--green); color: white;">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3">
+                            <div class="student-card">
+                                <div class="student-card-img" style="background-image: url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80');"></div>
+                                <div class="student-card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h3 class="h6 fw-semibold mb-0">Amina B.</h3>
+                                        <span class="badge bg-success bg-opacity-10 text-success availability-badge">Available</span>
+                                    </div>
+                                    <p class="small text-muted mb-2">Medical Student</p>
+                                    <div class="mb-2">
+                                        <span class="expertise-tag">Medicine</span>
+                                        <span class="expertise-tag">Research</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="small rating-stars">
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" class="fill-current" width="14"></i>
+                                            <i data-lucide="star" width="14"></i>
+                                            <span class="text-muted ms-1">4.0</span>
+                                        </span>
+                                        <button class="btn btn-sm" style="background-color: var(--green); color: white;">Connect</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Upcoming Sessions & Resources Section -->
+                <div class="row g-4 mb-5">
+                    <div class="col-lg-6">
+                        <div class="bg-white rounded-lg shadow-sm p-4 h-100 border">
+                            <h3 class="h5 fw-semibold mb-4">Upcoming Sessions</h3>
+                            <div class="list-group list-group-flush">
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">Career Guidance - John M.</h6>
+                                        <small class="text-muted">Tomorrow, 10:00 AM - 11:00 AM</small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-secondary">Details</button>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">Resume Review - Sarah K.</h6>
+                                        <small class="text-muted">Wednesday, 2:00 PM - 2:30 PM</small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-secondary">Details</button>
+                                </div>
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">Interview Prep - David L.</h6>
+                                        <small class="text-muted">Friday, 4:00 PM - 5:00 PM</small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-secondary">Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="bg-white rounded-lg shadow-sm p-4 h-100 border">
+                            <h3 class="h5 fw-semibold mb-4">Mentor Resources</h3>
+                            <div class="list-group list-group-flush">
+                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                                    <i data-lucide="file-text" class="text-primary me-3"></i>
+                                    <span>Mentoring Best Practices Guide</span>
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                                    <i data-lucide="video" class="text-danger me-3"></i>
+                                    <span>Effective Communication Techniques</span>
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                                    <i data-lucide="book-open" class="text-success me-3"></i>
+                                    <span>Career Development Frameworks</span>
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
+                                    <i data-lucide="clipboard" class="text-warning me-3"></i>
+                                    <span>Session Planning Templates</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <footer class="bg-light border-top py-4">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-4 mb-4 mb-lg-0">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 2rem; height: 2rem; background-color: var(--green);">
+                                    <span class="text-white small fw-bold">CM</span>
+                                </div>
+                                <span class="ms-2 fw-semibold">CareerMentor</span>
+                            </div>
+                            <p class="small text-muted">Connecting experienced professionals with students to guide them toward successful career paths.</p>
+                            <div class="d-flex gap-3 mt-3">
+                                <a href="#" class="text-muted"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="text-muted"><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="text-muted"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#" class="text-muted"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                            <h5 class="h6 mb-3">Quick Links</h5>
+                            <ul class="list-unstyled small">
+                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Home</a></li>
+                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">About Us</a></li>
+                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">For Mentors</a></li>
+                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Blog</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                            <h5 class="h6 mb-3">Support</h5>
+                            <ul class="list-unstyled small">
+                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Help Center</a></li>
+                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Contact Us</a></li>
+                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">FAQs</a></li>
+                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Feedback</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-2 col-md-4">
+                            <h5 class="h6 mb-3">Legal</h5>
+                            <ul class="list-unstyled small">
+                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Terms</a></li>
+                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Privacy</a></li>
+                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Cookies</a></li>
+                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Licenses</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-2">
+                            <h5 class="h6 mb-3">Get the App</h5>
+                            <a href="#" class="d-block mb-2">
+                                <img src="https://via.placeholder.com/120x40?text=App+Store" alt="App Store" class="img-fluid">
+                            </a>
+                            <a href="#" class="d-block">
+                                <img src="https://via.placeholder.com/120x40?text=Google+Play" alt="Google Play" class="img-fluid">
+                            </a>
+                        </div>
+                    </div>
+                    <hr class="my-4">
+                    <div class="text-center small text-muted">
+                        © <span id="currentYear"></span> CareerMentor. All rights reserved.
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        
+        // Firebase configuration (matches your other files)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnaxztu3L7DBn4T5s_j_vXaBl_etTbyxQ",
+            authDomain: "career-path-c89ed.firebaseapp.com",
+            databaseURL: "https://career-path-c89ed-default-rtdb.firebaseio.com",
+            projectId: "career-path-c89ed",
+            storageBucket: "career-path-c89ed.appspot.com",
+            messagingSenderId: "157237328572",
+            appId: "1:157237328572:web:7c1fbe078f33e5c48b2eb9",
+            measurementId: "G-P3N70T5RY2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // Toggle sidebar
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('expanded');
+            
+            // Change icon based on state
+            const icon = menuToggle.querySelector('i');
+            if (sidebar.classList.contains('open')) {
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            lucide.createIcons();
+        });
+
+        // Load user data from Firebase
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                const userRef = database.ref('users/' + user.uid);
+                userRef.once('value').then((snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData) {
+                        // Display user name and profession
+                        document.getElementById('userName').textContent = userData.fullName || 'Mentor';
+                        document.getElementById('userProfession').textContent = userData.profession || 'Professional Mentor';
+                        document.getElementById('greetingName').textContent = userData.fullName?.split(' ')[0] || 'Mentor';
+                    }
+                });
+            } else {
+                // User is signed out - redirect to login
+                window.location.href = 'log-in.html';
+            }
+        });
+
+        // Add this to mentor-homepage.html
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('hasUnreadMessages')) {
+        const msgIcon = document.getElementById('messagesIcon'); // or your actual icon/button ID
+        if (msgIcon && !msgIcon.querySelector('.unread-dot')) {
+            const dot = document.createElement('span');
+            dot.className = 'unread-dot';
+            msgIcon.appendChild(dot);
+        }
+    }
+});
+    </script>
+</body>
+</html>

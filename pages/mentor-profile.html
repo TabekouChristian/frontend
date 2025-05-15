@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | CareerMentor</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <style>
+        :root {
+            --green: #007a5e;
+            --red: #ce1126;
+            --yellow: #fcd116;
+            --dark-green: #00593e;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-500: #adb5bd;
+            --gray-700: #495057;
+            --gray-900: #212529;
+        }
+        
+        body {
+            background-color: var(--gray-100);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        .profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .profile-header {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--gray-700);
+            margin: 0 auto 1.5rem;
+            overflow: hidden;
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .profile-card h3 {
+            color: var(--green);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .detail-item {
+            display: flex;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        
+        .detail-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: var(--gray-700);
+            min-width: 150px;
+        }
+        
+        .detail-value {
+            color: var(--gray-900);
+        }
+        
+        .edit-btn {
+            background-color: var(--green);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .edit-btn:hover {
+            background-color: var(--dark-green);
+            color: white;
+        }
+        
+        .section-title {
+            color: var(--green);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-500);
+        }
+        
+        .empty-state i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .expertise-tag {
+            display: inline-block;
+            background-color: rgba(0, 122, 94, 0.1);
+            color: var(--green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-white shadow-sm py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="bg-success text-white fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">CM</div>
+                <span class="ms-2 fs-4 fw-bold text-dark">CareerMentor</span>
+            </div>
+            <div>
+                <a href="mentor-homepage.html" class="btn btn-outline-success me-2">Dashboard</a>
+                <button onclick="logout()" class="btn btn-outline-danger">
+                    <i data-lucide="log-out" class="me-1"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header text-center">
+            <div class="profile-avatar" id="userAvatar">
+                <i data-lucide="user"></i>
+            </div>
+            <h1 class="h3 fw-bold mb-2" id="userName">Loading...</h1>
+            <p class="text-muted mb-4" id="userRolePosition">Mentor • Loading...</p>
+            <button class="edit-btn" id="editProfileBtn">
+                <i data-lucide="edit-2" width="16" class="me-1"></i> Edit Profile
+            </button>
+        </div>
+        
+        <div class="row">
+            <!-- Personal Information -->
+            <div class="col-md-6">
+                <div class="profile-card">
+                    <h3><i data-lucide="user" class="me-2"></i> Personal Information</h3>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Full Name</div>
+                        <div class="detail-value" id="fullName">Loading...</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Date of Birth</div>
+                        <div class="detail-value" id="dob">Loading...</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Email</div>
+                        <div class="detail-value" id="email">Loading...</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Phone</div>
+                        <div class="detail-value" id="phone">Loading...</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Address</div>
+                        <div class="detail-value" id="address">Loading...</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">LinkedIn</div>
+                        <div class="detail-value" id="linkedin">Loading...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Professional Information -->
+            <div class="col-md-6">
+                <div class="profile-card">
+                    <h3><i data-lucide="briefcase" class="me-2"></i> Professional Information</h3>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Profession</div>
+                        <div class="detail-value" id="profession">Loading...</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Company</div>
+                        <div class="detail-value" id="company">Loading...</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Experience</div>
+                        <div class="detail-value" id="experience">Loading...</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Qualifications</div>
+                        <div class="detail-value" id="qualifications">Loading...</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Areas of Expertise</div>
+                        <div class="detail-value" id="expertise">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bio Section -->
+        <div class="profile-card">
+            <h3><i data-lucide="file-text" class="me-2"></i> Professional Bio</h3>
+            <div class="p-3 bg-light rounded" id="bio">
+                Loading...
+            </div>
+        </div>
+        
+        <!-- Mentoring Sessions -->
+        <div class="profile-card">
+            <h3><i data-lucide="calendar" class="me-2"></i> Upcoming Mentoring Sessions</h3>
+            
+            <div id="mentoringSessions">
+                <div class="empty-state">
+                    <i data-lucide="calendar"></i>
+                    <p>You don't have any upcoming mentoring sessions.</p>
+                    <a href="mentor-availability.html" class="btn btn-success">Set Availability</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <div class="mb-3 mb-md-0">
+                    <div class="footer-logo mb-1">
+                        <div class="footer-logo-box">CM</div>
+                        <span class="ms-2 fs-5 fw-bold">CareerMentor</span>
+                    </div>
+                    <p class="small text-gray-300 mb-0">Empowering careers across Cameroon</p>
+                </div>
+                <div class="d-flex gap-4">
+                    <a href="#" class="footer-link">About</a>
+                    <a href="#" class="footer-link">Privacy</a>
+                    <a href="#" class="footer-link">Terms</a>
+                    <a href="#" class="footer-link">Contact</a>
+                </div>
+            </div>
+            <div class="mt-4 text-center small text-gray-400">
+                © <span id="currentYear"></span> CareerMentor. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnaxztu3L7DBn4T5s_j_vXaBl_etTbyxQ",
+            authDomain: "career-path-c89ed.firebaseapp.com",
+            databaseURL: "https://career-path-c89ed-default-rtdb.firebaseio.com",
+            projectId: "career-path-c89ed",
+            storageBucket: "career-path-c89ed.appspot.com",
+            messagingSenderId: "157237328572",
+            appId: "1:157237328572:web:7c1fbe078f33e5c48b2eb9",
+            measurementId: "G-P3N70T5RY2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // Format date function
+        function formatDate(dateString) {
+            if (!dateString) return 'Not specified';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+
+        // Logout function
+        function logout() {
+            auth.signOut().then(() => {
+                // Sign-out successful
+                window.location.href = 'login.html';
+            }).catch((error) => {
+                // An error happened
+                console.error('Logout error:', error);
+                alert('Error signing out. Please try again.');
+            });
+        }
+
+        // Load user data
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                document.getElementById('email').textContent = user.email;
+                
+                // Get additional user data from database
+                const userRef = database.ref('users/' + user.uid);
+                userRef.on('value', (snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData) {
+                        // Personal Information
+                        document.getElementById('userName').textContent = userData.fullName || 'Mentor';
+                        document.getElementById('fullName').textContent = userData.fullName || 'Not specified';
+                        document.getElementById('dob').textContent = formatDate(userData.dob);
+                        document.getElementById('phone').textContent = userData.phone || 'Not specified';
+                        document.getElementById('address').textContent = userData.address || 'Not specified';
+                        document.getElementById('linkedin').innerHTML = userData.linkedin ? 
+                            `<a href="${userData.linkedin}" target="_blank">View Profile</a>` : 
+                            'Not specified';
+                        
+                        // Professional Information
+                        document.getElementById('profession').textContent = userData.profession || 'Not specified';
+                        document.getElementById('company').textContent = userData.company || 'Not specified';
+                        document.getElementById('experience').textContent = userData.experience ? 
+                            userData.experience + ' years' : 'Not specified';
+                        document.getElementById('qualifications').textContent = userData.qualifications || 'Not specified';
+                        
+                        // Expertise (as tags)
+                        if (userData.expertise && Array.isArray(userData.expertise)) {
+                            const expertiseContainer = document.getElementById('expertise');
+                            expertiseContainer.innerHTML = userData.expertise
+                                .map(expertise => `<span class="expertise-tag">${expertise}</span>`)
+                                .join('');
+                        } else {
+                            document.getElementById('expertise').textContent = 'Not specified';
+                        }
+                        
+                        // Bio
+                        document.getElementById('bio').textContent = userData.bio || 'No bio provided';
+                        
+                        // Update role and position display
+                        document.getElementById('userRolePosition').textContent = 
+                            `Mentor • ${userData.profession || 'Professional'}`;
+                        
+                        // Check for profile picture
+                        if (userData.profilePicture) {
+                            document.getElementById('userAvatar').innerHTML = 
+                                `<img src="${userData.profilePicture}" alt="Profile picture">`;
+                        }
+                    }
+                });
+            } else {
+                // User is signed out - redirect to login
+                window.location.href = 'log-in.html';
+            }
+        });
+
+        // Edit profile button
+        document.getElementById('editProfileBtn').addEventListener('click', () => {
+            window.location.href = 'edit-mentor-profile.html';
+        });
+    </script>
+</body>
+</html>

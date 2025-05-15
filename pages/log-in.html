@@ -8,6 +8,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <style>
         :root {
             --green: #007a5e;
@@ -81,6 +85,7 @@
             border: 1px solid #d1d5db;
             border-radius: 0.5rem;
             padding: 0.5rem;
+            margin-bottom: 1rem;
         }
         
         .input-group-icon:focus-within {
@@ -155,6 +160,30 @@
         .footer-link:hover {
             color: white;
         }
+        
+        .alert-message {
+            display: none;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .alert-error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+        
+        .alert-success {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+        
+        #loginSpinner {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -177,6 +206,10 @@
             </div>
             
             <div class="login-body">
+                <!-- Alert messages -->
+                <div id="errorMessage" class="alert-message alert-error"></div>
+                <div id="successMessage" class="alert-message alert-success"></div>
+
                 <!-- Role selector -->
                 <div class="mb-5">
                     <div class="d-flex justify-content-center gap-2">
@@ -202,14 +235,14 @@
                 <form id="loginForm">
                     <div class="mb-3">
                         <div class="input-group-icon">
-                            <i data-lucide="user" class="icon"></i>
-                            <input type="text" class="form-control-custom" placeholder="Username" required>
+                            <i data-lucide="mail" class="icon"></i>
+                            <input type="email" id="email" class="form-control-custom" placeholder="Email" required>
                         </div>
                     </div>
-                    <div class="mb-4">
+                    <div class="mb-3">
                         <div class="input-group-icon">
                             <i data-lucide="key" class="icon"></i>
-                            <input type="password" class="form-control-custom" placeholder="Password" required>
+                            <input type="password" id="password" class="form-control-custom" placeholder="Password" required>
                         </div>
                     </div>
                     <div class="d-flex align-items-center justify-content-between mb-4">
@@ -217,12 +250,15 @@
                             <input class="form-check-input" type="checkbox" id="remember">
                             <label class="form-check-label small text-muted" for="remember">Remember me</label>
                         </div>
-                        <a href="#" class="small link-green">Forgot password?</a>
+                        <a href="forgot-password.html" class="small link-green">Forgot password?</a>
                     </div>
-                    <button type="submit" class="btn-login mb-3">Login</button>
+                    <button type="submit" class="btn-login mb-3" id="loginButton">
+                        <span id="loginText">Login</span>
+                        <span id="loginSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    </button>
                     <div class="text-center small text-muted">
                         <span>Don't have an account? </span>
-                        <a href="register.html" class="small fw-medium link-green">Sign up</a>
+                        <a href="sign-up.html" class="small fw-medium link-green">Sign up</a>
                     </div>
                 </form>
             </div>
@@ -262,33 +298,163 @@
         // Set current year in footer
         document.getElementById('currentYear').textContent = new Date().getFullYear();
         
+        // Firebase configuration (matches your other files)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnaxztu3L7DBn4T5s_j_vXaBl_etTbyxQ",
+            authDomain: "career-path-c89ed.firebaseapp.com",
+            databaseURL: "https://career-path-c89ed-default-rtdb.firebaseio.com",
+            projectId: "career-path-c89ed",
+            storageBucket: "career-path-c89ed.appspot.com",
+            messagingSenderId: "157237328572",
+            appId: "1:157237328572:web:7c1fbe078f33e5c48b2eb9",
+            measurementId: "G-P3N70T5RY2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
         // Role selection functionality
+        let selectedRole = 'student';
         const roleOptions = document.querySelectorAll('.role-option');
+        
         roleOptions.forEach(option => {
             option.addEventListener('click', function() {
+                selectedRole = this.getAttribute('data-role');
                 roleOptions.forEach(opt => opt.classList.remove('selected'));
                 this.classList.add('selected');
             });
         });
-        
-        // Form submission
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+
+        // Form submission with enhanced authentication
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const selectedRole = document.querySelector('.role-option.selected').getAttribute('data-role');
-            const username = this.querySelector('input[type="text"]').value;
-            const password = this.querySelector('input[type="password"]').value;
             
-            console.log('Logging in as:', { 
-                role: selectedRole, 
-                username: username, 
-                password: password 
-            });
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('remember').checked;
             
-            // Login logic would go here
-            // Redirect based on role
-            alert(`Logging in as ${selectedRole}`);
-            // window.location.href = `${selectedRole}-dashboard.html`;
+            // Show loading state
+            document.getElementById('loginText').style.display = 'none';
+            document.getElementById('loginSpinner').style.display = 'inline-block';
+            document.getElementById('loginButton').disabled = true;
+            
+            // Hide any previous messages
+            document.getElementById('errorMessage').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+            
+            try {
+                // Set persistence based on "Remember me" selection
+                const persistence = rememberMe ? 
+                    firebase.auth.Auth.Persistence.LOCAL : 
+                    firebase.auth.Auth.Persistence.SESSION;
+                
+                await auth.setPersistence(persistence);
+                
+                // Authenticate user
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Check if email is verified
+                if (!user.emailVerified) {
+                    await auth.signOut();
+                    throw new Error('Please verify your email before logging in. Check your inbox.');
+                }
+                
+                // Get user data from database
+                const userRef = database.ref('users/' + user.uid);
+                const snapshot = await userRef.once('value');
+                
+                if (!snapshot.exists()) {
+                    await auth.signOut();
+                    throw new Error('User profile not found. Please complete your profile registration.');
+                }
+                
+                const userData = snapshot.val();
+                
+                // Verify user has completed profile
+                if (!userData.profileCompleted) {
+                    await auth.signOut();
+                    throw new Error('Profile not completed. Please complete your profile registration.');
+                }
+                
+                // Verify selected role matches user's actual role
+                if (userData.role !== selectedRole) {
+                    await auth.signOut();
+                    throw new Error(`This account is registered as a ${userData.role}, not a ${selectedRole}.`);
+                }
+                
+                // Redirect based on verified role
+                let redirectUrl;
+                switch(userData.role) {
+                    case 'student':
+                        redirectUrl = 'student-homepage.html';
+                        break;
+                    case 'mentor':
+                        redirectUrl = 'mentor-homepage.html';
+                        break;
+                    case 'educator':
+                        redirectUrl = 'educator-homepage.html';
+                        break;
+                    case 'admin':
+                        redirectUrl = 'admin-homepage.html';
+                        break;
+                    default:
+                        throw new Error('Invalid user role');
+                }
+                
+                // Show success and redirect
+                showSuccess('Login successful! Redirecting...');
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                let errorMessage = 'Login failed. Please try again.';
+                
+                switch(error.code) {
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email address format.';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessage = 'This account has been disabled.';
+                        break;
+                    case 'auth/user-not-found':
+                    case 'auth/wrong-password':
+                        errorMessage = 'Invalid email or password.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Too many login attempts. Try again later.';
+                        break;
+                    default:
+                        errorMessage = error.message || errorMessage;
+                }
+                
+                showError(errorMessage);
+                
+                // Reset loading state
+                document.getElementById('loginText').style.display = 'inline';
+                document.getElementById('loginSpinner').style.display = 'none';
+                document.getElementById('loginButton').disabled = false;
+            }
         });
+
+        function showError(message) {
+            const errorElement = document.getElementById('errorMessage');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        function showSuccess(message) {
+            const successElement = document.getElementById('successMessage');
+            successElement.textContent = message;
+            successElement.style.display = 'block';
+            successElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     </script>
 </body>
 </html>

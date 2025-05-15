@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Careers | CareerMentor</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <style>
+        :root {
+            --green: #007a5e;
+            --red: #ce1126;
+            --yellow: #fcd116;
+            --dark-green: #00593e;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-500: #adb5bd;
+            --gray-700: #495057;
+            --gray-900: #212529;
+        }
+        
+        body {
+            background-color: var(--gray-100);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        .saved-careers-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .career-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .career-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .career-title {
+            color: var(--green);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .career-match {
+            background-color: rgba(0, 122, 94, 0.1);
+            color: var(--green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .career-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .career-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .detail-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 0.25rem;
+        }
+        
+        .detail-value {
+            color: var(--gray-900);
+        }
+        
+        .career-description {
+            line-height: 1.6;
+            color: var(--gray-700);
+            margin-bottom: 1.5rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+        
+        .btn-danger {
+            background-color: var(--red);
+            border-color: var(--red);
+        }
+        
+        .btn-danger:hover {
+            background-color: #b10e1f;
+            border-color: #b10e1f;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-500);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--gray-300);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-white shadow-sm py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="bg-success text-white fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">CM</div>
+                <span class="ms-2 fs-4 fw-bold text-dark">CareerMentor</span>
+            </div>
+            <div>
+                <a href="student-homepage.html" class="btn btn-outline-success me-2">Dashboard</a>
+                <button onclick="logout()" class="btn btn-outline-danger">
+                    <i data-lucide="log-out" class="me-1"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="saved-careers-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 fw-bold mb-0">Saved Careers</h1>
+            <a href="career-recommendations.html" class="btn btn-success">
+                <i data-lucide="plus" class="me-1"></i> Find More Careers
+            </a>
+        </div>
+        
+        <div id="savedCareersList">
+            <!-- Careers will be loaded here -->
+            <div class="empty-state" id="noSavedCareers">
+                <i data-lucide="bookmark"></i>
+                <h3 class="h5 mb-3">No Saved Careers Yet</h3>
+                <p class="mb-4">You haven't saved any careers yet. Explore our recommendations to find careers that match your interests and skills.</p>
+                <a href="career-recommendations.html" class="btn btn-success">
+                    <i data-lucide="star" class="me-1"></i> Get Career Recommendations
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <div class="mb-3 mb-md-0">
+                    <div class="footer-logo mb-1">
+                        <div class="footer-logo-box">CM</div>
+                        <span class="ms-2 fs-5 fw-bold">CareerMentor</span>
+                    </div>
+                    <p class="small text-gray-300 mb-0">Empowering careers across Cameroon</p>
+                </div>
+                <div class="d-flex gap-4">
+                    <a href="#" class="footer-link">About</a>
+                    <a href="#" class="footer-link">Privacy</a>
+                    <a href="#" class="footer-link">Terms</a>
+                    <a href="#" class="footer-link">Contact</a>
+                </div>
+            </div>
+            <div class="mt-4 text-center small text-gray-400">
+                © <span id="currentYear"></span> CareerMentor. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnaxztu3L7DBn4T5s_j_vXaBl_etTbyxQ",
+            authDomain: "career-path-c89ed.firebaseapp.com",
+            databaseURL: "https://career-path-c89ed-default-rtdb.firebaseio.com",
+            projectId: "career-path-c89ed",
+            storageBucket: "career-path-c89ed.appspot.com",
+            messagingSenderId: "157237328572",
+            appId: "1:157237328572:web:7c1fbe078f33e5c48b2eb9",
+            measurementId: "G-P3N70T5RY2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // Load saved careers
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                const userRef = database.ref('users/' + user.uid + '/savedCareers');
+                userRef.on('value', (snapshot) => {
+                    const savedCareers = snapshot.val();
+                    const container = document.getElementById('savedCareersList');
+                    
+                    if (savedCareers && savedCareers.length > 0) {
+                        document.getElementById('noSavedCareers').style.display = 'none';
+                        container.innerHTML = '';
+                        
+                        savedCareers.forEach((career, index) => {
+                            const careerCard = document.createElement('div');
+                            careerCard.className = 'career-card';
+                            careerCard.innerHTML = `
+                                <div class="career-header">
+                                    <div>
+                                        <h2 class="career-title">${career.title}</h2>
+                                        <p class="text-muted">${career.field || 'General Career'}</p>
+                                    </div>
+                                    <span class="career-match">${career.matchLevel || 'Good Match'}</span>
+                                </div>
+                                
+                                ${career.imageUrl ? `<div class="career-image" style="background-image: url('${career.imageUrl}')"></div>` : ''}
+                                
+                                <div class="career-description">
+                                    <p>${career.description || 'No detailed description available.'}</p>
+                                </div>
+                                
+                                <div class="career-details">
+                                    <div>
+                                        <div class="detail-item">
+                                            <div class="detail-label">Salary Range</div>
+                                            <div class="detail-value">${career.salary || 'Not specified'}</div>
+                                        </div>
+                                        <div class="detail-item">
+                                            <div class="detail-label">Job Growth</div>
+                                            <div class="detail-value">${career.growth || 'Not specified'}</div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-item">
+                                            <div class="detail-label">Education Required</div>
+                                            <div class="detail-value">${career.education || 'Not specified'}</div>
+                                        </div>
+                                        <div class="detail-item">
+                                            <div class="detail-label">Experience Level</div>
+                                            <div class="detail-value">${career.experience || 'Not specified'}</div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-item">
+                                            <div class="detail-label">Skills Needed</div>
+                                            <div class="detail-value">${career.skills ? career.skills.join(', ') : 'Not specified'}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="action-buttons">
+                                    <button class="btn btn-danger" onclick="removeCareer('${career.id}')">
+                                        <i data-lucide="trash-2" class="me-1"></i> Remove
+                                    </button>
+                                </div>
+                            `;
+                            
+                            container.appendChild(careerCard);
+                        });
+                        
+                        lucide.createIcons();
+                    } else {
+                        document.getElementById('noSavedCareers').style.display = 'block';
+                    }
+                });
+            } else {
+                // User is signed out - redirect to login
+                window.location.href = 'log-in.html';
+            }
+        });
+
+        // Function to remove a saved career
+        function removeCareer(careerId) {
+            const user = auth.currentUser;
+            if (!user) return;
+            
+            if (confirm('Are you sure you want to remove this career from your saved list?')) {
+                const userRef = database.ref('users/' + user.uid + '/savedCareers');
+                
+                userRef.transaction((currentData) => {
+                    if (currentData) {
+                        return currentData.filter(career => career.id !== careerId);
+                    }
+                    return currentData;
+                }).then(() => {
+                    alert('Career removed successfully');
+                }).catch(error => {
+                    console.error('Error removing career:', error);
+                    alert('Failed to remove career. Please try again.');
+                });
+            }
+        }
+
+        // Logout function
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = 'log-in.html';
+            }).catch((error) => {
+                console.error('Logout error:', error);
+                alert('Error signing out. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html>

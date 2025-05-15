@@ -200,7 +200,7 @@
                     </div>
                     
                     <button type="submit" class="btn-submit mb-3" id="submitButton">
-                        <span id="submitText">Complete Profile</span>
+                        <span id="submitText">Complete Profile, please verify through email too</span>
                         <span id="submitSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
                     </button>
                 </form>
@@ -336,7 +336,7 @@
             // Show success message and redirect
             showSuccess('Profile completed successfully! Redirecting...');
             setTimeout(() => {
-                window.location.href = 'student-dashboard.html';
+                window.location.href = 'log-in.html';
             }, 2000);
             
         } catch (error) {

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students | CareerMentor</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <style>
+        :root {
+            --green: #007a5e;
+            --dark-green: #00593e;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+        }
+        
+        body {
+            background-color: var(--gray-100);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: white;
+            position: fixed;
+        }
+        
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+        
+        .student-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .student-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .student-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--gray-200);
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .student-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .interest-tag {
+            background-color: rgba(0, 122, 94, 0.1);
+            color: var(--green);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .btn-mentor {
+            background-color: var(--green);
+            color: white;
+            border: none;
+        }
+        
+        .btn-mentor:hover {
+            background-color: var(--dark-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <aside class="sidebar p-3">
+            <div class="d-flex align-items-center mb-4">
+                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" 
+                     style="width: 40px; height: 40px;">CM</div>
+                <span class="ms-2 fs-5 fw-semibold">CareerMentor</span>
+            </div>
+            
+            <nav class="nav flex-column">
+                <a href="mentor-dashboard.html" class="nav-link">
+                    <i data-lucide="home" class="me-2"></i> Dashboard
+                </a>
+                <a href="#" class="nav-link active">
+                    <i data-lucide="users" class="me-2"></i> Students
+                </a>
+                <a href="#" class="nav-link">
+                    <i data-lucide="calendar" class="me-2"></i> Sessions
+                </a>
+                <a href="mentor-profile.html" class="nav-link">
+                    <i data-lucide="user" class="me-2"></i> Profile
+                </a>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="bg-white shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="h4 mb-0">Students</h1>
+                    <div>
+                        <button class="btn btn-outline-secondary me-2">
+                            <i data-lucide="search"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary">
+                            <i data-lucide="bell"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="p-4">
+                <div class="row g-4" id="studentsContainer">
+                    <div class="col-12 text-center py-5" id="loadingStudents">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Loading students...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Student Modal -->
+    <div class="modal fade" id="studentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalStudentName">Student Name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <div class="student-avatar mx-auto mb-3" id="modalStudentAvatar">
+                            <i data-lucide="user"></i>
+                        </div>
+                        <h6 class="mb-1" id="modalStudentMajor">Major</h6>
+                        <div id="modalStudentInterests" class="mb-3"></div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>About</h6>
+                        <p id="modalStudentBio">No bio available</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Education</h6>
+                        <p id="modalStudentEducation">No education info</p>
+                    </div>
+                    
+                    <button class="btn btn-mentor w-100 mt-3" id="requestMentorshipBtn">
+                        <i data-lucide="user-plus" class="me-1"></i> Request to Mentor
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnaxztu3L7DBn4T5s_j_vXaBl_etTbyxQ",
+            authDomain: "career-path-c89ed.firebaseapp.com",
+            databaseURL: "https://career-path-c89ed-default-rtdb.firebaseio.com",
+            projectId: "career-path-c89ed",
+            storageBucket: "career-path-c89ed.appspot.com",
+            messagingSenderId: "157237328572",
+            appId: "1:157237328572:web:7c1fbe078f33e5c48b2eb9",
+            measurementId: "G-P3N70T5RY2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        const studentModal = new bootstrap.Modal('#studentModal');
+        
+        // Load students when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    loadStudents();
+                } else {
+                    window.location.href = 'log-in.html';
+                }
+            });
+        });
+        
+        // Load students from Firebase
+        function loadStudents() {
+            database.ref('users').orderByChild('role').equalTo('student').once('value')
+                .then(snapshot => {
+                    const studentsContainer = document.getElementById('studentsContainer');
+                    studentsContainer.innerHTML = '';
+                    
+                    if (!snapshot.exists()) {
+                        studentsContainer.innerHTML = `
+                            <div class="col-12 text-center py-5">
+                                <i data-lucide="users" class="text-muted" width="48" height="48"></i>
+                                <p class="mt-2 text-muted">No students found</p>
+                            </div>
+                        `;
+                        lucide.createIcons();
+                        return;
+                    }
+                    
+                    snapshot.forEach(childSnapshot => {
+                        const student = childSnapshot.val();
+                        const studentId = childSnapshot.key;
+                        
+                        const card = document.createElement('div');
+                        card.className = 'col-md-6 col-lg-4 col-xl-3';
+                        card.innerHTML = `
+                            <div class="student-card p-3 text-center" data-id="${studentId}">
+                                <div class="student-avatar mb-3">
+                                    ${student.profilePicture ? 
+                                        `<img src="${student.profilePicture}" alt="${student.fullName}">` : 
+                                        `<i data-lucide="user"></i>`}
+                                </div>
+                                <h5 class="mb-1">${student.fullName || 'Student'}</h5>
+                                <p class="text-muted small mb-2">${student.major || 'No major'}</p>
+                                <div class="d-flex justify-content-center flex-wrap mb-3">
+                                    ${student.interests ? 
+                                        student.interests.slice(0, 3).map(i => 
+                                            `<span class="interest-tag">${i}</span>`
+                                        ).join('') : ''}
+                                </div>
+                                <button class="btn btn-outline-primary btn-sm">View Profile</button>
+                            </div>
+                        `;
+                        
+                        card.querySelector('.student-card').addEventListener('click', () => {
+                            openStudentModal(studentId, student);
+                        });
+                        
+                        studentsContainer.appendChild(card);
+                    });
+                    
+                    lucide.createIcons();
+                })
+                .catch(error => {
+                    console.error("Error loading students:", error);
+                    document.getElementById('studentsContainer').innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i data-lucide="alert-circle" class="text-danger" width="48" height="48"></i>
+                            <p class="mt-2 text-muted">Error loading students</p>
+                        </div>
+                    `;
+                    lucide.createIcons();
+                });
+        }
+        
+        // Open student modal
+        function openStudentModal(studentId, studentData) {
+            const modal = document.getElementById('studentModal');
+            
+            // Set student data
+            document.getElementById('modalStudentName').textContent = studentData.fullName || 'Student';
+            document.getElementById('modalStudentMajor').textContent = studentData.major || 'No major specified';
+            document.getElementById('modalStudentBio').textContent = studentData.bio || 'No bio available';
+            
+            const educationText = studentData.institution ? 
+                `${studentData.institution}${studentData.graduationYear ? ', ' + studentData.graduationYear : ''}` :
+                'No education information';
+            document.getElementById('modalStudentEducation').textContent = educationText;
+            
+            // Set avatar
+            const avatar = document.getElementById('modalStudentAvatar');
+            avatar.innerHTML = studentData.profilePicture ? 
+                `<img src="${studentData.profilePicture}" alt="${studentData.fullName}">` : 
+                `<i data-lucide="user"></i>`;
+            
+            // Set interests
+            const interestsContainer = document.getElementById('modalStudentInterests');
+            interestsContainer.innerHTML = studentData.interests ? 
+                studentData.interests.map(i => `<span class="interest-tag">${i}</span>`).join('') : 
+                'No interests specified';
+            
+            // Set up request button
+            const requestBtn = document.getElementById('requestMentorshipBtn');
+            requestBtn.setAttribute('data-student-id', studentId);
+            requestBtn.onclick = () => sendMentorshipRequest(studentId);
+            
+            // Show modal
+            studentModal.show();
+            lucide.createIcons();
+        }
+        
+        // Send mentorship request
+        function sendMentorshipRequest(studentId) {
+            const mentorId = auth.currentUser.uid;
+            const requestRef = database.ref('mentorshipRequests').push();
+            
+            requestRef.set({
+                mentorId: mentorId,
+                studentId: studentId,
+                status: 'pending',
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            })
+            .then(() => {
+                alert('Mentorship request sent successfully!');
+                studentModal.hide();
+            })
+            .catch(error => {
+                console.error("Error sending request:", error);
+                alert('Failed to send request. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html>
