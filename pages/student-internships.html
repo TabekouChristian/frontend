@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Internships | CareerMentor</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <style>
+        :root {
+            --green: #007a5e;
+            --red: #ce1126;
+            --yellow: #fcd116;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --dark-green: #00593e;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-500: #adb5bd;
+            --gray-700: #495057;
+            --gray-900: #212529;
+        }
+        
+        body {
+            background-color: var(--gray-100);
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        /* Improved Sidebar */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: fixed;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar.collapsed {
+            left: -260px;
+        }
+        
+        .main-content {
+            margin-left: 260px;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .main-content.expanded {
+            margin-left: 0;
+        }
+        
+        /* Sidebar Links */
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            font-weight: 500;
+        }
+        
+        .sidebar-link:hover {
+            background-color: var(--gray-100);
+            color: var(--green);
+        }
+        
+        .sidebar-link.active {
+            border-left: 3px solid var(--green);
+            background-color: rgba(0, 122, 94, 0.05);
+            color: var(--green);
+        }
+        
+        .sidebar-link .icon {
+            margin-right: 0.75rem;
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Cards */
+        .feature-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            border-color: rgba(0, 122, 94, 0.2);
+        }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--green) 0%, var(--dark-green) 100%);
+            color: white;
+            border-radius: 0.75rem;
+            padding: 3rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section h2 {
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        .hero-section p {
+            opacity: 0.9;
+        }
+        
+        /* Career Cards */
+        .career-card {
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .career-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            border-color: rgba(0, 122, 94, 0.2);
+        }
+        
+        .career-card-img {
+            height: 140px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .career-card-body {
+            padding: 1.5rem;
+            background-color: white;
+        }
+        
+        .badge-pill {
+            padding: 0.35em 0.65em;
+            font-size: 0.75em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Chatbot Section */
+        .chatbot-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--purple);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        /* Header */
+        .dashboard-header {
+            background-color: white;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 20;
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+        }
+        
+        /* User Profile */
+        .user-profile {
+            padding: 1rem;
+            border-top: 1px solid var(--gray-200);
+            margin-top: auto;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-700);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .mobile-menu-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .sidebar {
+                left: -260px;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background-color: var(--green);
+            border-color: var(--green);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--dark-green);
+            border-color: var(--dark-green);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-500);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-700);
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Mobile menu toggle -->
+        <button class="mobile-menu-toggle btn btn-light shadow-sm" id="menuToggle">
+            <i data-lucide="menu"></i>
+        </button>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Logo -->
+            <div class="p-4 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem; background-color: var(--green);">
+                        <span class="text-white font-bold">CM</span>
+                    </div>
+                    <span class="ms-2 fs-5 fw-semibold">CareerMentor</span>
+                </div>
+            </div>
+            
+            <!-- Navigation Links -->
+            <nav class="mt-3">
+                <a href="student-homepage.html" class="sidebar-link ">
+                    <i data-lucide="home" class="icon"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="career-recommendations.html" class="sidebar-link">
+                    <i data-lucide="star" class="icon"></i>
+                    <span>Recommendations</span>
+                </a>
+                <a href="saved-careers.html" class="sidebar-link">
+                    <i data-lucide="bookmark" class="icon"></i>
+                    <span>Saved Careers</span>
+                </a>
+                <a href="mentor-student.html" class="sidebar-link">
+                    <i data-lucide="user" class="icon"></i>
+                    <span>Mentors</span>
+                </a>
+                <a href="student-programs.html" class="sidebar-link">
+                    <i data-lucide="book-open" class="icon"></i>
+                    <span>Programs</span>
+                </a>
+                <a href="student-internships.html" class="sidebar-link active">
+                    <i data-lucide="briefcase" class="icon"></i>
+                    <span>Internships</span>
+                </a>
+                <a href="student-courses.html" class="sidebar-link ">
+                    <i data-lucide="graduation-cap" class="icon"></i>
+                    <span>Short Courses</span>
+                </a>
+                <a href="student-message.html" class="sidebar-link">
+                    <i data-lucide="mail" class="icon"></i>
+                    <span>Discussion</span>
+                </a>
+                
+                <a href="#" class="sidebar-link">
+                    <i data-lucide="message-square" class="icon"></i>
+                    <span>CareerBot</span>
+                </a>
+                <a href="student-profile.html" class="sidebar-link">
+                    <i data-lucide="user" class="icon"></i>
+                    <span>Profile</span>
+                </a>
+            </nav>
+            
+            <!-- Student Profile -->
+            <div class="user-profile">
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar me-3">
+                        <i data-lucide="user" class="text-secondary"></i>
+                    </div>
+                    <div>
+                        <p class="fw-medium mb-0" id="userName">Loading...</p>
+                        <p class="text-muted small mb-0" id="userPosition">Student</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Top Header -->
+            <header class="dashboard-header">
+                <div class="container-fluid">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1 class="h4 mb-0 fw-semibold">Browse Internships</h1>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="input-group" style="width: 250px;">
+                                <span class="input-group-text bg-white"><i data-lucide="search"></i></span>
+                                <input type="text" class="form-control" placeholder="Search internships..." id="searchInput">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Internships Content -->
+            <div class="container-fluid p-4">
+                <!-- Search and Filter -->
+                <div class="search-filter-container">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="internshipTypeFilter" class="form-label">Filter by Type</label>
+                            <select class="form-select" id="internshipTypeFilter">
+                                <option value="">All Types</option>
+                                <option value="Full-time">Full-time</option>
+                                <option value="Part-time">Part-time</option>
+                                <option value="Remote">Remote</option>
+                                <option value="Hybrid">Hybrid</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="internshipFieldFilter" class="form-label">Filter by Field</label>
+                            <input type="text" class="form-control" id="internshipFieldFilter" placeholder="e.g. Software Engineering, Marketing">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="internshipLocationFilter" class="form-label">Filter by Location</label>
+                            <input type="text" class="form-control" id="internshipLocationFilter" placeholder="e.g. New York, Remote">
+                        </div>
+                    </div>
+                    <div class="filter-tags" id="activeFilters">
+                        <!-- Active filters will appear here -->
+                    </div>
+                </div>
+                
+                <!-- Internships List -->
+                <div class="row g-4" id="internshipsContainer">
+                    <!-- Internships will be loaded here dynamically -->
+                    <div class="col-12 text-center py-5">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Internship Detail Modal -->
+    <div class="modal fade program-detail-modal" id="internshipDetailModal" tabindex="-1" aria-labelledby="internshipDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="internshipDetailModalLabel">Internship Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="educator-profile" id="employerProfile">
+                        <div class="educator-avatar">
+                            <i data-lucide="building-2"></i>
+                        </div>
+                        <div class="educator-info">
+                            <h5 id="employerName">Loading...</h5>
+                            <p id="employerPosition">Employer</p>
+                            <p class="small" id="employerOrganization">Company</p>
+                        </div>
+                    </div>
+                    
+                    <div class="program-detail-section">
+                        <h5>About This Internship</h5>
+                        <p id="internshipDetailDescription">Loading internship description...</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="program-detail-section">
+                                <h5>Internship Details</h5>
+                                <div class="d-flex mb-2">
+                                    <i data-lucide="briefcase" class="me-2" width="18"></i>
+                                    <span id="internshipDetailType">Type: Loading...</span>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <i data-lucide="clock" class="me-2" width="18"></i>
+                                    <span id="internshipDetailDuration">Duration: Loading...</span>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <i data-lucide="map-pin" class="me-2" width="18"></i>
+                                    <span id="internshipDetailLocation">Location: Loading...</span>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <i data-lucide="dollar-sign" class="me-2" width="18"></i>
+                                    <span id="internshipDetailStipend">Stipend: Loading...</span>
+                                </div>
+                                <div class="d-flex">
+                                    <i data-lucide="calendar" class="me-2" width="18"></i>
+                                    <span id="internshipDetailDate">Posted: Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="program-detail-section">
+                                <h5>Requirements</h5>
+                                <ul class="requirements-list" id="internshipDetailRequirements">
+                                    <li>Loading requirements...</li>
+                                </ul>
+                            </div>
+                            <div class="program-detail-section">
+                                <h5>Responsibilities</h5>
+                                <ul class="requirements-list" id="internshipDetailResponsibilities">
+                                    <li>Loading responsibilities...</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" id="applyToInternshipBtn">
+                        <span id="applyText">Apply for Internship</span>
+                        <span id="applySpinner" class="spinner-border spinner-border-sm d-none"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnaxztu3L7DBn4T5s_j_vXaBl_etTbyxQ",
+            authDomain: "career-path-c89ed.firebaseapp.com",
+            databaseURL: "https://career-path-c89ed-default-rtdb.firebaseio.com",
+            projectId: "career-path-c89ed",
+            storageBucket: "career-path-c89ed.appspot.com",
+            messagingSenderId: "157237328572",
+            appId: "1:157237328572:web:7c1fbe078f33e5c48b2eb9",
+            measurementId: "G-P3N70T5RY2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // Global variables
+        let currentUser = null;
+        let currentInternshipId = null;
+        let allInternships = [];
+        let filteredInternships = [];
+
+        // Toggle sidebar
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('expanded');
+            
+            const icon = menuToggle.querySelector('i');
+            if (sidebar.classList.contains('open')) {
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            lucide.createIcons();
+        });
+
+        // Format date from timestamp
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        // Load user data from Firebase
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                const userRef = database.ref('users/' + user.uid);
+                userRef.once('value').then((snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData) {
+                        document.getElementById('userName').textContent = userData.fullName || 'Student';
+                        document.getElementById('userPosition').textContent = 'Student';
+                        
+                        loadAllInternships();
+                    } else {
+                        console.log('No user data found');
+                        showEmptyState();
+                    }
+                }).catch((error) => {
+                    console.error('Error loading user data:', error);
+                    showEmptyState();
+                });
+            } else {
+                console.log('User not authenticated, redirecting to login');
+                window.location.href = 'log-in.html';
+            }
+        });
+
+        // Show empty state message
+        function showEmptyState() {
+            const internshipsContainer = document.getElementById('internshipsContainer');
+            internshipsContainer.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <i data-lucide="briefcase" class="text-muted mb-3" width="48" height="48"></i>
+                    <h5 class="text-muted">No internships found</h5>
+                    <p class="text-muted">There are currently no internships available</p>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // Load all internships
+        function loadAllInternships() {
+            console.log('Loading all internships');
+            const internshipsRef = database.ref('internships').orderByChild('status').equalTo('active');
+            
+            internshipsRef.on('value', (snapshot) => {
+                console.log('Internships snapshot received');
+                const internshipsContainer = document.getElementById('internshipsContainer');
+                
+                if (snapshot.exists()) {
+                    console.log('Internships found:', snapshot.numChildren());
+                    allInternships = [];
+                    snapshot.forEach((childSnapshot) => {
+                        const internship = childSnapshot.val();
+                        internship.id = childSnapshot.key;
+                        allInternships.push(internship);
+                    });
+                    
+                    filteredInternships = [...allInternships];
+                    renderInternships();
+                    setupSearchAndFilter();
+                } else {
+                    console.log('No internships found');
+                    showEmptyState();
+                }
+            }, (error) => {
+                console.error('Error loading internships:', error);
+                showEmptyState();
+            });
+        }
+
+        // Render internships to the DOM
+        function renderInternships() {
+            const internshipsContainer = document.getElementById('internshipsContainer');
+            internshipsContainer.innerHTML = '';
+            
+            if (filteredInternships.length === 0) {
+                internshipsContainer.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i data-lucide="search" class="text-muted mb-3" width="48" height="48"></i>
+                        <h5 class="text-muted">No internships match your filters</h5>
+                        <button class="btn btn-link text-success" onclick="clearFilters()">Clear all filters</button>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+            
+            filteredInternships.forEach((internship) => {
+                const internshipCard = document.createElement('div');
+                internshipCard.className = 'col-md-6 col-lg-4 col-xl-3';
+                internshipCard.innerHTML = `
+                    <div class="program-card" data-internship-id="${internship.id}">
+                        <div class="program-card-header">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h3 class="h5 fw-semibold mb-0">${internship.name || 'Unnamed Internship'}</h3>
+                                <span class="badge bg-success bg-opacity-10 text-success badge-pill">
+                                    ${internship.status || 'Active'}
+                                </span>
+                            </div>
+                            <div class="program-meta">
+                                <span><i data-lucide="clock" width="14"></i> ${internship.duration || 'Duration not specified'}</span>
+                                <span><i data-lucide="map-pin" width="14"></i> ${internship.location || 'Location not specified'}</span>
+                            </div>
+                        </div>
+                        <div class="program-card-body">
+                            <div class="program-tags mb-2">
+                                <span class="program-tag">${internship.type || 'Type not specified'}</span>
+                                <span class="program-tag">${internship.field || 'Field not specified'}</span>
+                                <span class="program-tag">${internship.stipend || 'Stipend not specified'}</span>
+                            </div>
+                            <p class="program-description">${internship.description ? internship.description.substring(0, 120) + (internship.description.length > 120 ? '...' : '') : 'No description'}</p>
+                            <div class="program-stats">
+                                <div class="stat-item">
+                                    <i data-lucide="users" width="16"></i>
+                                    <span>${internship.applicants || 0} Applicants</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i data-lucide="file-text" width="16"></i>
+                                    <span>${internship.applications || 0} Applications</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="program-card-footer">
+                            <button class="btn btn-sm btn-outline-primary view-details" data-internship-id="${internship.id}">
+                                <i data-lucide="eye" width="14"></i> View Details
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                internshipsContainer.appendChild(internshipCard);
+                
+                // Add event listener to view details button
+                internshipCard.querySelector('.view-details').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    viewInternshipDetails(internship.id);
+                });
+                
+                // Add event listener to entire card
+                internshipCard.querySelector('.program-card').addEventListener('click', function() {
+                    viewInternshipDetails(internship.id);
+                });
+            });
+            
+            lucide.createIcons();
+        }
+
+        // View internship details
+        function viewInternshipDetails(internshipId) {
+            currentInternshipId = internshipId;
+            const internship = allInternships.find(i => i.id === internshipId);
+            const internshipDetailModal = new bootstrap.Modal(document.getElementById('internshipDetailModal'));
+            
+            if (!internship) {
+                alert('Internship details could not be loaded');
+                return;
+            }
+            
+            // Load internship details
+            document.getElementById('internshipDetailModalLabel').textContent = internship.name;
+            document.getElementById('internshipDetailDescription').textContent = internship.description || 'No description available';
+            document.getElementById('internshipDetailType').textContent = `Type: ${internship.type || 'Not specified'}`;
+            document.getElementById('internshipDetailDuration').textContent = `Duration: ${internship.duration || 'Not specified'}`;
+            document.getElementById('internshipDetailLocation').textContent = `Location: ${internship.location || 'Not specified'}`;
+            document.getElementById('internshipDetailStipend').textContent = `Stipend: ${internship.stipend || 'Not specified'}`;
+            document.getElementById('internshipDetailDate').textContent = `Posted: ${formatDate(internship.createdAt) || 'Not specified'}`;
+            
+            // Load requirements
+            const requirementsList = document.getElementById('internshipDetailRequirements');
+            requirementsList.innerHTML = '';
+            
+            if (internship.requirements && internship.requirements.length > 0) {
+                internship.requirements.forEach(req => {
+                    if (req.trim()) {
+                        const li = document.createElement('li');
+                        li.textContent = req.trim();
+                        requirementsList.appendChild(li);
+                    }
+                });
+            } else {
+                requirementsList.innerHTML = '<li>No specific requirements</li>';
+            }
+            
+            // Load responsibilities
+            const responsibilitiesList = document.getElementById('internshipDetailResponsibilities');
+            responsibilitiesList.innerHTML = '';
+            
+            if (internship.responsibilities && internship.responsibilities.length > 0) {
+                internship.responsibilities.forEach(resp => {
+                    if (resp.trim()) {
+                        const li = document.createElement('li');
+                        li.textContent = resp.trim();
+                        responsibilitiesList.appendChild(li);
+                    }
+                });
+            } else {
+                responsibilitiesList.innerHTML = '<li>No specific responsibilities listed</li>';
+            }
+            
+            // Load employer info
+            const employerRef = database.ref('users/' + internship.employerId);
+            employerRef.once('value').then((snapshot) => {
+                const employerData = snapshot.val();
+                if (employerData) {
+                    document.getElementById('employerName').textContent = employerData.fullName || 'Employer';
+                    document.getElementById('employerPosition').textContent = employerData.position || 'Employer';
+                    document.getElementById('employerOrganization').textContent = employerData.organization || 'Company not specified';
+                }
+            });
+            
+            // Check if student has already applied
+            checkApplicationStatus();
+            
+            internshipDetailModal.show();
+        }
+
+        // Check if student has already applied to the internship
+        function checkApplicationStatus() {
+            if (!currentUser || !currentInternshipId) return;
+            
+            const applicationRef = database.ref(`internships/${currentInternshipId}/applicationList/${currentUser.uid}`);
+            applicationRef.once('value').then((snapshot) => {
+                const applyBtn = document.getElementById('applyToInternshipBtn');
+                
+                if (snapshot.exists()) {
+                    const application = snapshot.val();
+                    applyBtn.disabled = true;
+                    
+                    if (application.status === 'approved') {
+                        applyBtn.innerHTML = '<i data-lucide="check-circle" width="16"></i> Approved';
+                        updateInternshipCardStatus(currentInternshipId, 'approved');
+                    } else {
+                        applyBtn.innerHTML = '<i data-lucide="clock" width="16"></i> Application Pending';
+                        updateInternshipCardStatus(currentInternshipId, 'pending');
+                    }
+                    lucide.createIcons();
+                } else {
+                    applyBtn.disabled = false;
+                    applyBtn.innerHTML = '<span id="applyText">Apply for Internship</span><span id="applySpinner" class="spinner-border spinner-border-sm d-none"></span>';
+                }
+            });
+        }
+
+        // Helper function to update internship card status
+        function updateInternshipCardStatus(internshipId, status) {
+            const internshipCards = document.querySelectorAll(`.program-card[data-internship-id="${internshipId}"]`);
+            internshipCards.forEach(card => {
+                const btn = card.querySelector('.view-details');
+                if (btn) {
+                    if (status === 'pending') {
+                        btn.innerHTML = '<i data-lucide="clock" width="14"></i> Application Pending';
+                        btn.classList.remove('btn-outline-primary');
+                        btn.classList.add('btn-outline-secondary');
+                    } else if (status === 'approved') {
+                        btn.innerHTML = '<i data-lucide="check-circle" width="14"></i> Approved';
+                        btn.classList.remove('btn-outline-primary');
+                        btn.classList.add('btn-outline-success');
+                    }
+                    lucide.createIcons();
+                }
+            });
+        }
+
+        // Apply to internship
+        document.getElementById('applyToInternshipBtn').addEventListener('click', function() {
+            if (!currentUser || !currentInternshipId) {
+                alert('Please log in to apply for internships');
+                return;
+            }
+            
+            const applyBtn = this;
+            const applyText = document.getElementById('applyText');
+            const applySpinner = document.getElementById('applySpinner');
+            
+            // Show loading state
+            applyText.style.display = 'none';
+            applySpinner.classList.remove('d-none');
+            applyBtn.disabled = true;
+            
+            // Get student data
+            const studentRef = database.ref('users/' + currentUser.uid);
+            studentRef.once('value').then((snapshot) => {
+                const studentData = snapshot.val();
+                
+                if (!studentData) {
+                    throw new Error('Student data not found');
+                }
+                
+                // Verify user is a student
+                if (studentData.role !== 'student') {
+                    throw new Error('Only students can apply for internships');
+                }
+                
+                // Create application data
+                const applicationData = {
+                    studentId: currentUser.uid,
+                    studentName: studentData.fullName || 'Unknown Student',
+                    status: 'pending',
+                    appliedAt: firebase.database.ServerValue.TIMESTAMP,
+                    studentEmail: studentData.email || '',
+                    studentEducation: studentData.education || 'Not specified',
+                    resumeUrl: studentData.resumeUrl || ''
+                };
+                
+                // Create updates object
+                const updates = {};
+                updates[`internships/${currentInternshipId}/applicationList/${currentUser.uid}`] = applicationData;
+                updates[`internships/${currentInternshipId}/applications`] = firebase.database.ServerValue.increment(1);
+                updates[`students/${currentUser.uid}/appliedInternships/${currentInternshipId}`] = true;
+                
+                return database.ref().update(updates);
+            }).then(() => {
+                // Update button to show pending status
+                applyBtn.innerHTML = '<i data-lucide="clock" width="16"></i> Application Submitted';
+                lucide.createIcons();
+                
+                // Update the internship card to show applied status
+                updateInternshipCardStatus(currentInternshipId, 'pending');
+            }).catch((error) => {
+                console.error('Error applying to internship:', error.code, error.message);
+                alert(`Application failed: ${error.message}`);
+                
+                // Reset button state
+                applyText.style.display = 'inline';
+                applySpinner.classList.add('d-none');
+                applyBtn.disabled = false;
+            });
+        });
+
+        // Setup search and filter functionality
+        function setupSearchAndFilter() {
+            const searchInput = document.getElementById('searchInput');
+            const typeFilter = document.getElementById('internshipTypeFilter');
+            const fieldFilter = document.getElementById('internshipFieldFilter');
+            const locationFilter = document.getElementById('internshipLocationFilter');
+            const activeFiltersContainer = document.getElementById('activeFilters');
+            
+            // Search input handler
+            searchInput.addEventListener('input', function() {
+                filterInternships();
+            });
+            
+            // Filter select handlers
+            typeFilter.addEventListener('change', function() {
+                filterInternships();
+                updateActiveFilters();
+            });
+            
+            fieldFilter.addEventListener('input', function() {
+                filterInternships();
+                updateActiveFilters();
+            });
+            
+            locationFilter.addEventListener('input', function() {
+                filterInternships();
+                updateActiveFilters();
+            });
+            
+            // Filter internships based on current filters
+            function filterInternships() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const typeValue = typeFilter.value;
+                const fieldValue = fieldFilter.value.toLowerCase();
+                const locationValue = locationFilter.value.toLowerCase();
+                
+                filteredInternships = allInternships.filter(internship => {
+                    // Search term matching
+                    const matchesSearch = 
+                        internship.name.toLowerCase().includes(searchTerm) ||
+                        (internship.description && internship.description.toLowerCase().includes(searchTerm)) ||
+                        (internship.field && internship.field.toLowerCase().includes(searchTerm));
+                    
+                    // Type filter matching
+                    const matchesType = !typeValue || internship.type === typeValue;
+                    
+                    // Field filter matching
+                    const matchesField = !fieldValue || 
+                        (internship.field && internship.field.toLowerCase().includes(fieldValue));
+                    
+                    // Location filter matching
+                    const matchesLocation = !locationValue || 
+                        (internship.location && internship.location.toLowerCase().includes(locationValue));
+                    
+                    return matchesSearch && matchesType && matchesField && matchesLocation;
+                });
+                
+                renderInternships();
+            }
+            
+            // Update active filters display
+            function updateActiveFilters() {
+                activeFiltersContainer.innerHTML = '';
+                
+                if (typeFilter.value) {
+                    const filterTag = document.createElement('span');
+                    filterTag.className = 'filter-tag active';
+                    filterTag.textContent = `Type: ${typeFilter.value}`;
+                    filterTag.addEventListener('click', function() {
+                        typeFilter.value = '';
+                        filterInternships();
+                        updateActiveFilters();
+                    });
+                    activeFiltersContainer.appendChild(filterTag);
+                }
+                
+                if (fieldFilter.value) {
+                    const filterTag = document.createElement('span');
+                    filterTag.className = 'filter-tag active';
+                    filterTag.textContent = `Field: ${fieldFilter.value}`;
+                    filterTag.addEventListener('click', function() {
+                        fieldFilter.value = '';
+                        filterInternships();
+                        updateActiveFilters();
+                    });
+                    activeFiltersContainer.appendChild(filterTag);
+                }
+                
+                if (locationFilter.value) {
+                    const filterTag = document.createElement('span');
+                    filterTag.className = 'filter-tag active';
+                    filterTag.textContent = `Location: ${locationFilter.value}`;
+                    filterTag.addEventListener('click', function() {
+                        locationFilter.value = '';
+                        filterInternships();
+                        updateActiveFilters();
+                    });
+                    activeFiltersContainer.appendChild(filterTag);
+                }
+            }
+        }
+        
+        // Clear all filters
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('internshipTypeFilter').value = '';
+            document.getElementById('internshipFieldFilter').value = '';
+            document.getElementById('internshipLocationFilter').value = '';
+            filterInternships();
+            document.getElementById('activeFilters').innerHTML = '';
+        }
+
+        // Global function for filter clearing
+        window.clearFilters = clearFilters;
+    </script>
+</body>
+</html>

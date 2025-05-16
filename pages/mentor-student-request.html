@@ -552,19 +552,18 @@
                 lastMessageTime: firebase.database.ServerValue.TIMESTAMP,
                 requestId: currentRequestId
             };
-            
-            // Create the chat
-            database.ref(`chats/${chatId}`).set(chatData);
-            
-            // Add chat reference to both users
-            const mentorUpdate = {};
-            mentorUpdate[`userChats/${currentMentorId}/${chatId}`] = true;
-            
-            const studentUpdate = {};
-            studentUpdate[`userChats/${currentStudentId}/${chatId}`] = true;
-            
-            database.ref().update(mentorUpdate);
-            database.ref().update(studentUpdate);
+
+            // Create the chat, then update both userChats in a single update
+            database.ref(`chats/${chatId}`).set(chatData)
+                .then(() => {
+                    const updates = {};
+                    updates[`userChats/${currentMentorId}/${chatId}`] = true;
+                    updates[`userChats/${currentStudentId}/${chatId}`] = true;
+                    return database.ref().update(updates);
+                })
+                .catch(error => {
+                    console.error('Error creating chat connection:', error);
+                });
         }
 
         function formatDate(timestamp) {

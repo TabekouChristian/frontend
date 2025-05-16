@@ -334,11 +334,10 @@
             <div class="search-container">
                 <div class="search-input-container">
                     <i data-lucide="search" width="16" height="16" class="text-muted"></i>
-                    <input type="text" class="search-input" placeholder="Search or start new chat">
+                    <input type="text" class="search-input" placeholder="Search or start new chat" id="searchInput">
                 </div>
             </div>
             <ul class="chat-list" id="chatList">
-                <!-- Chats will be loaded here -->
                 <div class="text-center py-5">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Loading...</span>
@@ -453,6 +452,7 @@
     let currentMentorId = null;
     let profileModal = null;
     let chats = {};
+    let allChats = []; // For search
 
     document.addEventListener('DOMContentLoaded', function() {
         lucide.createIcons();
@@ -468,65 +468,68 @@
                 window.location.href = 'log-in.html';
             }
         });
+
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            filterChats(e.target.value);
+        });
     });
 
     function loadChats() {
         const chatList = document.getElementById('chatList');
         chatList.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-3">Loading chats...</p></div>';
-        database.ref(`userChats/${currentUser.uid}`).on('value', snapshot => {
-            if (!snapshot.exists()) {
+        // Scan all chats for participation
+        database.ref('chats').once('value').then(snapshot => {
+            const chatsData = snapshot.val() || {};
+            allChats = [];
+            Object.entries(chatsData).forEach(([chatId, chat]) => {
+                if (chat.participants && chat.participants[currentUser.uid]) {
+                    // Find mentorId
+                    const mentorId = Object.keys(chat.participants).find(uid => uid !== currentUser.uid);
+                    allChats.push({ chatId, chat, mentorId });
+                }
+            });
+            if (allChats.length === 0) {
                 showNoChatsMessage();
                 return;
             }
-            const userChats = snapshot.val();
-            chats = {};
-            chatList.innerHTML = '';
-            let validChatsCount = 0;
-            Object.keys(userChats).forEach(chatId => {
-                database.ref(`chats/${chatId}`).once('value')
-                    .then(chatSnapshot => {
-                        if (!chatSnapshot.exists()) {
-                            return database.ref(`userChats/${currentUser.uid}/${chatId}`).remove().then(() => null);
-                        }
-                        const chat = chatSnapshot.val();
-                        if (!chat.participants || !chat.participants[currentUser.uid]) {
-                            return database.ref(`userChats/${currentUser.uid}/${chatId}`).remove().then(() => null);
-                        }
-                        chats[chatId] = chat;
-                        // Get the other participant's ID (mentor)
-                        const participantIds = Object.keys(chat.participants);
-                        const mentorId = participantIds.find(id => id !== currentUser.uid);
-                        if (mentorId) {
-                            return database.ref(`users/${mentorId}`).once('value')
-                                .then(mentorSnapshot => {
-                                    const mentor = mentorSnapshot.val() || {};
-                                    mentor.uid = mentorId;
-                                    return { chatId, chat, mentor };
-                                });
-                        }
-                        return null;
-                    })
-                    .then(chatData => {
-                        if (chatData) {
-                            validChatsCount++;
-                            const chatItem = createChatListItem(chatData.chatId, chatData.chat, chatData.mentor);
-                            chatList.appendChild(chatItem);
-                            if (validChatsCount === 1) {
-                                openChat(chatData.chatId, chatData.mentor);
-                            }
-                        }
-                        if (validChatsCount === 0 && Object.keys(userChats).length === Object.keys(chats).length) {
-                            showNoChatsMessage();
-                        }
-                    })
-                    .catch(error => {
-                        console.error(`Error processing chat ${chatId}:`, error);
-                    });
-            });
-        }, error => {
-            console.error('Error loading user chats:', error);
-            showNoChatsMessage();
+            renderChatList(allChats);
         });
+    }
+
+    function renderChatList(chatArray) {
+        const chatList = document.getElementById('chatList');
+        chatList.innerHTML = '';
+        let firstChat = null;
+        let loaded = 0;
+        chatArray.forEach(({ chatId, chat, mentorId }, idx) => {
+            database.ref('users/' + mentorId).once('value').then(mentorSnap => {
+                const mentor = mentorSnap.val() || {};
+                mentor.uid = mentorId;
+                const chatItem = createChatListItem(chatId, chat, mentor);
+                chatList.appendChild(chatItem);
+                loaded++;
+                if (loaded === 1) {
+                    firstChat = { chatId, mentor };
+                }
+                if (loaded === chatArray.length && firstChat) {
+                    openChat(firstChat.chatId, firstChat.mentor);
+                }
+                lucide.createIcons();
+            });
+        });
+    }
+
+    function filterChats(query) {
+        query = query.trim().toLowerCase();
+        if (!query) {
+            renderChatList(allChats);
+            return;
+        }
+        const filtered = allChats.filter(({ chat, mentorId }) => {
+            // You can also fetch mentor name here if needed
+            return chat.lastMessage && chat.lastMessage.toLowerCase().includes(query);
+        });
+        renderChatList(filtered);
     }
 
     function createChatListItem(chatId, chat, mentor) {
@@ -551,7 +554,6 @@
                 </div>
                 <div class="chat-preview">
                     ${previewText}
-                    ${chat.unreadCount ? `<span class="unread-count">${chat.unreadCount}</span>` : ''}
                 </div>
             </div>
         `;
@@ -588,8 +590,7 @@
             .catch(error => {
                 console.error('Error opening chat:', error);
                 alert('Could not open this chat. It may have been deleted or you no longer have access.');
-                database.ref(`userChats/${currentUser.uid}/${chatId}`).remove()
-                    .then(() => { loadChats(); });
+                loadChats();
             });
     }
 

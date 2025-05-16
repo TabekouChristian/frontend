@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Programs | CareerMentor</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <style>
+        :root {
+            --green: #007a5e;
+            --red: #ce1126;
+            --yellow: #fcd116;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --dark-green: #00593e;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-500: #adb5bd;
+            --gray-700: #495057;
+            --gray-900: #212529;
+        }
+        
+        body {
+            background-color: var(--gray-100);
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: fixed;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar.collapsed {
+            left: -260px;
+        }
+        
+        .main-content {
+            margin-left: 260px;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .main-content.expanded {
+            margin-left: 0;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            font-weight: 500;
+        }
+        
+        .sidebar-link:hover {
+            background-color: var(--gray-100);
+            color: var(--green);
+        }
+        
+        .sidebar-link.active {
+            border-left: 3px solid var(--green);
+            background-color: rgba(0, 122, 94, 0.05);
+            color: var(--green);
+        }
+        
+        .sidebar-link .icon {
+            margin-right: 0.75rem;
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Updated Program Card Styles */
+        .program-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-width: 350px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .program-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 122, 94, 0.15);
+            border-color: rgba(0, 122, 94, 0.3);
+        }
+
+        .program-card-header {
+            padding: 1.5rem 1.5rem 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .program-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+        }
+
+        .program-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .program-card-body {
+            padding: 1.25rem 1.5rem;
+            flex-grow: 1;
+        }
+
+        .program-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .program-tag {
+            background-color: rgba(0, 122, 94, 0.1);
+            color: var(--green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .program-description {
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            margin: 1rem 0;
+        }
+
+        .program-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        .program-card-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .program-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        /* Header */
+        .dashboard-header {
+            background-color: white;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 20;
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+        }
+        
+        /* User Profile */
+        .user-profile {
+            padding: 1rem;
+            border-top: 1px solid var(--gray-200);
+            margin-top: auto;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-700);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .mobile-menu-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .sidebar {
+                left: -260px;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        /* Modal styles */
+        .modal-content {
+            border-radius: 0.75rem;
+            border: none;
+        }
+        
+        .modal-header {
+            background-color: var(--green);
+            color: white;
+            border-radius: 0.75rem 0.75rem 0 0;
+        }
+        
+        /* Application Modal */
+        .application-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            transition: background-color 0.2s;
+        }
+        
+        .application-item:hover {
+            background-color: var(--gray-100);
+        }
+        
+        .application-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background-color: rgba(252, 209, 22, 0.1);
+            color: var(--yellow);
+        }
+        
+        .status-approved {
+            background-color: rgba(0, 122, 94, 0.1);
+            color: var(--green);
+        }
+        
+        .status-rejected {
+            background-color: rgba(206, 17, 38, 0.1);
+            color: var(--red);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            color: var(--gray-500);
+            margin-bottom: 1rem;
+        }
+
+        #programsContainer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: flex-start;
+            align-items: stretch;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Mobile menu toggle -->
+        <button class="mobile-menu-toggle btn btn-light shadow-sm" id="menuToggle">
+            <i data-lucide="menu"></i>
+        </button>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Logo -->
+            <div class="p-4 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem; background-color: var(--green);">
+                        <span class="text-white font-bold">CM</span>
+                    </div>
+                    <span class="ms-2 fs-5 fw-semibold">CareerMentor</span>
+                </div>
+            </div>
+            
+            <!-- Navigation Links -->
+            <nav class="mt-3">
+                <a href="educator-homepage.html" class="sidebar-link">
+                    <i data-lucide="home" class="icon"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="educator-programs.html" class="sidebar-link active">
+                    <i data-lucide="book-open" class="icon"></i>
+                    <span>Programs</span>
+                </a>
+                <a href="educator-students.html" class="sidebar-link">
+                    <i data-lucide="users" class="icon"></i>
+                    <span>Students</span>
+                </a>
+                <a href="educator-internships.html" class="sidebar-link">
+                    <i data-lucide="briefcase" class="icon"></i>
+                    <span>Internships</span>
+                </a>
+                <a href="educator-courses.html" class="sidebar-link">
+                    <i data-lucide="graduation-cap" class="icon"></i>
+                    <span>Short Courses</span>
+                </a>
+                <a href="educator-message.html" class="sidebar-link">
+                    <i data-lucide="mail" class="icon"></i>
+                    <span>Messages</span>
+                </a>
+                <a href="educator-analytics.html" class="sidebar-link">
+                    <i data-lucide="bar-chart-2" class="icon"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="educator-profile.html" class="sidebar-link">
+                    <i data-lucide="user" class="icon"></i>
+                    <span>Profile</span>
+                </a>
+            </nav>
+            
+            <!-- Educator Profile -->
+            <div class="user-profile">
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar me-3">
+                        <i data-lucide="user" class="text-secondary"></i>
+                    </div>
+                    <div>
+                        <p class="fw-medium mb-0" id="userName">Loading...</p>
+                        <p class="text-muted small mb-0" id="userPosition">Educator</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Top Header -->
+            <header class="dashboard-header">
+                <div class="container-fluid">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1 class="h4 mb-0 fw-semibold">My Programs</h1>
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProgramModal">
+                            <i data-lucide="plus" class="me-1"></i> Add Program
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Programs Content -->
+            <div class="container-fluid p-4">
+                <!-- Programs List -->
+                <div class="row g-4" id="programsContainer">
+                    <!-- Programs will be loaded here dynamically -->
+                    <div class="col-12 text-center py-5">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Add Program Modal -->
+    <div class="modal fade" id="addProgramModal" tabindex="-1" aria-labelledby="addProgramModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addProgramModalLabel">Add New Program</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="programForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="programName" class="form-label">Program Name</label>
+                                <input type="text" class="form-control" id="programName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="programType" class="form-label">Program Type</label>
+                                <select class="form-select" id="programType" required>
+                                    <option value="">Select type</option>
+                                    <option value="Degree">Degree Program</option>
+                                    <option value="Diploma">Diploma</option>
+                                    <option value="Certificate">Certificate</option>
+                                    <option value="Bootcamp">Bootcamp</option>
+                                    <option value="Workshop">Workshop</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="programDuration" class="form-label">Duration</label>
+                                <input type="text" class="form-control" id="programDuration" placeholder="e.g. 4 years, 6 months" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="programField" class="form-label">Field of Study</label>
+                                <input type="text" class="form-control" id="programField" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="programDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="programDescription" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="programRequirements" class="form-label">Requirements</label>
+                            <textarea class="form-control" id="programRequirements" rows="2" placeholder="List requirements separated by commas"></textarea>
+                        </div>
+                        
+                        <div class="alert alert-danger d-none" id="programError"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="saveProgramBtn">
+                        <span id="saveProgramText">Save Program</span>
+                        <span id="saveProgramSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applications Modal -->
+    <div class="modal fade" id="applicationsModal" tabindex="-1" aria-labelledby="applicationsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="applicationsModalLabel">Program Applications</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-outline-secondary active filter-btn" data-status="all">All</button>
+                            <button class="btn btn-sm btn-outline-secondary filter-btn" data-status="pending">Pending</button>
+                            <button class="btn btn-sm btn-outline-secondary filter-btn" data-status="approved">Approved</button>
+                            <button class="btn btn-sm btn-outline-secondary filter-btn" data-status="rejected">Rejected</button>
+                        </div>
+                        <div class="text-muted small" id="applicationsCount">0 applications</div>
+                    </div>
+                    
+                    <div id="applicationsList">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i data-lucide="users"></i>
+                            </div>
+                            <h5>No applications found</h5>
+                            <p class="text-muted">Students who apply to this program will appear here</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnaxztu3L7DBn4T5s_j_vXaBl_etTbyxQ",
+            authDomain: "career-path-c89ed.firebaseapp.com",
+            databaseURL: "https://career-path-c89ed-default-rtdb.firebaseio.com",
+            projectId: "career-path-c89ed",
+            storageBucket: "career-path-c89ed.appspot.com",
+            messagingSenderId: "157237328572",
+            appId: "1:157237328572:web:7c1fbe078f33e5c48b2eb9",
+            measurementId: "G-P3N70T5RY2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // Toggle sidebar
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('expanded');
+            
+            const icon = menuToggle.querySelector('i');
+            if (sidebar.classList.contains('open')) {
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            lucide.createIcons();
+        });
+
+        // Format date from timestamp
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            const date = new Date(timestamp);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        // Load user data from Firebase
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log('User authenticated:', user.uid);
+                const userRef = database.ref('users/' + user.uid);
+                userRef.once('value').then((snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData) {
+                        document.getElementById('userName').textContent = userData.fullName || 'Educator';
+                        document.getElementById('userPosition').textContent = userData.position || 'Educator';
+                        
+                        loadPrograms(user.uid);
+                    } else {
+                        console.log('No user data found');
+                        showEmptyState();
+                    }
+                }).catch((error) => {
+                    console.error('Error loading user data:', error);
+                    showEmptyState();
+                });
+            } else {
+                console.log('User not authenticated, redirecting to login');
+                window.location.href = 'log-in.html';
+            }
+        });
+
+        // Show empty state message
+        function showEmptyState() {
+            const programsContainer = document.getElementById('programsContainer');
+            programsContainer.innerHTML = `
+                <div class="col-12 text-center py-5">
+                    <i data-lucide="book-open" class="text-muted mb-3" width="48" height="48"></i>
+                    <h5 class="text-muted">No programs found</h5>
+                    <p class="text-muted">Create your first program to get started</p>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProgramModal">
+                        <i data-lucide="plus" class="me-1"></i> Add Program
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // Load educator's programs with error handling
+        function loadPrograms(educatorId) {
+            console.log('Loading programs for educator:', educatorId);
+            const programsRef = database.ref('programs').orderByChild('educatorId').equalTo(educatorId);
+            
+            programsRef.on('value', (snapshot) => {
+                console.log('Programs snapshot received');
+                const programsContainer = document.getElementById('programsContainer');
+                
+                if (snapshot.exists()) {
+                    console.log('Programs found:', snapshot.numChildren());
+                    const programs = snapshot.val();
+                    programsContainer.innerHTML = '';
+                    
+                    Object.keys(programs).forEach((programId) => {
+                        const program = programs[programId];
+                        console.log('Adding program:', programId, program);
+                        addProgramToDOM(programId, program);
+                    });
+                } else {
+                    console.log('No programs found for this educator');
+                    showEmptyState();
+                }
+            }, (error) => {
+                console.error('Error loading programs:', error);
+                showEmptyState();
+            });
+        }
+
+        // Add program to DOM
+        function addProgramToDOM(programId, program) {
+            const programsContainer = document.getElementById('programsContainer');
+            
+            const programCard = document.createElement('div');
+            programCard.className = '';
+            programCard.style.margin = "0 1rem 2rem 0"; // right and bottom margin for spacing
+            programCard.innerHTML = `
+                <div class="program-card">
+                    <div class="program-card-header">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h3 class="h5 fw-semibold mb-0">${program.name || 'Unnamed Program'}</h3>
+                            <span class="badge ${program.status === 'active' ? 'bg-success' : 'bg-warning'} bg-opacity-10 text-${program.status === 'active' ? 'success' : 'warning'} badge-pill">
+                                ${program.status || 'Active'}
+                            </span>
+                        </div>
+                        <div class="program-meta">
+                            <span><i data-lucide="clock" width="14"></i> ${program.duration || 'Duration not specified'}</span>
+                            <span><i data-lucide="calendar" width="14"></i> ${formatDate(program.createdAt) || 'Date not specified'}</span>
+                        </div>
+                    </div>
+                    <div class="program-card-body">
+                        <div class="program-tags mb-2">
+                            <span class="program-tag">${program.type || 'Type not specified'}</span>
+                            <span class="program-tag">${program.field || 'Field not specified'}</span>
+                        </div>
+                        <p class="program-description">${program.description ? program.description.substring(0, 120) + (program.description.length > 120 ? '...' : '') : 'No description'}</p>
+                        <div class="program-stats">
+                            <div class="stat-item">
+                                <i data-lucide="users" width="16"></i>
+                                <span>${program.studentsEnrolled || 0} Enrolled</span>
+                            </div>
+                            <div class="stat-item">
+                                <i data-lucide="file-text" width="16"></i>
+                                <span>${program.applications || 0} Applications</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="program-card-footer">
+                        <button class="btn btn-sm btn-outline-primary view-applications" data-program-id="${programId}">
+                            <i data-lucide="list" width="14"></i> Applications
+                        </button>
+                        <div class="program-actions">
+                            <button class="btn btn-sm btn-outline-secondary">
+                                <i data-lucide="edit-2" width="14"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteProgram('${programId}')">
+                                <i data-lucide="trash-2" width="14"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            programsContainer.appendChild(programCard);
+            lucide.createIcons();
+            
+            // Add event listener to view applications button
+            programCard.querySelector('.view-applications').addEventListener('click', function() {
+                viewApplications(programId, program.name);
+            });
+        }
+
+        // View applications for a program
+        function viewApplications(programId, programName) {
+            const applicationsModal = new bootstrap.Modal(document.getElementById('applicationsModal'));
+            document.getElementById('applicationsModalLabel').textContent = `Applications for ${programName}`;
+            
+            // Load applications
+            const applicationsRef = database.ref(`programs/${programId}/applicationList`);
+            applicationsRef.on('value', (snapshot) => {
+                const applicationsList = document.getElementById('applicationsList');
+                
+                if (snapshot.exists()) {
+                    const applications = snapshot.val();
+                    const applicationCount = Object.keys(applications).length;
+                    document.getElementById('applicationsCount').textContent = `${applicationCount} application${applicationCount !== 1 ? 's' : ''}`;
+                    
+                    applicationsList.innerHTML = '';
+                    
+                    Object.entries(applications).forEach(([studentId, application]) => {
+                        const applicationItem = document.createElement('div');
+                        applicationItem.className = 'application-item';
+                        applicationItem.innerHTML = `
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">${application.studentName || 'Unknown Student'}</h6>
+                                    <small class="text-muted">Applied on ${formatDate(application.appliedAt)}</small>
+                                </div>
+                                <div>
+                                    <span class="application-status status-${application.status}">${application.status}</span>
+                                    <div class="btn-group btn-group-sm ms-2">
+                                        <button class="btn btn-outline-success" onclick="updateApplicationStatus('${programId}', '${studentId}', 'approved')">
+                                            <i data-lucide="check" width="14"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger" onclick="updateApplicationStatus('${programId}', '${studentId}', 'rejected')">
+                                            <i data-lucide="x" width="14"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        applicationsList.appendChild(applicationItem);
+                    });
+                    
+                    lucide.createIcons();
+                } else {
+                    applicationsList.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i data-lucide="users"></i>
+                            </div>
+                            <h5>No applications found</h5>
+                            <p class="text-muted">Students who apply to this program will appear here</p>
+                        </div>
+                    `;
+                    document.getElementById('applicationsCount').textContent = '0 applications';
+                    lucide.createIcons();
+                }
+            });
+            
+            applicationsModal.show();
+        }
+
+        // Update application status
+        function updateApplicationStatus(programId, studentId, status) {
+            if (!['approved', 'rejected', 'pending'].includes(status)) return;
+            
+            const updates = {};
+            updates[`programs/${programId}/applicationList/${studentId}/status`] = status;
+            
+            // If approved, increment enrolled count
+            if (status === 'approved') {
+                updates[`programs/${programId}/studentsEnrolled`] = firebase.database.ServerValue.increment(1);
+            }
+            
+            database.ref().update(updates)
+                .then(() => {
+                    console.log('Application status updated successfully');
+                })
+                .catch((error) => {
+                    console.error('Error updating application status:', error);
+                    alert('Error updating application status. Please try again.');
+                });
+        }
+
+        // Save new program
+        document.getElementById('saveProgramBtn').addEventListener('click', function() {
+            const saveBtn = this;
+            const saveText = document.getElementById('saveProgramText');
+            const saveSpinner = document.getElementById('saveProgramSpinner');
+            const errorElement = document.getElementById('programError');
+            
+            // Get form values
+            const name = document.getElementById('programName').value.trim();
+            const type = document.getElementById('programType').value;
+            const duration = document.getElementById('programDuration').value.trim();
+            const field = document.getElementById('programField').value.trim();
+            const description = document.getElementById('programDescription').value.trim();
+            const requirements = document.getElementById('programRequirements').value.trim();
+            
+            // Validate form
+            if (!name || !type || !duration || !field || !description) {
+                errorElement.textContent = 'Please fill in all required fields';
+                errorElement.classList.remove('d-none');
+                return;
+            }
+            
+            // Show loading state
+            saveText.textContent = 'Saving...';
+            saveSpinner.classList.remove('d-none');
+            saveBtn.disabled = true;
+            errorElement.classList.add('d-none');
+            
+            // Get current user
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = 'log-in.html';
+                return;
+            }
+            
+            // Create program data
+            const programData = {
+                name,
+                type,
+                duration,
+                field,
+                description,
+                requirements: requirements ? requirements.split(',').map(r => r.trim()) : [],
+                educatorId: user.uid,
+                createdAt: firebase.database.ServerValue.TIMESTAMP,
+                status: 'active',
+                studentsEnrolled: 0,
+                applications: 0
+            };
+            
+            // Save to database
+            database.ref('programs').push(programData)
+                .then(() => {
+                    console.log('Program saved successfully');
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addProgramModal'));
+                    modal.hide();
+                    document.getElementById('programForm').reset();
+                    
+                    saveText.textContent = 'Save Program';
+                    saveSpinner.classList.add('d-none');
+                    saveBtn.disabled = false;
+                })
+                .catch((error) => {
+                    console.error('Error saving program:', error);
+                    errorElement.textContent = 'Error saving program. Please try again.';
+                    errorElement.classList.remove('d-none');
+                    
+                    saveText.textContent = 'Save Program';
+                    saveSpinner.classList.add('d-none');
+                    saveBtn.disabled = false;
+                });
+        });
+        
+        // Delete program
+        function deleteProgram(programId) {
+            if (confirm('Are you sure you want to delete this program? This will also delete all associated applications.')) {
+                database.ref('programs/' + programId).remove()
+                    .then(() => {
+                        console.log('Program deleted successfully');
+                    })
+                    .catch((error) => {
+                        console.error('Error deleting program:', error);
+                        alert('Error deleting program. Please try again.');
+                    });
+            }
+        }
+        
+        // Reset form when modal is closed
+        document.getElementById('addProgramModal').addEventListener('hidden.bs.modal', function() {
+            document.getElementById('programForm').reset();
+            document.getElementById('programError').classList.add('d-none');
+            document.getElementById('saveProgramText').textContent = 'Save Program';
+            document.getElementById('saveProgramSpinner').classList.add('d-none');
+            document.getElementById('saveProgramBtn').disabled = false;
+        });
+
+        // Application filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const status = this.getAttribute('data-status');
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Filter applications - this would need to be implemented based on your actual data structure
+                console.log('Filter by:', status);
+                // You would need to implement the actual filtering logic here
+            });
+        });
+    </script>
+</body>
+</html>
