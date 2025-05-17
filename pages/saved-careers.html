@@ -6,6 +6,10 @@
     <title>Saved Careers | CareerMentor</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Firebase SDK -->
@@ -14,35 +18,123 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <style>
         :root {
-            --green: #007a5e;
-            --red: #ce1126;
-            --yellow: #fcd116;
-            --dark-green: #00593e;
-            --gray-100: #f8f9fa;
-            --gray-200: #e9ecef;
-            --gray-500: #adb5bd;
-            --gray-700: #495057;
-            --gray-900: #212529;
+            /* 2025 Modern Color Palette */
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --primary-light: #e0f2fe;
+            --secondary: #8b5cf6;
+            --secondary-dark: #7c3aed;
+            --secondary-light: #f3e8ff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            
+            /* Glass Effect */
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --glass-blur: blur(10px);
         }
         
         body {
-            background-color: var(--gray-100);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--gray-50);
+            font-family: 'Inter', sans-serif;
+            color: var(--gray-800);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.05) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 30%);
+            background-attachment: fixed;
         }
         
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+        }
+        
+        /* Glass Morphism */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+        
+        /* Header */
+        .modern-header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+        }
+        
+        /* Saved Careers Container */
         .saved-careers-container {
             max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
         }
         
+        /* Career Card */
         .career-card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--gray-200);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            padding: 1.75rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .career-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
         }
         
         .career-header {
@@ -50,58 +142,86 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
+            padding-bottom: 1.25rem;
             border-bottom: 1px solid var(--gray-200);
         }
         
         .career-title {
-            color: var(--green);
-            font-weight: 600;
+            color: var(--primary);
+            font-weight: 700;
             margin-bottom: 0.5rem;
+            font-size: 1.5rem;
         }
         
         .career-match {
-            background-color: rgba(0, 122, 94, 0.1);
-            color: var(--green);
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
+            background-color: rgba(14, 165, 233, 0.1);
+            color: var(--primary);
+            padding: 0.35rem 0.85rem;
+            border-radius: 2rem;
             font-size: 0.875rem;
-            font-weight: 500;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
         
         .career-image {
-            height: 200px;
+            height: 240px;
             background-size: cover;
             background-position: center;
-            border-radius: 0.5rem;
-            margin-bottom: 1.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.75rem;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .career-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+        }
+        
+        .career-description {
+            line-height: 1.7;
+            color: var(--gray-700);
+            margin-bottom: 1.75rem;
+            font-size: 1rem;
         }
         
         .career-details {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.75rem;
+            margin-bottom: 2rem;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid var(--gray-200);
         }
         
         .detail-item {
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
         
         .detail-label {
-            font-weight: 500;
+            font-weight: 600;
             color: var(--gray-700);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .detail-label i {
+            margin-right: 0.5rem;
+            color: var(--primary);
         }
         
         .detail-value {
             color: var(--gray-900);
-        }
-        
-        .career-description {
-            line-height: 1.6;
-            color: var(--gray-700);
-            margin-bottom: 1.5rem;
+            font-weight: 500;
         }
         
         .action-buttons {
@@ -110,42 +230,186 @@
             justify-content: flex-end;
         }
         
-        .btn-danger {
-            background-color: var(--red);
-            border-color: var(--red);
+        /* Custom Buttons */
+        .btn-primary-gradient {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
         }
         
-        .btn-danger:hover {
-            background-color: #b10e1f;
-            border-color: #b10e1f;
+        .btn-primary-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+            color: white;
         }
         
+        .btn-danger-gradient {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-danger-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+            color: white;
+        }
+        
+        .btn-outline-primary {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+            padding: 0.7rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 3rem;
-            color: var(--gray-500);
+            padding: 4rem 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
         }
         
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+        
+        /* Footer */
+        .modern-footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0 2rem;
+        }
+        
+        .footer-logo-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        
+        .footer-link {
             color: var(--gray-300);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .footer-link:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .text-gray-300 {
+            color: var(--gray-300);
+        }
+        
+        .text-gray-400 {
+            color: var(--gray-400);
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .career-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .career-header {
+                flex-direction: column;
+            }
+            
+            .career-match {
+                margin-top: 0.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-500);
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="bg-white shadow-sm py-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-                <div class="bg-success text-white fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">CM</div>
-                <span class="ms-2 fs-4 fw-bold text-dark">CareerMentor</span>
-            </div>
-            <div>
-                <a href="student-homepage.html" class="btn btn-outline-success me-2">Dashboard</a>
-                <button onclick="logout()" class="btn btn-outline-danger">
-                    <i data-lucide="log-out" class="me-1"></i> Logout
-                </button>
+    <header class="modern-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="logo-container">
+                    <div class="logo-circle me-2">CM</div>
+                    <span class="fs-4 fw-bold">CareerMentor</span>
+                </div>
+                <div>
+                    <a href="student-homepage.html" class="btn btn-outline-primary me-2">
+                        <i data-lucide="layout-dashboard" class="me-1" width="18"></i> Dashboard
+                    </a>
+                    <button onclick="logout()" class="btn btn-outline-danger rounded-pill">
+                        <i data-lucide="log-out" class="me-1" width="18"></i> Logout
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -154,43 +418,77 @@
     <div class="saved-careers-container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="h3 fw-bold mb-0">Saved Careers</h1>
-            <a href="career-recommendations.html" class="btn btn-success">
-                <i data-lucide="plus" class="me-1"></i> Find More Careers
+            <a href="career-recommendations.html" class="btn btn-primary-gradient">
+                <i data-lucide="plus" class="me-1" width="18"></i> Find More Careers
             </a>
         </div>
         
         <div id="savedCareersList">
             <!-- Careers will be loaded here -->
             <div class="empty-state" id="noSavedCareers">
-                <i data-lucide="bookmark"></i>
-                <h3 class="h5 mb-3">No Saved Careers Yet</h3>
-                <p class="mb-4">You haven't saved any careers yet. Explore our recommendations to find careers that match your interests and skills.</p>
-                <a href="career-recommendations.html" class="btn btn-success">
-                    <i data-lucide="star" class="me-1"></i> Get Career Recommendations
+                <div class="empty-state-icon">
+                    <i data-lucide="bookmark"></i>
+                </div>
+                <h3 class="h4 fw-bold mb-3">No Saved Careers Yet</h3>
+                <p class="mb-4 text-gray-600">You haven't saved any careers yet. Explore our recommendations to find careers that match your interests and skills.</p>
+                <a href="career-recommendations.html" class="btn btn-primary-gradient">
+                    <i data-lucide="sparkles" class="me-1" width="18"></i> Get Career Recommendations
                 </a>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
+    <footer class="modern-footer mt-5">
         <div class="container">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-                <div class="mb-3 mb-md-0">
-                    <div class="footer-logo mb-1">
-                        <div class="footer-logo-box">CM</div>
-                        <span class="ms-2 fs-5 fw-bold">CareerMentor</span>
+            <div class="row">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="footer-logo-box me-2">CM</div>
+                        <span class="fs-5 fw-bold">CareerMentor</span>
                     </div>
-                    <p class="small text-gray-300 mb-0">Empowering careers across Cameroon</p>
+                    <p class="text-gray-300 mb-4">Empowering students to discover and pursue their ideal career paths through personalized guidance and AI-powered tools.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="footer-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="footer-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="footer-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="footer-link"><i class="fab fa-instagram"></i></a>
+                    </div>
                 </div>
-                <div class="d-flex gap-4">
-                    <a href="#" class="footer-link">About</a>
-                    <a href="#" class="footer-link">Privacy</a>
-                    <a href="#" class="footer-link">Terms</a>
-                    <a href="#" class="footer-link">Contact</a>
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="col-md-4 mb-4 mb-md-0">
+                            <h5 class="h6 fw-bold mb-3">Quick Links</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><a href="#" class="footer-link">Home</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">About Us</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Careers</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Blog</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4 mb-4 mb-md-0">
+                            <h5 class="h6 fw-bold mb-3">Support</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><a href="#" class="footer-link">Help Center</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Contact Us</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">FAQs</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Feedback</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="h6 fw-bold mb-3">Legal</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><a href="#" class="footer-link">Terms</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Privacy</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Cookies</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Licenses</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="mt-4 text-center small text-gray-400">
+            <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.1);">
+            <div class="text-center text-gray-400">
                 © <span id="currentYear"></span> CareerMentor. All rights reserved.
             </div>
         </div>
@@ -198,6 +496,8 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome for footer icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
@@ -255,35 +555,53 @@
                                 <div class="career-details">
                                     <div>
                                         <div class="detail-item">
-                                            <div class="detail-label">Salary Range</div>
+                                            <div class="detail-label">
+                                                <i data-lucide="dollar-sign" width="18"></i>
+                                                Salary Range
+                                            </div>
                                             <div class="detail-value">${career.salary || 'Not specified'}</div>
                                         </div>
                                         <div class="detail-item">
-                                            <div class="detail-label">Job Growth</div>
+                                            <div class="detail-label">
+                                                <i data-lucide="trending-up" width="18"></i>
+                                                Job Growth
+                                            </div>
                                             <div class="detail-value">${career.growth || 'Not specified'}</div>
                                         </div>
                                     </div>
                                     <div>
                                         <div class="detail-item">
-                                            <div class="detail-label">Education Required</div>
+                                            <div class="detail-label">
+                                                <i data-lucide="graduation-cap" width="18"></i>
+                                                Education Required
+                                            </div>
                                             <div class="detail-value">${career.education || 'Not specified'}</div>
                                         </div>
                                         <div class="detail-item">
-                                            <div class="detail-label">Experience Level</div>
+                                            <div class="detail-label">
+                                                <i data-lucide="briefcase" width="18"></i>
+                                                Experience Level
+                                            </div>
                                             <div class="detail-value">${career.experience || 'Not specified'}</div>
                                         </div>
                                     </div>
                                     <div>
                                         <div class="detail-item">
-                                            <div class="detail-label">Skills Needed</div>
+                                            <div class="detail-label">
+                                                <i data-lucide="check-circle" width="18"></i>
+                                                Skills Needed
+                                            </div>
                                             <div class="detail-value">${career.skills ? career.skills.join(', ') : 'Not specified'}</div>
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <div class="action-buttons">
-                                    <button class="btn btn-danger" onclick="removeCareer('${career.id}')">
-                                        <i data-lucide="trash-2" class="me-1"></i> Remove
+                                    <a href="career-details.html?id=${career.id}" class="btn btn-primary-gradient">
+                                        <i data-lucide="info" class="me-1" width="18"></i> View Details
+                                    </a>
+                                    <button class="btn btn-danger-gradient" onclick="removeCareer('${career.id}')">
+                                        <i data-lucide="trash-2" class="me-1" width="18"></i> Remove
                                     </button>
                                 </div>
                             `;
@@ -316,13 +634,82 @@
                     }
                     return currentData;
                 }).then(() => {
-                    alert('Career removed successfully');
+                    // Show a toast notification instead of an alert
+                    showToast('Career removed successfully', 'success');
                 }).catch(error => {
                     console.error('Error removing career:', error);
-                    alert('Failed to remove career. Please try again.');
+                    showToast('Failed to remove career. Please try again.', 'error');
                 });
             }
         }
+
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            // Create toast container if it doesn't exist
+            let toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.style.position = 'fixed';
+                toastContainer.style.bottom = '20px';
+                toastContainer.style.right = '20px';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            // Create toast
+            const toast = document.createElement('div');
+            toast.style.minWidth = '250px';
+            toast.style.margin = '0.5rem 0';
+            toast.style.padding = '1rem 1.5rem';
+            toast.style.borderRadius = '0.5rem';
+            toast.style.boxShadow = 'var(--shadow-lg)';
+            toast.style.display = 'flex';
+            toast.style.alignItems = 'center';
+            toast.style.animation = 'slideIn 0.3s ease-out forwards';
+            
+            // Set background color based on type
+            if (type === 'success') {
+                toast.style.backgroundColor = 'rgba(16, 185, 129, 0.9)';
+                toast.style.color = 'white';
+                toast.innerHTML = `<i data-lucide="check-circle" class="me-2"></i> ${message}`;
+            } else if (type === 'error') {
+                toast.style.backgroundColor = 'rgba(239, 68, 68, 0.9)';
+                toast.style.color = 'white';
+                toast.innerHTML = `<i data-lucide="alert-circle" class="me-2"></i> ${message}`;
+            } else {
+                toast.style.backgroundColor = 'rgba(14, 165, 233, 0.9)';
+                toast.style.color = 'white';
+                toast.innerHTML = `<i data-lucide="info" class="me-2"></i> ${message}`;
+            }
+            
+            // Add toast to container
+            toastContainer.appendChild(toast);
+            lucide.createIcons();
+            
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out forwards';
+                setTimeout(() => {
+                    toastContainer.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Add animations for toast
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
 
         // Logout function
         function logout() {
@@ -330,7 +717,7 @@
                 window.location.href = 'log-in.html';
             }).catch((error) => {
                 console.error('Logout error:', error);
-                alert('Error signing out. Please try again.');
+                showToast('Error signing out. Please try again.', 'error');
             });
         }
     </script>

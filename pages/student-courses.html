@@ -94,18 +94,20 @@
         /* Cards */
         .feature-card {
             background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            border-radius: 1rem;
+            box-shadow: 0 0.25rem 1rem rgba(0,0,0,0.06);
             padding: 1.5rem;
-            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e9ecef;
+            transition: box-shadow 0.2s;
+            cursor: pointer;
             height: 100%;
-            border: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         
         .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-            border-color: rgba(0, 122, 94, 0.2);
+            box-shadow: 0 0.5rem 1.5rem rgba(0,122,94,0.12);
         }
         
         .feature-icon {
@@ -414,13 +416,8 @@
                 </div>
                 
                 <!-- Courses List -->
-                <div class="row g-4" id="coursesContainer">
-                    <!-- Courses will be loaded here dynamically -->
-                    <div class="col-12 text-center py-5">
-                        <div class="spinner-border text-success" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
+                <div class="row g-4 justify-content-center" id="coursesContainer">
+                    <!-- Cards will be injected here -->
                 </div>
             </div>
         </main>
@@ -637,56 +634,47 @@
             
             filteredCourses.forEach((course) => {
                 const courseCard = document.createElement('div');
-                courseCard.className = 'col-md-6 col-lg-4 col-xl-3';
+                courseCard.className = 'col-12 col-md-6 col-lg-4 d-flex';
+
                 courseCard.innerHTML = `
-                    <div class="program-card" data-course-id="${course.id}">
-                        <div class="program-card-header">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <h3 class="h5 fw-semibold mb-0">${course.name || 'Unnamed Course'}</h3>
-                                <span class="badge bg-success bg-opacity-10 text-success badge-pill">
-                                    ${course.status || 'Active'}
-                                </span>
-                            </div>
-                            <div class="program-meta">
-                                <span><i data-lucide="clock" width="14"></i> ${course.duration || 'Duration not specified'}</span>
-                                <span><i data-lucide="calendar" width="14"></i> ${formatDate(course.createdAt) || 'Date not specified'}</span>
-                            </div>
+                    <div class="feature-card w-100 mb-4">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="fw-semibold mb-0">${course.name || 'Unnamed Course'}</h5>
+                            <span class="badge bg-success bg-opacity-10 text-success badge-pill">
+                                ${course.status || 'Active'}
+                            </span>
                         </div>
-                        <div class="program-card-body">
-                            <div class="program-tags mb-2">
-                                <span class="program-tag">${course.type || 'Type not specified'}</span>
-                                <span class="program-tag">${course.field || 'Field not specified'}</span>
-                            </div>
-                            <p class="program-description">${course.description ? course.description.substring(0, 120) + (course.description.length > 120 ? '...' : '') : 'No description'}</p>
-                            <div class="program-stats">
-                                <div class="stat-item">
-                                    <i data-lucide="users" width="16"></i>
-                                    <span>${course.studentsEnrolled || 0} Enrolled</span>
-                                </div>
-                                <div class="stat-item">
-                                    <i data-lucide="file-text" width="16"></i>
-                                    <span>${course.applications || 0} Applications</span>
-                                </div>
-                            </div>
+                        <div class="mb-2">
+                            <span class="badge bg-light text-dark me-1">${course.type || 'Type not specified'}</span>
+                            <span class="badge bg-light text-dark">${course.field || 'Field not specified'}</span>
                         </div>
-                        <div class="program-card-footer">
+                        <p class="small text-muted mb-2">${course.description ? course.description.substring(0, 120) + (course.description.length > 120 ? '...' : '') : 'No description'}</p>
+                        <div class="mb-2">
+                            <span class="me-3"><i data-lucide="clock" width="14"></i> ${course.duration || 'Duration not specified'}</span>
+                            <span><i data-lucide="calendar" width="14"></i> ${formatDate(course.createdAt) || 'Date not specified'}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div>
+                                <span class="me-3"><i data-lucide="users" width="16"></i> ${course.studentsEnrolled || 0} Enrolled</span>
+                                <span><i data-lucide="file-text" width="16"></i> ${course.applications || 0} Applications</span>
+                            </div>
                             <button class="btn btn-sm btn-outline-primary view-details" data-course-id="${course.id}">
                                 <i data-lucide="eye" width="14"></i> View Details
                             </button>
                         </div>
                     </div>
                 `;
-                
+
                 coursesContainer.appendChild(courseCard);
-                
+
                 // Add event listener to view details button
                 courseCard.querySelector('.view-details').addEventListener('click', function(e) {
                     e.stopPropagation();
                     viewCourseDetails(course.id);
                 });
-                
+
                 // Add event listener to entire card
-                courseCard.querySelector('.program-card').addEventListener('click', function() {
+                courseCard.querySelector('.feature-card').addEventListener('click', function() {
                     viewCourseDetails(course.id);
                 });
             });

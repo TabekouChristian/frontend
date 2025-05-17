@@ -26,14 +26,12 @@
             --gray-700: #495057;
             --gray-900: #212529;
         }
-        
         body {
             background-color: var(--gray-100);
             height: 100vh;
             overflow: hidden;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
-        
         .sidebar {
             width: 260px;
             height: 100vh;
@@ -45,22 +43,19 @@
             display: flex;
             flex-direction: column;
         }
-        
         .sidebar.collapsed {
             left: -260px;
         }
-        
         .main-content {
+            width: 100%;
             margin-left: 260px;
             height: 100vh;
             overflow-y: auto;
             transition: all 0.3s ease;
         }
-        
         .main-content.expanded {
             margin-left: 0;
         }
-        
         .sidebar-link {
             display: flex;
             align-items: center;
@@ -71,24 +66,20 @@
             border-left: 3px solid transparent;
             font-weight: 500;
         }
-        
         .sidebar-link:hover {
             background-color: var(--gray-100);
             color: var(--green);
         }
-        
         .sidebar-link.active {
             border-left: 3px solid var(--green);
             background-color: rgba(0, 122, 94, 0.05);
             color: var(--green);
         }
-        
         .sidebar-link .icon {
             margin-right: 0.75rem;
             width: 20px;
             height: 20px;
         }
-        
         /* Program Card Styles */
         .program-card {
             background-color: white;
@@ -101,23 +92,17 @@
             flex-direction: column;
             height: 100%;
             cursor: pointer;
-            min-width: 350px;
-            max-width: 600px;
-            margin: 0 1rem 2rem 0;
-            flex: 1 1 350px;
+            /* Removed min-width, max-width, margin, flex */
         }
-
         .program-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 0.5rem 1.5rem rgba(0, 122, 94, 0.15);
             border-color: rgba(0, 122, 94, 0.3);
         }
-
         .program-card-header {
             padding: 1.5rem 1.5rem 0.75rem;
             border-bottom: 1px solid var(--gray-200);
         }
-
         .program-meta {
             display: flex;
             gap: 1rem;
@@ -125,24 +110,20 @@
             color: var(--gray-600);
             margin-top: 0.5rem;
         }
-
         .program-meta span {
             display: flex;
             align-items: center;
             gap: 0.25rem;
         }
-
         .program-card-body {
             padding: 1.25rem 1.5rem;
             flex-grow: 1;
         }
-
         .program-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
         }
-
         .program-tag {
             background-color: rgba(0, 122, 94, 0.1);
             color: var(--green);
@@ -151,19 +132,16 @@
             font-size: 0.75rem;
             font-weight: 500;
         }
-
         .program-description {
             font-size: 0.875rem;
             color: var(--gray-700);
             margin: 1rem 0;
         }
-
         .program-stats {
             display: flex;
             gap: 1.5rem;
             margin-top: 1rem;
         }
-
         .stat-item {
             display: flex;
             align-items: center;
@@ -171,14 +149,12 @@
             font-size: 0.8rem;
             color: var(--gray-600);
         }
-
         .program-card-footer {
             padding: 1rem 1.5rem;
             border-top: 1px solid var(--gray-200);
             display: flex;
             justify-content: flex-end;
         }
-        
         /* Header */
         .dashboard-header {
             background-color: white;
@@ -188,7 +164,6 @@
             top: 0;
             z-index: 5;
         }
-        
         /* Mobile Menu */
         .mobile-menu-toggle {
             position: fixed;
@@ -202,14 +177,12 @@
             background-color: white;
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
         }
-        
         /* User Profile */
         .user-profile {
             padding: 1rem;
             border-top: 1px solid var(--gray-200);
             margin-top: auto;
         }
-        
         .user-avatar {
             width: 40px;
             height: 40px;
@@ -220,7 +193,6 @@
             justify-content: center;
             color: var(--gray-700);
         }
-        
         /* Responsive */
         @media (max-width: 992px) {
             .mobile-menu-toggle {
@@ -228,31 +200,26 @@
                 align-items: center;
                 justify-content: center;
             }
-            
             .sidebar {
                 left: -260px;
             }
-            
             .sidebar.open {
                 left: 0;
             }
-            
             .main-content {
                 margin-left: 0;
+                width: 100%;
             }
         }
-        
         /* Program Detail Modal */
         .program-detail-modal .modal-content {
             border-radius: 0.75rem;
         }
-        
         .program-detail-modal .modal-header {
             background-color: var(--green);
             color: white;
             border-radius: 0.75rem 0.75rem 0 0;
         }
-        
         .educator-profile {
             display: flex;
             align-items: center;
@@ -261,7 +228,6 @@
             border-radius: 0.5rem;
             margin-bottom: 1.5rem;
         }
-        
         .educator-avatar {
             width: 60px;
             height: 60px;
@@ -274,46 +240,36 @@
             font-size: 1.5rem;
             margin-right: 1rem;
         }
-        
         .educator-info h5 {
             margin-bottom: 0.25rem;
         }
-        
         .educator-info p {
             color: var(--gray-600);
             margin-bottom: 0;
             font-size: 0.875rem;
         }
-        
         .program-detail-section {
             margin-bottom: 1.5rem;
         }
-        
         .program-detail-section h5 {
             color: var(--green);
             margin-bottom: 0.75rem;
         }
-        
         .requirements-list {
             padding-left: 1.25rem;
         }
-        
         .requirements-list li {
             margin-bottom: 0.5rem;
         }
-        
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
         }
-        
         .empty-state-icon {
             font-size: 3rem;
             color: var(--gray-500);
             margin-bottom: 1rem;
         }
-        
-        /* Search and Filter */
         .search-filter-container {
             background-color: white;
             padding: 1.5rem;
@@ -321,14 +277,12 @@
             margin-bottom: 1.5rem;
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
         }
-        
         .filter-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
             margin-top: 1rem;
         }
-        
         .filter-tag {
             background-color: var(--gray-200);
             color: var(--gray-700);
@@ -338,19 +292,12 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
         .filter-tag:hover, .filter-tag.active {
             background-color: var(--green);
             color: white;
         }
-
-        /* Use flexbox for the container */
-        #programsContainer {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: flex-start;
-            align-items: stretch;
+        .container-fluid.p-4 {
+            min-height: 100vh;
         }
     </style>
 </head>
@@ -360,7 +307,6 @@
         <button class="mobile-menu-toggle btn btn-light shadow-sm" id="menuToggle">
             <i data-lucide="menu"></i>
         </button>
-        
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <!-- Logo -->
@@ -372,7 +318,6 @@
                     <span class="ms-2 fs-5 fw-semibold">CareerMentor</span>
                 </div>
             </div>
-            
             <!-- Navigation Links -->
             <nav class="mt-3">
                 <a href="student-homepage.html" class="sidebar-link ">
@@ -407,7 +352,6 @@
                     <i data-lucide="mail" class="icon"></i>
                     <span>Discussion</span>
                 </a>
-                
                 <a href="#" class="sidebar-link">
                     <i data-lucide="message-square" class="icon"></i>
                     <span>CareerBot</span>
@@ -417,7 +361,6 @@
                     <span>Profile</span>
                 </a>
             </nav>
-            
             <!-- Student Profile -->
             <div class="user-profile">
                 <div class="d-flex align-items-center">
@@ -431,7 +374,6 @@
                 </div>
             </div>
         </aside>
-        
         <!-- Main Content -->
         <main class="main-content" id="mainContent">
             <!-- Top Header -->
@@ -448,7 +390,6 @@
                     </div>
                 </div>
             </header>
-            
             <!-- Programs Content -->
             <div class="container-fluid p-4">
                 <!-- Search and Filter -->
@@ -474,9 +415,8 @@
                         <!-- Active filters will appear here -->
                     </div>
                 </div>
-                
                 <!-- Programs List -->
-                <div class="row g-4" id="programsContainer">
+                <div class="row g-4 justify-content-center" id="programsContainer">
                     <!-- Programs will be loaded here dynamically -->
                     <div class="col-12 text-center py-5">
                         <div class="spinner-border text-success" role="status">
@@ -487,7 +427,6 @@
             </div>
         </main>
     </div>
-    
     <!-- Program Detail Modal -->
     <div class="modal fade program-detail-modal" id="programDetailModal" tabindex="-1" aria-labelledby="programDetailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -507,12 +446,10 @@
                             <p class="small" id="educatorOrganization">Organization</p>
                         </div>
                     </div>
-                    
                     <div class="program-detail-section">
                         <h5>About This Program</h5>
                         <p id="programDetailDescription">Loading program description...</p>
                     </div>
-                    
                     <div class="row">
                         <div class="col-md-6">
                             <div class="program-detail-section">
@@ -555,15 +492,11 @@
             </div>
         </div>
     </div>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
+    <script>
     // Initialize Lucide icons
     lucide.createIcons();
-    
     // Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyBnaxztu3L7DBn4T5s_j_vXaBl_etTbyxQ",
@@ -575,27 +508,22 @@
         appId: "1:157237328572:web:7c1fbe078f33e5c48b2eb9",
         measurementId: "G-P3N70T5RY2"
     };
-
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const database = firebase.database();
-
     // Global variables
     let currentUser = null;
     let currentProgramId = null;
     let allPrograms = [];
     let filteredPrograms = [];
-
     // Toggle sidebar
     const menuToggle = document.getElementById('menuToggle');
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
-    
     menuToggle.addEventListener('click', function() {
         sidebar.classList.toggle('open');
         mainContent.classList.toggle('expanded');
-        
         const icon = menuToggle.querySelector('i');
         if (sidebar.classList.contains('open')) {
             icon.setAttribute('data-lucide', 'x');
@@ -604,14 +532,12 @@
         }
         lucide.createIcons();
     });
-
     // Format date from timestamp
     function formatDate(timestamp) {
         if (!timestamp) return 'N/A';
         const date = new Date(timestamp);
         return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
     }
-
     // Load user data from Firebase
     auth.onAuthStateChanged((user) => {
         if (user) {
@@ -622,7 +548,6 @@
                 if (userData) {
                     document.getElementById('userName').textContent = userData.fullName || 'Student';
                     document.getElementById('userPosition').textContent = 'Student';
-                    
                     loadAllPrograms();
                 } else {
                     console.log('No user data found');
@@ -637,7 +562,6 @@
             window.location.href = 'log-in.html';
         }
     });
-
     // Show empty state message
     function showEmptyState() {
         const programsContainer = document.getElementById('programsContainer');
@@ -650,43 +574,32 @@
         `;
         lucide.createIcons();
     }
-
     // Load all programs
     function loadAllPrograms() {
-        console.log('Loading all programs');
         const programsRef = database.ref('programs').orderByChild('status').equalTo('active');
-        
         programsRef.on('value', (snapshot) => {
-            console.log('Programs snapshot received');
             const programsContainer = document.getElementById('programsContainer');
-            
             if (snapshot.exists()) {
-                console.log('Programs found:', snapshot.numChildren());
                 allPrograms = [];
                 snapshot.forEach((childSnapshot) => {
                     const program = childSnapshot.val();
                     program.id = childSnapshot.key;
                     allPrograms.push(program);
                 });
-                
                 filteredPrograms = [...allPrograms];
                 renderPrograms();
                 setupSearchAndFilter();
             } else {
-                console.log('No programs found');
                 showEmptyState();
             }
         }, (error) => {
-            console.error('Error loading programs:', error);
             showEmptyState();
         });
     }
-
     // Render programs to the DOM
     function renderPrograms() {
         const programsContainer = document.getElementById('programsContainer');
         programsContainer.innerHTML = '';
-        
         if (filteredPrograms.length === 0) {
             programsContainer.innerHTML = `
                 <div class="col-12 text-center py-5">
@@ -698,12 +611,11 @@
             lucide.createIcons();
             return;
         }
-        
         filteredPrograms.forEach((program) => {
             const programCard = document.createElement('div');
-            programCard.className = 'col-md-6 col-lg-4 col-xl-3';
+            programCard.className = 'col-12 col-md-8 col-lg-5 d-flex justify-content-center';
             programCard.innerHTML = `
-                <div class="program-card" data-program-id="${program.id}">
+                <div class="program-card w-100" data-program-id="${program.id}" style="max-width:500px;">
                     <div class="program-card-header">
                         <div class="d-flex justify-content-between align-items-start">
                             <h3 class="h5 fw-semibold mb-0">${program.name || 'Unnamed Program'}</h3>
@@ -740,47 +652,36 @@
                     </div>
                 </div>
             `;
-            
             programsContainer.appendChild(programCard);
-            
             // Add event listener to view details button
             programCard.querySelector('.view-details').addEventListener('click', function(e) {
                 e.stopPropagation();
                 viewProgramDetails(program.id);
             });
-            
             // Add event listener to entire card
             programCard.querySelector('.program-card').addEventListener('click', function() {
                 viewProgramDetails(program.id);
             });
         });
-        
         lucide.createIcons();
     }
-
     // View program details
     function viewProgramDetails(programId) {
         currentProgramId = programId;
         const program = allPrograms.find(p => p.id === programId);
         const programDetailModal = new bootstrap.Modal(document.getElementById('programDetailModal'));
-        
         if (!program) {
             alert('Program details could not be loaded');
             return;
         }
-        
-        // Load program details
         document.getElementById('programDetailModalLabel').textContent = program.name;
         document.getElementById('programDetailDescription').textContent = program.description || 'No description available';
         document.getElementById('programDetailType').textContent = `Type: ${program.type || 'Not specified'}`;
         document.getElementById('programDetailDuration').textContent = `Duration: ${program.duration || 'Not specified'}`;
         document.getElementById('programDetailDate').textContent = `Posted: ${formatDate(program.createdAt) || 'Not specified'}`;
         document.getElementById('programDetailStudents').textContent = `Students: ${program.studentsEnrolled || 0} enrolled`;
-        
-        // Load requirements
         const requirementsList = document.getElementById('programDetailRequirements');
         requirementsList.innerHTML = '';
-        
         if (program.requirements && program.requirements.length > 0) {
             program.requirements.forEach(req => {
                 if (req.trim()) {
@@ -792,8 +693,6 @@
         } else {
             requirementsList.innerHTML = '<li>No specific requirements</li>';
         }
-        
-        // Load educator info
         const educatorRef = database.ref('users/' + program.educatorId);
         educatorRef.once('value').then((snapshot) => {
             const educatorData = snapshot.val();
@@ -803,25 +702,18 @@
                 document.getElementById('educatorOrganization').textContent = educatorData.organization || 'Organization not specified';
             }
         });
-        
-        // Check if student has already applied
         checkApplicationStatus();
-        
         programDetailModal.show();
     }
-
     // Check if student has already applied to the program
     function checkApplicationStatus() {
         if (!currentUser || !currentProgramId) return;
-        
         const applicationRef = database.ref(`programs/${currentProgramId}/applicationList/${currentUser.uid}`);
         applicationRef.once('value').then((snapshot) => {
             const applyBtn = document.getElementById('applyToProgramBtn');
-            
             if (snapshot.exists()) {
                 const application = snapshot.val();
                 applyBtn.disabled = true;
-                
                 if (application.status === 'approved') {
                     applyBtn.innerHTML = '<i data-lucide="check-circle" width="16"></i> Approved';
                     updateProgramCardStatus(currentProgramId, 'approved');
@@ -834,11 +726,8 @@
                 applyBtn.disabled = false;
                 applyBtn.innerHTML = '<span id="applyText">Apply to Program</span><span id="applySpinner" class="spinner-border spinner-border-sm d-none"></span>';
             }
-        }).catch(error => {
-            console.error('Error checking application status:', error);
-        });
+        }).catch(error => {});
     }
-
     // Helper function to update program card status
     function updateProgramCardStatus(programId, status) {
         const programCards = document.querySelectorAll(`.program-card[data-program-id="${programId}"]`);
@@ -858,38 +747,27 @@
             }
         });
     }
-
     // Apply to program
     document.getElementById('applyToProgramBtn').addEventListener('click', function() {
         if (!currentUser || !currentProgramId) {
             alert('Please log in to apply for programs');
             return;
         }
-        
         const applyBtn = this;
         const applyText = document.getElementById('applyText');
         const applySpinner = document.getElementById('applySpinner');
-        
-        // Show loading state
         applyText.style.display = 'none';
         applySpinner.classList.remove('d-none');
         applyBtn.disabled = true;
-        
-        // Get student data
         const studentRef = database.ref('users/' + currentUser.uid);
         studentRef.once('value').then((snapshot) => {
             const studentData = snapshot.val();
-            
             if (!studentData) {
                 throw new Error('Student data not found');
             }
-            
-            // Verify user is a student
             if (studentData.role !== 'student') {
                 throw new Error('Only students can apply to programs');
             }
-            
-            // Create application data
             const applicationData = {
                 studentId: currentUser.uid,
                 studentName: studentData.fullName || 'Unknown Student',
@@ -898,85 +776,56 @@
                 studentEmail: studentData.email || '',
                 studentEducation: studentData.education || 'Not specified'
             };
-            
-            // Create updates object
             const updates = {};
             updates[`programs/${currentProgramId}/applicationList/${currentUser.uid}`] = applicationData;
             updates[`programs/${currentProgramId}/applications`] = firebase.database.ServerValue.increment(1);
             updates[`students/${currentUser.uid}/appliedPrograms/${currentProgramId}`] = true;
-            
             return database.ref().update(updates);
         }).then(() => {
-            // Update button to show pending status
             applyBtn.innerHTML = '<i data-lucide="clock" width="16"></i> Application Submitted';
             lucide.createIcons();
-            
-            // Update the program card to show applied status
             updateProgramCardStatus(currentProgramId, 'pending');
         }).catch((error) => {
-            console.error('Error applying to program:', error.code, error.message);
-            alert(`Application failed: ${error.message}`);
-            
-            // Reset button state
             applyText.style.display = 'inline';
             applySpinner.classList.add('d-none');
             applyBtn.disabled = false;
         });
     });
-
     // Setup search and filter functionality
     function setupSearchAndFilter() {
         const searchInput = document.getElementById('searchInput');
         const typeFilter = document.getElementById('programTypeFilter');
         const fieldFilter = document.getElementById('programFieldFilter');
         const activeFiltersContainer = document.getElementById('activeFilters');
-        
-        // Search input handler
         searchInput.addEventListener('input', function() {
             filterPrograms();
         });
-        
-        // Filter select handlers
         typeFilter.addEventListener('change', function() {
             filterPrograms();
             updateActiveFilters();
         });
-        
         fieldFilter.addEventListener('input', function() {
             filterPrograms();
             updateActiveFilters();
         });
-        
-        // Filter programs based on current filters
         function filterPrograms() {
             const searchTerm = searchInput.value.toLowerCase();
             const typeValue = typeFilter.value;
             const fieldValue = fieldFilter.value.toLowerCase();
-            
             filteredPrograms = allPrograms.filter(program => {
-                // Search term matching
                 const matchesSearch = 
                     program.name.toLowerCase().includes(searchTerm) ||
                     (program.description && program.description.toLowerCase().includes(searchTerm)) ||
                     (program.field && program.field.toLowerCase().includes(searchTerm));
-                
-                // Type filter matching
                 const matchesType = !typeValue || program.type === typeValue;
-                
-                // Field filter matching
                 const matchesField = !fieldValue || 
                     (program.field && program.field.toLowerCase().includes(fieldValue));
-                
                 return matchesSearch && matchesType && matchesField;
             });
-            
             renderPrograms();
         }
-        
-        // Update active filters display
         function updateActiveFilters() {
             activeFiltersContainer.innerHTML = '';
-            
             if (typeFilter.value) {
                 const filterTag = document.createElement('span');
                 filterTag.className = 'filter-tag active';
@@ -988,7 +837,6 @@
                 });
                 activeFiltersContainer.appendChild(filterTag);
             }
-            
             if (fieldFilter.value) {
                 const filterTag = document.createElement('span');
                 filterTag.className = 'filter-tag active';
@@ -1002,7 +850,6 @@
             }
         }
     }
-    
     // Clear all filters
     function clearFilters() {
         document.getElementById('searchInput').value = '';
@@ -1011,9 +858,7 @@
         filterPrograms();
         document.getElementById('activeFilters').innerHTML = '';
     }
-
-    // Global function for filter clearing
     window.clearFilters = clearFilters;
-</script>
+    </script>
 </body>
 </html>

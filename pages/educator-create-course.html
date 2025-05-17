@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Course | CareerMentor</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <style>
+        
+        :root {
+            --green: #007a5e;
+            --red: #ce1126;
+            --yellow: #fcd116;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --dark-green: #00593e;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-500: #adb5bd;
+            --gray-700: #495057;
+            --gray-900: #212529;
+        }
+        
+        body {
+            background-color: var(--gray-100);
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: fixed;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar.collapsed {
+            left: -260px;
+        }
+        
+        .main-content {
+            margin-left: 260px;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+        
+        .main-content.expanded {
+            margin-left: 0;
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            font-weight: 500;
+        }
+        
+        .sidebar-link:hover {
+            background-color: var(--gray-100);
+            color: var(--green);
+        }
+        
+        .sidebar-link.active {
+            border-left: 3px solid var(--green);
+            background-color: rgba(0, 122, 94, 0.05);
+            color: var(--green);
+        }
+        
+        .sidebar-link .icon {
+            margin-right: 0.75rem;
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Updated Program Card Styles */
+        .program-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-width: 350px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .program-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 122, 94, 0.15);
+            border-color: rgba(0, 122, 94, 0.3);
+        }
+
+        .program-card-header {
+            padding: 1.5rem 1.5rem 0.75rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .program-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            margin-top: 0.5rem;
+        }
+
+        .program-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .program-card-body {
+            padding: 1.25rem 1.5rem;
+            flex-grow: 1;
+        }
+
+        .program-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .program-tag {
+            background-color: rgba(0, 122, 94, 0.1);
+            color: var(--green);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .program-description {
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            margin: 1rem 0;
+        }
+
+        .program-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+            color: var(--gray-600);
+        }
+
+        .program-card-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .program-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        /* Header */
+        .dashboard-header {
+            background-color: white;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 20;
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+        }
+        
+        /* User Profile */
+        .user-profile {
+            padding: 1rem;
+            border-top: 1px solid var(--gray-200);
+            margin-top: auto;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-700);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .mobile-menu-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .sidebar {
+                left: -260px;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
+        /* Modal styles */
+        .modal-content {
+            border-radius: 0.75rem;
+            border: none;
+        }
+        
+        .modal-header {
+            background-color: var(--green);
+            color: white;
+            border-radius: 0.75rem 0.75rem 0 0;
+        }
+        
+        /* Application Modal */
+        .application-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            transition: background-color 0.2s;
+        }
+        
+        .application-item:hover {
+            background-color: var(--gray-100);
+        }
+        
+        .application-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background-color: rgba(252, 209, 22, 0.1);
+            color: var(--yellow);
+        }
+        
+        .status-approved {
+            background-color: rgba(0, 122, 94, 0.1);
+            color: var(--green);
+        }
+        
+        .status-rejected {
+            background-color: rgba(206, 17, 38, 0.1);
+            color: var(--red);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        
+        .empty-state-icon {
+            font-size: 3rem;
+            color: var(--gray-500);
+            margin-bottom: 1rem;
+        }
+
+        #programsContainer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: flex-start;
+            align-items: stretch;
+        }
+        /* [Keep the same CSS as student-programs.html] */
+        .course-form-section {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+        }
+        .requirements-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .requirement-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+    
+        /* [Keep the same CSS as educator-courses.html] */
+        .requirement-input-group {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <!-- Mobile menu toggle -->
+        <button class="mobile-menu-toggle btn btn-light shadow-sm" id="menuToggle">
+            <i data-lucide="menu"></i>
+        </button>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <!-- [Keep the same sidebar as educator-courses.html] -->
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Top Header -->
+            <header class="dashboard-header">
+                <div class="container-fluid">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1 class="h4 mb-0 fw-semibold">Create New Course</h1>
+                        <div class="d-flex align-items-center gap-2">
+                            <a href="educator-courses.html" class="btn btn-outline-secondary">
+                                <i data-lucide="arrow-left" width="16"></i> Back to Courses
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Course Form -->
+            <div class="container-fluid p-4">
+                <div class="course-form-section">
+                    <form id="courseForm">
+                        <div class="row mb-4">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="courseName" class="form-label">Course Title</label>
+                                    <input type="text" class="form-control" id="courseName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="courseDescription" class="form-label">Description</label>
+                                    <textarea class="form-control" id="courseDescription" rows="4" required></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="courseType" class="form-label">Course Type</label>
+                                    <select class="form-select" id="courseType" required>
+                                        <option value="">Select type</option>
+                                        <option value="Technical">Technical</option>
+                                        <option value="Business">Business</option>
+                                        <option value="Creative">Creative</option>
+                                        <option value="Language">Language</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="courseField" class="form-label">Field/Subject</label>
+                                    <input type="text" class="form-control" id="courseField" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="courseDuration" class="form-label">Duration</label>
+                                    <input type="text" class="form-control" id="courseDuration" placeholder="e.g. 4 weeks, 3 months" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h5 class="mb-3">Requirements</h5>
+                            <div id="requirementsContainer">
+                                <div class="requirement-input-group input-group mb-2">
+                                    <input type="text" class="form-control requirement-input" placeholder="Add a requirement">
+                                    <button class="btn btn-outline-danger remove-requirement" type="button" disabled>
+                                        <i data-lucide="trash-2" width="16"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2" id="addRequirementBtn">
+                                <i data-lucide="plus" width="16"></i> Add Requirement
+                            </button>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-success" id="submitCourseBtn">
+                                <span id="submitText">Create Course</span>
+                                <span id="submitSpinner" class="spinner-border spinner-border-sm d-none"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnaxztu3L7DBn4T5s_j_vXaBl_etTbyxQ",
+            authDomain: "career-path-c89ed.firebaseapp.com",
+            databaseURL: "https://career-path-c89ed-default-rtdb.firebaseio.com",
+            projectId: "career-path-c89ed",
+            storageBucket: "career-path-c89ed.appspot.com",
+            messagingSenderId: "157237328572",
+            appId: "1:157237328572:web:7c1fbe078f33e5c48b2eb9",
+            measurementId: "G-P3N70T5RY2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // Global variables
+        let currentUser = null;
+
+        // Toggle sidebar
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('expanded');
+            
+            const icon = menuToggle.querySelector('i');
+            if (sidebar.classList.contains('open')) {
+                icon.setAttribute('data-lucide', 'x');
+            } else {
+                icon.setAttribute('data-lucide', 'menu');
+            }
+            lucide.createIcons();
+        });
+
+        // Load user data from Firebase
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                const userRef = database.ref('users/' + user.uid);
+                userRef.once('value').then((snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData) {
+                        document.getElementById('userName').textContent = userData.fullName || 'Educator';
+                        document.getElementById('userPosition').textContent = 'Educator';
+                    }
+                });
+            } else {
+                window.location.href = 'log-in.html';
+            }
+        });
+
+        // Add requirement field
+        document.getElementById('addRequirementBtn').addEventListener('click', function() {
+            const container = document.getElementById('requirementsContainer');
+            const newRequirement = document.createElement('div');
+            newRequirement.className = 'requirement-input-group input-group mb-2';
+            newRequirement.innerHTML = `
+                <input type="text" class="form-control requirement-input" placeholder="Add a requirement">
+                <button class="btn btn-outline-danger remove-requirement" type="button">
+                    <i data-lucide="trash-2" width="16"></i>
+                </button>
+            `;
+            container.appendChild(newRequirement);
+            
+            // Add event listener to remove button
+            newRequirement.querySelector('.remove-requirement').addEventListener('click', function() {
+                newRequirement.remove();
+            });
+            
+            lucide.createIcons();
+        });
+
+        // Submit course form
+        document.getElementById('courseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                alert('Please log in to create courses');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitCourseBtn');
+            const submitText = document.getElementById('submitText');
+            const submitSpinner = document.getElementById('submitSpinner');
+            
+            // Show loading state
+            submitText.style.display = 'none';
+            submitSpinner.classList.remove('d-none');
+            submitBtn.disabled = true;
+            
+            // Get form values
+            const courseData = {
+                name: document.getElementById('courseName').value,
+                description: document.getElementById('courseDescription').value,
+                type: document.getElementById('courseType').value,
+                field: document.getElementById('courseField').value,
+                duration: document.getElementById('courseDuration').value,
+                requirements: Array.from(document.querySelectorAll('.requirement-input'))
+                    .map(input => input.value.trim())
+                    .filter(value => value !== ''),
+                educatorId: currentUser.uid,
+                status: 'active',
+                createdAt: firebase.database.ServerValue.TIMESTAMP,
+                studentsEnrolled: 0,
+                applications: 0
+            };
+            
+            // Save to database
+            const newCourseRef = database.ref('shortCourses').push();
+            newCourseRef.set(courseData)
+                .then(() => {
+                    alert('Course created successfully!');
+                    window.location.href = 'educator-courses.html';
+                })
+                .catch(error => {
+                    console.error('Error creating course:', error);
+                    alert('Failed to create course. Please try again.');
+                    
+                    // Reset button state
+                    submitText.style.display = 'inline';
+                    submitSpinner.classList.add('d-none');
+                    submitBtn.disabled = false;
+                });
+        });
+    </script>
+</body>
+</html>
