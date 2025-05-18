@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse Courses | CareerMentor</title>
+    <title>Browse Resources | CareerMentor</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -248,8 +248,8 @@
             box-shadow: var(--shadow-md);
         }
         
-        /* Course Cards */
-        .course-card {
+        /* Resource Cards */
+        .resource-card {
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
@@ -261,15 +261,14 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            padding: 1.75rem;
         }
         
-        .course-card:hover {
+        .resource-card:hover {
             transform: translateY(-8px);
             box-shadow: var(--shadow-lg);
         }
         
-        .course-card::before {
+        .resource-card::before {
             content: '';
             position: absolute;
             top: 0;
@@ -279,26 +278,12 @@
             background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
         
-        .course-tag {
-            background-color: var(--primary-light);
-            color: var(--primary);
-            padding: 0.35rem 0.85rem;
-            border-radius: 2rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            display: inline-block;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
+        .resource-card-header {
+            padding: 1.75rem 1.75rem 1rem;
+            border-bottom: 1px solid var(--gray-200);
         }
         
-        .course-tag:hover {
-            background-color: var(--primary);
-            color: white;
-            transform: translateY(-2px);
-        }
-        
-        .course-meta {
+        .resource-meta {
             display: flex;
             gap: 1rem;
             font-size: 0.8rem;
@@ -306,20 +291,48 @@
             margin-top: 0.75rem;
         }
         
-        .course-meta span {
+        .resource-meta span {
             display: flex;
             align-items: center;
             gap: 0.35rem;
         }
         
-        .course-description {
+        .resource-card-body {
+            padding: 1.5rem 1.75rem;
+            flex-grow: 1;
+        }
+        
+        .resource-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .resource-tag {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 0.35rem 0.85rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        
+        .resource-tag:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .resource-description {
             font-size: 0.95rem;
             color: var(--gray-700);
             margin: 1rem 0;
             line-height: 1.6;
         }
         
-        .course-stats {
+        .resource-stats {
             display: flex;
             gap: 1.5rem;
             margin-top: 1.25rem;
@@ -331,6 +344,13 @@
             gap: 0.5rem;
             font-size: 0.85rem;
             color: var(--gray-600);
+        }
+        
+        .resource-card-footer {
+            padding: 1.25rem 1.75rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: flex-end;
         }
         
         .btn-view-details {
@@ -438,31 +458,31 @@
             color: white;
         }
         
-        /* Course Detail Modal */
-        .course-detail-modal .modal-content {
+        /* Resource Detail Modal */
+        .resource-detail-modal .modal-content {
             border-radius: 1.25rem;
             border: none;
             overflow: hidden;
             box-shadow: var(--shadow-xl);
         }
         
-        .course-detail-modal .modal-header {
+        .resource-detail-modal .modal-header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             border-bottom: none;
             padding: 1.5rem;
         }
         
-        .course-detail-modal .modal-title {
+        .resource-detail-modal .modal-title {
             font-weight: 700;
             font-size: 1.5rem;
         }
         
-        .course-detail-modal .modal-body {
+        .resource-detail-modal .modal-body {
             padding: 2rem;
         }
         
-        .educator-profile {
+        .mentor-profile {
             display: flex;
             align-items: center;
             padding: 1.5rem;
@@ -472,7 +492,7 @@
             border: 1px solid var(--gray-200);
         }
         
-        .educator-avatar {
+        .mentor-avatar {
             width: 70px;
             height: 70px;
             border-radius: 50%;
@@ -488,23 +508,23 @@
             border: 3px solid white;
         }
         
-        .educator-info h5 {
+        .mentor-info h5 {
             margin-bottom: 0.25rem;
             color: var(--gray-900);
             font-weight: 600;
         }
         
-        .educator-info p {
+        .mentor-info p {
             color: var(--gray-600);
             margin-bottom: 0;
             font-size: 0.95rem;
         }
         
-        .course-detail-section {
+        .resource-detail-section {
             margin-bottom: 2rem;
         }
         
-        .course-detail-section h5 {
+        .resource-detail-section h5 {
             color: var(--primary);
             margin-bottom: 1rem;
             font-weight: 600;
@@ -513,7 +533,7 @@
             gap: 0.5rem;
         }
         
-        .course-detail-section p {
+        .resource-detail-section p {
             line-height: 1.7;
             color: var(--gray-700);
         }
@@ -530,21 +550,21 @@
             margin-right: 0.75rem;
         }
         
-        .requirements-list {
+        .benefits-list {
             padding-left: 1.25rem;
             margin-bottom: 0;
         }
         
-        .requirements-list li {
+        .benefits-list li {
             margin-bottom: 0.75rem;
             color: var(--gray-700);
         }
         
-        .requirements-list li:last-child {
+        .benefits-list li:last-child {
             margin-bottom: 0;
         }
         
-        .btn-enroll {
+        .btn-access {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             border: none;
             color: white;
@@ -558,7 +578,7 @@
             gap: 0.5rem;
         }
         
-        .btn-enroll:hover {
+        .btn-access:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
             color: white;
@@ -718,15 +738,16 @@
                     <i data-lucide="book-open" class="icon"></i>
                     <span>Programs</span>
                 </a>
+                
                 <a href="student-internships.html" class="sidebar-link">
                     <i data-lucide="briefcase" class="icon"></i>
                     <span>Internships</span>
                 </a>
-                <a href="student-courses.html" class="sidebar-link active">
+                <a href="student-courses.html" class="sidebar-link">
                     <i data-lucide="graduation-cap" class="icon"></i>
                     <span>Short Courses</span>
                 </a>
-                <a href="student-resources.html" class="sidebar-link ">
+                <a href="student-resources.html" class="sidebar-link active">
                     <i data-lucide="book" class="icon"></i>
                     <span>Resources</span>
                 </a>
@@ -764,33 +785,35 @@
             <header class="dashboard-header">
                 <div class="container-fluid">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h1 class="h4 mb-0 fw-bold">Browse Short Courses</h1>
+                        <h1 class="h4 mb-0 fw-bold">Browse Resources</h1>
                         <div class="search-input-container">
                             <i data-lucide="search" width="18"></i>
-                            <input type="text" class="search-input" id="searchInput" placeholder="Search courses...">
+                            <input type="text" class="search-input" id="searchInput" placeholder="Search resources...">
                         </div>
                     </div>
                 </div>
             </header>
             
-            <!-- Courses Content -->
+            <!-- Resources Content -->
             <div class="container-fluid p-4">
                 <!-- Search and Filter -->
                 <div class="search-filter-container">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="courseTypeFilter" class="form-label fw-medium">Filter by Course Type</label>
-                            <select class="filter-select" id="courseTypeFilter">
+                            <label for="resourceTypeFilter" class="form-label fw-medium">Filter by Resource Type</label>
+                            <select class="filter-select" id="resourceTypeFilter">
                                 <option value="">All Types</option>
-                                <option value="Technical">Technical</option>
-                                <option value="Business">Business</option>
-                                <option value="Creative">Creative</option>
-                                <option value="Language">Language</option>
+                                <option value="E-book">E-book</option>
+                                <option value="Video Course">Video Course</option>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Template">Template</option>
+                                <option value="Guide">Guide</option>
+                                <option value="Toolkit">Toolkit</option>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="courseFieldFilter" class="form-label fw-medium">Filter by Field</label>
-                            <input type="text" class="filter-input" id="courseFieldFilter" placeholder="e.g. Web Development, Marketing">
+                            <label for="resourceFieldFilter" class="form-label fw-medium">Filter by Field</label>
+                            <input type="text" class="filter-input" id="resourceFieldFilter" placeholder="e.g. Technology, Business">
                         </div>
                     </div>
                     <div class="filter-tags" id="activeFilters">
@@ -798,14 +821,14 @@
                     </div>
                 </div>
                 
-                <!-- Courses List -->
-                <div class="row g-4" id="coursesContainer">
-                    <!-- Loading state -->
+                <!-- Resources List -->
+                <div class="row g-4 justify-content-center" id="resourcesContainer">
+                    <!-- Resources will be loaded here dynamically -->
                     <div class="col-12">
                         <div class="loading-state">
                             <div class="spinner"></div>
-                            <h4 class="mb-3">Loading Courses</h4>
-                            <p class="text-muted">Please wait while we fetch available courses...</p>
+                            <h4 class="mb-3">Loading Resources</h4>
+                            <p class="text-muted">Please wait while we fetch available resources...</p>
                         </div>
                     </div>
                 </div>
@@ -813,58 +836,58 @@
         </main>
     </div>
     
-    <!-- Course Detail Modal -->
-    <div class="modal fade course-detail-modal" id="courseDetailModal" tabindex="-1" aria-labelledby="courseDetailModalLabel" aria-hidden="true">
+    <!-- Resource Detail Modal -->
+    <div class="modal fade resource-detail-modal" id="resourceDetailModal" tabindex="-1" aria-labelledby="resourceDetailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="courseDetailModalLabel">Course Details</h5>
+                    <h5 class="modal-title" id="resourceDetailModalLabel">Resource Details</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="educator-profile" id="educatorProfile">
-                        <div class="educator-avatar">
+                    <div class="mentor-profile" id="mentorProfile">
+                        <div class="mentor-avatar">
                             <i data-lucide="user"></i>
                         </div>
-                        <div class="educator-info">
-                            <h5 id="educatorName">Loading...</h5>
-                            <p id="educatorPosition">Educator</p>
-                            <p class="small" id="educatorOrganization">Organization</p>
+                        <div class="mentor-info">
+                            <h5 id="mentorName">Loading...</h5>
+                            <p id="mentorPosition">Mentor</p>
+                            <p class="small" id="mentorOrganization">Organization</p>
                         </div>
                     </div>
                     
-                    <div class="course-detail-section">
-                        <h5><i data-lucide="info" width="20"></i> About This Course</h5>
-                        <p id="courseDetailDescription">Loading course description...</p>
+                    <div class="resource-detail-section">
+                        <h5><i data-lucide="info" width="20"></i> About This Resource</h5>
+                        <p id="resourceDetailDescription">Loading resource description...</p>
                     </div>
                     
                     <div class="row g-4">
                         <div class="col-md-6">
-                            <div class="course-detail-section">
-                                <h5><i data-lucide="clipboard" width="20"></i> Course Details</h5>
+                            <div class="resource-detail-section">
+                                <h5><i data-lucide="clipboard" width="20"></i> Resource Details</h5>
                                 <div class="detail-item">
-                                    <i data-lucide="book-open" width="18"></i>
-                                    <span id="courseDetailType">Type: Loading...</span>
+                                    <i data-lucide="book" width="18"></i>
+                                    <span id="resourceDetailType">Type: Loading...</span>
                                 </div>
                                 <div class="detail-item">
-                                    <i data-lucide="clock" width="18"></i>
-                                    <span id="courseDetailDuration">Duration: Loading...</span>
+                                    <i data-lucide="tag" width="18"></i>
+                                    <span id="resourceDetailField">Field: Loading...</span>
                                 </div>
                                 <div class="detail-item">
                                     <i data-lucide="calendar" width="18"></i>
-                                    <span id="courseDetailDate">Posted: Loading...</span>
+                                    <span id="resourceDetailDate">Posted: Loading...</span>
                                 </div>
                                 <div class="detail-item">
                                     <i data-lucide="users" width="18"></i>
-                                    <span id="courseDetailStudents">Students: Loading...</span>
+                                    <span id="resourceDetailParticipants">Participants: Loading...</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="course-detail-section">
-                                <h5><i data-lucide="check-circle" width="20"></i> Requirements</h5>
-                                <ul class="requirements-list" id="courseDetailRequirements">
-                                    <li>Loading requirements...</li>
+                            <div class="resource-detail-section">
+                                <h5><i data-lucide="check-circle" width="20"></i> Key Benefits</h5>
+                                <ul class="benefits-list" id="resourceDetailBenefits">
+                                    <li>Loading benefits...</li>
                                 </ul>
                             </div>
                         </div>
@@ -872,9 +895,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-close-modal" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn-enroll" id="applyToCourseBtn">
-                        <span id="applyText">Enroll in Course</span>
-                        <span id="applySpinner" class="spinner-border spinner-border-sm d-none"></span>
+                    <button type="button" class="btn-access" id="accessResourceBtn">
+                        <span id="accessText">Access Resource</span>
+                        <span id="accessSpinner" class="spinner-border spinner-border-sm d-none"></span>
                     </button>
                 </div>
             </div>
@@ -906,9 +929,9 @@
         
         // Global variables
         let currentUser = null;
-        let currentCourseId = null;
-        let allCourses = [];
-        let filteredCourses = [];
+        let currentResourceId = null;
+        let allResources = [];
+        let filteredResources = [];
         
         // Toggle sidebar
         const menuToggle = document.getElementById('menuToggle');
@@ -944,8 +967,7 @@
                     if (userData) {
                         document.getElementById('userName').textContent = userData.fullName || 'Student';
                         document.getElementById('userPosition').textContent = 'Student';
-                        
-                        loadAllCourses();
+                        loadAllResources();
                     } else {
                         console.log('No user data found');
                         showEmptyState();
@@ -962,67 +984,59 @@
         
         // Show empty state message
         function showEmptyState() {
-            const coursesContainer = document.getElementById('coursesContainer');
-            coursesContainer.innerHTML = `
+            const resourcesContainer = document.getElementById('resourcesContainer');
+            resourcesContainer.innerHTML = `
                 <div class="col-12">
                     <div class="empty-state">
                         <div class="empty-state-icon">
-                            <i data-lucide="graduation-cap"></i>
+                            <i data-lucide="book"></i>
                         </div>
-                        <h3 class="mb-3">No Courses Found</h3>
-                        <p class="text-muted mb-4">There are currently no courses available. Check back later for new learning opportunities.</p>
+                        <h3 class="mb-3">No Resources Found</h3>
+                        <p class="text-muted mb-4">There are currently no resources available. Check back later for new materials.</p>
                     </div>
                 </div>
             `;
             lucide.createIcons();
         }
         
-        // Load all courses
-        function loadAllCourses() {
-            console.log('Loading all courses');
-            const coursesRef = database.ref('shortCourses').orderByChild('status').equalTo('active');
-            
-            coursesRef.on('value', (snapshot) => {
-                console.log('Courses snapshot received');
-                const coursesContainer = document.getElementById('coursesContainer');
-                
+        // Load all resources
+        function loadAllResources() {
+            const resourcesRef = database.ref('resources').orderByChild('status').equalTo('active');
+            resourcesRef.on('value', (snapshot) => {
+                const resourcesContainer = document.getElementById('resourcesContainer');
                 if (snapshot.exists()) {
-                    console.log('Courses found:', snapshot.numChildren());
-                    allCourses = [];
+                    allResources = [];
                     snapshot.forEach((childSnapshot) => {
-                        const course = childSnapshot.val();
-                        course.id = childSnapshot.key;
-                        allCourses.push(course);
+                        const resource = childSnapshot.val();
+                        resource.id = childSnapshot.key;
+                        allResources.push(resource);
                     });
-                    
-                    filteredCourses = [...allCourses];
-                    renderCourses();
+                    filteredResources = [...allResources];
+                    renderResources();
                     setupSearchAndFilter();
                 } else {
-                    console.log('No courses found');
                     showEmptyState();
                 }
             }, (error) => {
-                console.error('Error loading courses:', error);
                 showEmptyState();
             });
         }
         
-        // Render courses to the DOM
-        function renderCourses() {
-            const coursesContainer = document.getElementById('coursesContainer');
-            coursesContainer.innerHTML = '';
+        // Render resources to the DOM
+        function renderResources() {
+            const resourcesContainer = document.getElementById('resourcesContainer');
+            resourcesContainer.innerHTML = '';
             
-            if (filteredCourses.length === 0) {
-                coursesContainer.innerHTML = `
+            if (filteredResources.length === 0) {
+                resourcesContainer.innerHTML = `
                     <div class="col-12">
                         <div class="empty-state">
                             <div class="empty-state-icon">
                                 <i data-lucide="search"></i>
                             </div>
-                            <h3 class="mb-3">No Courses Match Your Filters</h3>
+                            <h3 class="mb-3">No Resources Match Your Filters</h3>
                             <p class="text-muted mb-4">Try adjusting your search criteria or clear all filters to see more results.</p>
-                            <button class="btn-enroll" onclick="clearFilters()">
+                            <button class="btn-access" onclick="clearFilters()">
                                 <i data-lucide="refresh-cw" class="me-2" width="18"></i> Clear All Filters
                             </button>
                         </div>
@@ -1032,179 +1046,174 @@
                 return;
             }
             
-            filteredCourses.forEach((course) => {
-                const courseCard = document.createElement('div');
-                courseCard.className = 'col-md-6 col-lg-4';
-                
-                courseCard.innerHTML = `
-                    <div class="course-card" data-course-id="${course.id}">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <h3 class="h5 fw-semibold mb-0">${course.name || 'Unnamed Course'}</h3>
-                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1">
-                                ${course.status || 'Active'}
-                            </span>
+            filteredResources.forEach((resource) => {
+                const resourceCard = document.createElement('div');
+                resourceCard.className = 'col-12 col-md-6 col-lg-4';
+                resourceCard.innerHTML = `
+                    <div class="resource-card" data-resource-id="${resource.id}">
+                        <div class="resource-card-header">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h3 class="h5 fw-semibold mb-0">${resource.name || 'Unnamed Resource'}</h3>
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1">
+                                    ${resource.status || 'Active'}
+                                </span>
+                            </div>
+                            <div class="resource-meta">
+                                <span><i data-lucide="book" width="14"></i> ${resource.type || 'Type not specified'}</span>
+                                <span><i data-lucide="calendar" width="14"></i> ${formatDate(resource.createdAt) || 'Date not specified'}</span>
+                            </div>
                         </div>
-                        
-                        <div class="mb-3">
-                            <span class="course-tag">${course.type || 'Type not specified'}</span>
-                            <span class="course-tag">${course.field || 'Field not specified'}</span>
-                        </div>
-                        
-                        <p class="course-description">${course.description ? course.description.substring(0, 120) + (course.description.length > 120 ? '...' : '') : 'No description'}</p>
-                        
-                        <div class="course-meta">
-                            <span><i data-lucide="clock" width="14"></i> ${course.duration || 'Duration not specified'}</span>
-                            <span><i data-lucide="calendar" width="14"></i> ${formatDate(course.createdAt) || 'Date not specified'}</span>
-                        </div>
-                        
-                        <div class="d-flex justify-content-between align-items-center mt-4">
-                            <div class="course-stats">
+                        <div class="resource-card-body">
+                            <div class="resource-tags">
+                                <span class="resource-tag">${resource.field || 'Field not specified'}</span>
+                            </div>
+                            <p class="resource-description">${resource.description ? resource.description.substring(0, 120) + (resource.description.length > 120 ? '...' : '') : 'No description'}</p>
+                            <div class="resource-stats">
                                 <div class="stat-item">
                                     <i data-lucide="users" width="16"></i>
-                                    <span>${course.studentsEnrolled || 0} Enrolled</span>
+                                    <span>${resource.participants || 0} Participants</span>
                                 </div>
                             </div>
-                            
-                            <button class="btn-view-details view-details" data-course-id="${course.id}">
+                        </div>
+                        <div class="resource-card-footer">
+                            <button class="btn-view-details view-details" data-resource-id="${resource.id}">
                                 <i data-lucide="eye" width="16"></i> View Details
                             </button>
                         </div>
                     </div>
                 `;
-                
-                coursesContainer.appendChild(courseCard);
+                resourcesContainer.appendChild(resourceCard);
                 
                 // Add event listener to view details button
-                courseCard.querySelector('.view-details').addEventListener('click', function(e) {
+                resourceCard.querySelector('.view-details').addEventListener('click', function(e) {
                     e.stopPropagation();
-                    viewCourseDetails(course.id);
+                    viewResourceDetails(resource.id);
                 });
                 
                 // Add event listener to entire card
-                courseCard.querySelector('.course-card').addEventListener('click', function() {
-                    viewCourseDetails(course.id);
+                resourceCard.querySelector('.resource-card').addEventListener('click', function() {
+                    viewResourceDetails(resource.id);
                 });
             });
             
             lucide.createIcons();
         }
         
-        // View course details
-        function viewCourseDetails(courseId) {
-            currentCourseId = courseId;
-            const course = allCourses.find(c => c.id === courseId);
-            const courseDetailModal = new bootstrap.Modal(document.getElementById('courseDetailModal'));
+        // View resource details
+        function viewResourceDetails(resourceId) {
+            currentResourceId = resourceId;
+            const resource = allResources.find(r => r.id === resourceId);
+            const resourceDetailModal = new bootstrap.Modal(document.getElementById('resourceDetailModal'));
             
-            if (!course) {
-                alert('Course details could not be loaded');
+            if (!resource) {
+                alert('Resource details could not be loaded');
                 return;
             }
             
-            // Load course details
-            document.getElementById('courseDetailModalLabel').textContent = course.name;
-            document.getElementById('courseDetailDescription').textContent = course.description || 'No description available';
-            document.getElementById('courseDetailType').textContent = `Type: ${course.type || 'Not specified'}`;
-            document.getElementById('courseDetailDuration').textContent = `Duration: ${course.duration || 'Not specified'}`;
-            document.getElementById('courseDetailDate').textContent = `Posted: ${formatDate(course.createdAt) || 'Not specified'}`;
-            document.getElementById('courseDetailStudents').textContent = `Students: ${course.studentsEnrolled || 0} enrolled`;
+            document.getElementById('resourceDetailModalLabel').textContent = resource.name;
+            document.getElementById('resourceDetailDescription').textContent = resource.description || 'No description available';
+            document.getElementById('resourceDetailType').textContent = `Type: ${resource.type || 'Not specified'}`;
+            document.getElementById('resourceDetailField').textContent = `Field: ${resource.field || 'Not specified'}`;
+            document.getElementById('resourceDetailDate').textContent = `Posted: ${formatDate(resource.createdAt) || 'Not specified'}`;
+            document.getElementById('resourceDetailParticipants').textContent = `Participants: ${resource.participants || 0}`;
             
-            // Load requirements
-            const requirementsList = document.getElementById('courseDetailRequirements');
-            requirementsList.innerHTML = '';
+            const benefitsList = document.getElementById('resourceDetailBenefits');
+            benefitsList.innerHTML = '';
             
-            if (course.requirements && course.requirements.length > 0) {
-                course.requirements.forEach(req => {
-                    if (req.trim()) {
+            if (resource.benefits && resource.benefits.length > 0) {
+                resource.benefits.forEach(benefit => {
+                    if (benefit.trim()) {
                         const li = document.createElement('li');
-                        li.textContent = req.trim();
-                        requirementsList.appendChild(li);
+                        li.textContent = benefit.trim();
+                        benefitsList.appendChild(li);
                     }
                 });
             } else {
-                requirementsList.innerHTML = '<li>No specific requirements</li>';
+                benefitsList.innerHTML = '<li>No specific benefits listed</li>';
             }
             
-            // Load educator info
-            const educatorRef = database.ref('users/' + course.educatorId);
-            educatorRef.once('value').then((snapshot) => {
-                const educatorData = snapshot.val();
-                if (educatorData) {
-                    document.getElementById('educatorName').textContent = educatorData.fullName || 'Educator';
-                    document.getElementById('educatorPosition').textContent = educatorData.position || 'Educator';
-                    document.getElementById('educatorOrganization').textContent = educatorData.organization || 'Organization not specified';
+            const mentorRef = database.ref('users/' + resource.mentorId);
+            mentorRef.once('value').then((snapshot) => {
+                const mentorData = snapshot.val();
+                if (mentorData) {
+                    document.getElementById('mentorName').textContent = mentorData.fullName || 'Mentor';
+                    document.getElementById('mentorPosition').textContent = mentorData.position || 'Mentor';
+                    document.getElementById('mentorOrganization').textContent = mentorData.organization || 'Organization not specified';
                 }
             });
             
-            // Check if student has already applied
-            checkApplicationStatus();
-            
-            courseDetailModal.show();
+            checkAccessStatus();
+            resourceDetailModal.show();
         }
         
-        // Check if student has already applied to the course
-        function checkApplicationStatus() {
-            if (!currentUser || !currentCourseId) return;
+        // Check if student has already accessed the resource
+        function checkAccessStatus() {
+            if (!currentUser || !currentResourceId) return;
             
-            const applicationRef = database.ref(`shortCourses/${currentCourseId}/applicationList/${currentUser.uid}`);
-            applicationRef.once('value').then((snapshot) => {
-                const applyBtn = document.getElementById('applyToCourseBtn');
+            const accessRef = database.ref(`resources/${currentResourceId}/participantList/${currentUser.uid}`);
+            accessRef.once('value').then((snapshot) => {
+                const accessBtn = document.getElementById('accessResourceBtn');
                 
                 if (snapshot.exists()) {
-                    const application = snapshot.val();
-                    applyBtn.disabled = true;
+                    const access = snapshot.val();
+                    accessBtn.disabled = true;
                     
-                    if (application.status === 'approved') {
-                        applyBtn.innerHTML = '<i data-lucide="check-circle" width="18"></i> Enrolled';
-                        updateCourseCardStatus(currentCourseId, 'approved');
+                    if (access.status === 'approved') {
+                        accessBtn.innerHTML = '<i data-lucide="check-circle" width="18"></i> Access Granted';
+                        updateResourceCardStatus(currentResourceId, 'approved');
                     } else {
-                        applyBtn.innerHTML = '<i data-lucide="clock" width="18"></i> Enrollment Pending';
-                        updateCourseCardStatus(currentCourseId, 'pending');
+                        accessBtn.innerHTML = '<i data-lucide="clock" width="18"></i> Access Pending';
+                        updateResourceCardStatus(currentResourceId, 'pending');
                     }
+                    
                     lucide.createIcons();
                 } else {
-                    applyBtn.disabled = false;
-                    applyBtn.innerHTML = '<span id="applyText">Enroll in Course</span><span id="applySpinner" class="spinner-border spinner-border-sm d-none"></span>';
+                    accessBtn.disabled = false;
+                    accessBtn.innerHTML = '<span id="accessText">Access Resource</span><span id="accessSpinner" class="spinner-border spinner-border-sm d-none"></span>';
                 }
+            }).catch(error => {
+                console.error('Error checking access status:', error);
             });
         }
         
-        // Helper function to update course card status
-        function updateCourseCardStatus(courseId, status) {
-            const courseCards = document.querySelectorAll(`.course-card[data-course-id="${courseId}"]`);
-            courseCards.forEach(card => {
+        // Helper function to update resource card status
+        function updateResourceCardStatus(resourceId, status) {
+            const resourceCards = document.querySelectorAll(`.resource-card[data-resource-id="${resourceId}"]`);
+            
+            resourceCards.forEach(card => {
                 const btn = card.querySelector('.view-details');
+                
                 if (btn) {
                     if (status === 'pending') {
-                        btn.innerHTML = '<i data-lucide="clock" width="16"></i> Enrollment Pending';
+                        btn.innerHTML = '<i data-lucide="clock" width="16"></i> Access Pending';
                         btn.classList.remove('btn-view-details');
                         btn.classList.add('btn-outline-secondary');
                     } else if (status === 'approved') {
-                        btn.innerHTML = '<i data-lucide="check-circle" width="16"></i> Enrolled';
+                        btn.innerHTML = '<i data-lucide="check-circle" width="16"></i> Access Granted';
                         btn.classList.remove('btn-view-details');
                         btn.classList.add('btn-outline-success');
                     }
+                    
                     lucide.createIcons();
                 }
             });
         }
         
-        // Apply to course
-        document.getElementById('applyToCourseBtn').addEventListener('click', function() {
-            if (!currentUser || !currentCourseId) {
-                alert('Please log in to enroll in courses');
+        // Access resource
+        document.getElementById('accessResourceBtn').addEventListener('click', function() {
+            if (!currentUser || !currentResourceId) {
+                alert('Please log in to access resources');
                 return;
             }
             
-            const applyBtn = this;
-            const applyText = document.getElementById('applyText');
-            const applySpinner = document.getElementById('applySpinner');
+            const accessBtn = this;
+            const accessText = document.getElementById('accessText');
+            const accessSpinner = document.getElementById('accessSpinner');
             
-            // Show loading state
-            applyText.style.display = 'none';
-            applySpinner.classList.remove('d-none');
-            applyBtn.disabled = true;
+            accessText.style.display = 'none';
+            accessSpinner.classList.remove('d-none');
+            accessBtn.disabled = true;
             
-            // Get student data
             const studentRef = database.ref('users/' + currentUser.uid);
             studentRef.once('value').then((snapshot) => {
                 const studentData = snapshot.val();
@@ -1213,62 +1222,54 @@
                     throw new Error('Student data not found');
                 }
                 
-                // Verify user is a student
                 if (studentData.role !== 'student') {
-                    throw new Error('Only students can enroll in courses');
+                    throw new Error('Only students can access resources');
                 }
                 
-                // Create application data
-                const applicationData = {
+                const accessData = {
                     studentId: currentUser.uid,
                     studentName: studentData.fullName || 'Unknown Student',
                     status: 'pending',
-                    appliedAt: firebase.database.ServerValue.TIMESTAMP,
+                    accessedAt: firebase.database.ServerValue.TIMESTAMP,
                     studentEmail: studentData.email || '',
                     studentEducation: studentData.education || 'Not specified'
                 };
                 
-                // Create updates object
                 const updates = {};
-                updates[`shortCourses/${currentCourseId}/applicationList/${currentUser.uid}`] = applicationData;
-                updates[`shortCourses/${currentCourseId}/applications`] = firebase.database.ServerValue.increment(1);
-                updates[`students/${currentUser.uid}/appliedCourses/${currentCourseId}`] = true;
+                updates[`resources/${currentResourceId}/participantList/${currentUser.uid}`] = accessData;
+                updates[`resources/${currentResourceId}/accessRequests`] = firebase.database.ServerValue.increment(1);
+                updates[`students/${currentUser.uid}/accessedResources/${currentResourceId}`] = true;
                 
                 return database.ref().update(updates);
             }).then(() => {
-                // Update button to show pending status
-                applyBtn.innerHTML = '<i data-lucide="check" width="18"></i> Enrollment Submitted';
+                accessBtn.innerHTML = '<i data-lucide="check" width="18"></i> Access Requested';
                 lucide.createIcons();
-                
-                // Update the course card to show applied status
-                updateCourseCardStatus(currentCourseId, 'pending');
+                updateResourceCardStatus(currentResourceId, 'pending');
                 
                 // Show success message
                 const modalBody = document.querySelector('.modal-body');
                 const successAlert = document.createElement('div');
                 successAlert.className = 'alert alert-success mt-3';
-                successAlert.innerHTML = '<i data-lucide="check-circle" class="me-2" width="18"></i> Your enrollment request has been submitted successfully!';
+                successAlert.innerHTML = '<i data-lucide="check-circle" class="me-2" width="18"></i> Your access request has been submitted successfully!';
                 modalBody.appendChild(successAlert);
                 lucide.createIcons();
                 
                 setTimeout(() => {
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('courseDetailModal'));
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('resourceDetailModal'));
                     modal.hide();
                 }, 2000);
                 
             }).catch((error) => {
-                console.error('Error applying to course:', error.code, error.message);
-                
-                // Reset button state
-                applyText.style.display = 'inline';
-                applySpinner.classList.add('d-none');
-                applyBtn.disabled = false;
+                console.error('Error accessing resource:', error);
+                accessText.style.display = 'inline';
+                accessSpinner.classList.add('d-none');
+                accessBtn.disabled = false;
                 
                 // Show error message
                 const modalBody = document.querySelector('.modal-body');
                 const errorAlert = document.createElement('div');
                 errorAlert.className = 'alert alert-danger mt-3';
-                errorAlert.innerHTML = `<i data-lucide="alert-circle" class="me-2" width="18"></i> Enrollment failed: ${error.message}`;
+                errorAlert.innerHTML = '<i data-lucide="alert-circle" class="me-2" width="18"></i> Failed to request access. Please try again.';
                 modalBody.appendChild(errorAlert);
                 lucide.createIcons();
             });
@@ -1277,53 +1278,46 @@
         // Setup search and filter functionality
         function setupSearchAndFilter() {
             const searchInput = document.getElementById('searchInput');
-            const typeFilter = document.getElementById('courseTypeFilter');
-            const fieldFilter = document.getElementById('courseFieldFilter');
+            const typeFilter = document.getElementById('resourceTypeFilter');
+            const fieldFilter = document.getElementById('resourceFieldFilter');
             const activeFiltersContainer = document.getElementById('activeFilters');
             
-            // Search input handler
             searchInput.addEventListener('input', function() {
-                filterCourses();
+                filterResources();
             });
             
-            // Filter select handlers
             typeFilter.addEventListener('change', function() {
-                filterCourses();
+                filterResources();
                 updateActiveFilters();
             });
             
             fieldFilter.addEventListener('input', function() {
-                filterCourses();
+                filterResources();
                 updateActiveFilters();
             });
             
-            // Filter courses based on current filters
-            function filterCourses() {
+            function filterResources() {
                 const searchTerm = searchInput.value.toLowerCase();
                 const typeValue = typeFilter.value;
                 const fieldValue = fieldFilter.value.toLowerCase();
                 
-                filteredCourses = allCourses.filter(course => {
-                    // Search term matching
+                filteredResources = allResources.filter(resource => {
                     const matchesSearch = 
-                        (course.name && course.name.toLowerCase().includes(searchTerm)) ||
-                        (course.description && course.description.toLowerCase().includes(searchTerm)) ||
-                        (course.field && course.field.toLowerCase().includes(searchTerm));
+                        (resource.name && resource.name.toLowerCase().includes(searchTerm)) ||
+                        (resource.description && resource.description.toLowerCase().includes(searchTerm)) ||
+                        (resource.field && resource.field.toLowerCase().includes(searchTerm));
                     
-                    // Type filter matching
-                    const matchesType = !typeValue || (course.type && course.type === typeValue);
+                    const matchesType = !typeValue || (resource.type && resource.type === typeValue);
                     
-                    // Field filter matching
                     const matchesField = !fieldValue || 
-                        (course.field && course.field.toLowerCase().includes(fieldValue));
+                        (resource.field && resource.field.toLowerCase().includes(fieldValue));
                     
                     return matchesSearch && matchesType && matchesField;
                 });
                 
-                renderCourses();
+                renderResources();
             }
             
-            // Update active filters display
             function updateActiveFilters() {
                 activeFiltersContainer.innerHTML = '';
                 
@@ -1334,7 +1328,7 @@
                     
                     filterTag.addEventListener('click', function() {
                         typeFilter.value = '';
-                        filterCourses();
+                        filterResources();
                         updateActiveFilters();
                     });
                     
@@ -1348,7 +1342,7 @@
                     
                     filterTag.addEventListener('click', function() {
                         fieldFilter.value = '';
-                        filterCourses();
+                        filterResources();
                         updateActiveFilters();
                     });
                     
@@ -1362,14 +1356,13 @@
         // Clear all filters
         function clearFilters() {
             document.getElementById('searchInput').value = '';
-            document.getElementById('courseTypeFilter').value = '';
-            document.getElementById('courseFieldFilter').value = '';
-            filteredCourses = [...allCourses];
-            renderCourses();
+            document.getElementById('resourceTypeFilter').value = '';
+            document.getElementById('resourceFieldFilter').value = '';
+            filteredResources = [...allResources];
+            renderResources();
             document.getElementById('activeFilters').innerHTML = '';
         }
         
-        // Global function for filter clearing
         window.clearFilters = clearFilters;
     </script>
 </body>
