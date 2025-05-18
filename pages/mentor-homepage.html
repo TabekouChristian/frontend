@@ -6,6 +6,10 @@
     <title>Mentor Dashboard - CareerMentor</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Font Awesome -->
@@ -16,45 +20,145 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <style>
         :root {
-            --green: #007a5e;
-            --red: #ce1126;
-            --yellow: #fcd116;
-            --blue: #3b82f6;
-            --purple: #8b5cf6;
-            --dark-green: #00593e;
-            --gray-100: #f8f9fa;
-            --gray-200: #e9ecef;
-            --gray-500: #adb5bd;
-            --gray-700: #495057;
-            --gray-900: #212529;
+            /* 2025 Modern Color Palette - Green Theme */
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --primary-light: #d1fae5;
+            --secondary: #14b8a6;
+            --secondary-dark: #0f766e;
+            --secondary-light: #ccfbf1;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --accent-light: #fef3c7;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            
+            /* Glass Effect */
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --glass-blur: blur(10px);
         }
         
         body {
-            background-color: var(--gray-100);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-800);
             height: 100vh;
             overflow: hidden;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(20, 184, 166, 0.05) 0%, transparent 30%);
+            background-attachment: fixed;
         }
         
-        /* Improved Sidebar */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+        }
+        
+        /* Glass Morphism */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+        
+        /* Sidebar */
         .sidebar {
-            width: 260px;
+            width: 280px;
             height: 100vh;
-            background-color: white;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
             transition: all 0.3s ease;
             position: fixed;
             z-index: 10;
             display: flex;
             flex-direction: column;
+            overflow-y: auto;
         }
         
         .sidebar.collapsed {
-            left: -260px;
+            left: -280px;
         }
         
+        .sidebar-logo {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .logo-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+        
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.5rem;
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            font-weight: 500;
+            margin: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+        }
+        
+        .sidebar-link:hover {
+            background-color: var(--primary-light);
+            color: var(--primary);
+        }
+        
+        .sidebar-link.active {
+            background: linear-gradient(90deg, var(--primary-light), transparent);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+        }
+        
+        .sidebar-link .icon {
+            margin-right: 0.75rem;
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Main Content */
         .main-content {
-            margin-left: 260px;
+            width: 100%;
+            margin-left: 280px;
             height: 100vh;
             overflow-y: auto;
             transition: all 0.3s ease;
@@ -64,136 +168,46 @@
             margin-left: 0;
         }
         
-        /* Sidebar Links */
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1.5rem;
-            color: var(--gray-700);
-            text-decoration: none;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-            font-weight: 500;
-        }
-        
-        .sidebar-link:hover {
-            background-color: var(--gray-100);
-            color: var(--green);
-        }
-        
-        .sidebar-link.active {
-            border-left: 3px solid var(--green);
-            background-color: rgba(0, 122, 94, 0.05);
-            color: var(--green);
-        }
-        
-        .sidebar-link .icon {
-            margin-right: 0.75rem;
-            width: 20px;
-            height: 20px;
-        }
-        
-        /* Cards */
-        .feature-card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
-            padding: 1.5rem;
-            transition: transform 0.3s, box-shadow 0.3s;
-            height: 100%;
-            border: 1px solid var(--gray-200);
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-            border-color: rgba(0, 122, 94, 0.2);
-        }
-        
-        .feature-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-            font-size: 1.25rem;
-        }
-        
-        /* Hero Section */
-        .hero-section {
-            background: linear-gradient(135deg, var(--green) 0%, var(--dark-green) 100%);
-            color: white;
-            border-radius: 0.75rem;
-            padding: 3rem 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-section h2 {
-            font-weight: 700;
-            line-height: 1.2;
-        }
-        
-        .hero-section p {
-            opacity: 0.9;
-        }
-        
-        /* Student Cards */
-        .student-card {
-            border-radius: 0.75rem;
-            overflow: hidden;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s;
-            border: 1px solid var(--gray-200);
-            background-color: white;
-        }
-        
-        .student-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-            border-color: rgba(0, 122, 94, 0.2);
-        }
-        
-        .student-card-img {
-            height: 140px;
-            background-size: cover;
-            background-position: center;
-        }
-        
-        .student-card-body {
-            padding: 1.5rem;
-        }
-        
-        .badge-pill {
-            padding: 0.35em 0.65em;
-            font-size: 0.75em;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-        
-        /* Chatbot Section */
-        .chatbot-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background-color: var(--purple);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-        
         /* Header */
         .dashboard-header {
-            background-color: white;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid var(--glass-border);
             padding: 1rem 1.5rem;
             position: sticky;
             top: 0;
             z-index: 5;
+        }
+        
+        .search-input-container {
+            position: relative;
+            width: 300px;
+        }
+        
+        .search-input-container i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-500);
+        }
+        
+        .search-input {
+            background-color: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.75rem;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
         
         /* Mobile Menu */
@@ -206,47 +220,304 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: white;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--glass-border);
+            color: var(--primary);
+            align-items: center;
+            justify-content: center;
         }
         
         /* User Profile */
         .user-profile {
-            padding: 1rem;
+            padding: 1.25rem;
             border-top: 1px solid var(--gray-200);
+            margin-top: auto;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
+            border-radius: 0.75rem;
+            margin: 1rem;
             margin-top: auto;
         }
         
         .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-radius: 1rem;
+            padding: 3rem 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+            z-index: 0;
+        }
+        
+        .hero-section h2, .hero-section p, .hero-section button {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-section img {
+            border-radius: 1rem;
+            box-shadow: var(--shadow-xl);
+            border: 4px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Feature Cards */
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            height: 100%;
+            cursor: pointer;
+            padding: 1.75rem;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.25rem;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+        
+        /* Student Cards */
+        .student-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .student-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .student-card-img {
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .student-card-img::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+        }
+        
+        .student-card-body {
+            padding: 1.5rem;
+        }
+        
+        /* Expertise Tags */
+        .expertise-tag {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 0.35rem 0.85rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: inline-block;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .expertise-tag:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Rating Stars */
+        .rating-stars {
+            color: var(--accent);
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 0.6rem 1.25rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+        }
+        
+        .btn-light-green {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+            border: none;
+            font-weight: 500;
+            padding: 0.6rem 1.25rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-light-green:hover {
+            background-color: rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* Content Cards */
+        .content-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            padding: 1.75rem;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .content-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+        }
+        
+        /* List Items */
+        .custom-list-item {
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+            background-color: white;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .custom-list-item:hover {
+            background-color: var(--primary-light);
+            border-color: rgba(16, 185, 129, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .resource-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.2s ease;
+            background-color: white;
+            border: 1px solid var(--gray-200);
+            text-decoration: none;
+            color: var(--gray-800);
+        }
+        
+        .resource-item:hover {
+            background-color: var(--primary-light);
+            border-color: rgba(16, 185, 129, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .resource-icon {
             width: 40px;
             height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: white;
+            border-top: 1px solid var(--gray-200);
+            padding: 2rem 0;
+        }
+        
+        .footer-link {
+            color: var(--gray-600);
+            text-decoration: none;
+            transition: color 0.2s;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-link:hover {
+            color: var(--primary);
+        }
+        
+        .social-icon {
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background-color: var(--gray-200);
+            background-color: var(--gray-100);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--gray-700);
+            transition: all 0.3s ease;
+            margin-right: 0.5rem;
         }
         
-        /* Responsive */
-        @media (max-width: 992px) {
-            .mobile-menu-toggle {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .sidebar {
-                left: -260px;
-            }
-            
-            .sidebar.open {
-                left: 0;
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
+        .social-icon:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-3px);
         }
         
         /* Animations */
@@ -257,81 +528,68 @@
         }
         
         .floating {
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        /* Typography */
-        h1, h2, h3, h4, h5, h6 {
-            font-weight: 600;
-        }
-        
-        /* Buttons */
-        .btn-primary {
-            background-color: var(--green);
-            border-color: var(--green);
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--dark-green);
-            border-color: var(--dark-green);
+            animation: float 4s ease-in-out infinite;
         }
         
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
+            height: 6px;
         }
         
         ::-webkit-scrollbar-track {
-            background: var(--gray-100);
+            background: transparent;
         }
         
         ::-webkit-scrollbar-thumb {
-            background: var(--gray-500);
-            border-radius: 4px;
+            background: var(--gray-300);
+            border-radius: 3px;
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--gray-700);
+            background: var(--gray-500);
         }
         
-        /* Mentor specific styles */
-        .expertise-tag {
-            background-color: rgba(0, 122, 94, 0.1);
-            color: var(--green);
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.75rem;
-            display: inline-block;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .availability-badge {
-            font-size: 0.7rem;
-            padding: 0.25rem 0.5rem;
-        }
-        
-        .rating-stars {
-            color: var(--yellow);
+        /* Responsive */
+        @media (max-width: 992px) {
+            .mobile-menu-toggle {
+                display: flex;
+            }
+            
+            .sidebar {
+                left: -280px;
+            }
+            
+            .sidebar.open {
+                left: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .search-input-container {
+                width: 100%;
+                max-width: 300px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="d-flex">
         <!-- Mobile menu toggle -->
-        <button class="mobile-menu-toggle btn btn-light shadow-sm" id="menuToggle">
+        <button class="mobile-menu-toggle btn" id="menuToggle">
             <i data-lucide="menu"></i>
         </button>
         
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <!-- Logo -->
-            <div class="p-4 border-bottom">
+            <div class="sidebar-logo">
                 <div class="d-flex align-items-center">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem; background-color: var(--green);">
-                        <span class="text-white font-bold">CM</span>
-                    </div>
-                    <span class="ms-2 fs-5 fw-semibold">CareerMentor</span>
+                    <div class="logo-circle me-2">CM</div>
+                    <span class="fs-5 fw-semibold">CareerMentor</span>
                 </div>
             </div>
             
@@ -343,7 +601,7 @@
                 </a>
                 <a href="mentor-student-request.html" class="sidebar-link">
                     <i data-lucide="users" class="icon"></i>
-                    <span>Student Request</span>
+                    <span>Student Requests</span>
                 </a>
                 <a href="#" class="sidebar-link">
                     <i data-lucide="calendar" class="icon"></i>
@@ -369,13 +627,17 @@
                     <i data-lucide="user" class="icon"></i>
                     <span>Profile</span>
                 </a>
+                <a href="#" class="sidebar-link">
+                    <i data-lucide="settings" class="icon"></i>
+                    <span>Settings</span>
+                </a>
             </nav>
             
             <!-- Mentor Profile -->
             <div class="user-profile">
                 <div class="d-flex align-items-center">
                     <div class="user-avatar me-3">
-                        <i data-lucide="user" class="text-secondary"></i>
+                        <i data-lucide="user"></i>
                     </div>
                     <div>
                         <p class="fw-medium mb-0" id="userName">Loading...</p>
@@ -389,34 +651,40 @@
         <main class="main-content" id="mainContent">
             <!-- Top Header -->
             <header class="dashboard-header">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h1 class="h4 mb-0 fw-semibold">Mentor Dashboard</h1>
-                    
-                    <div class="d-flex align-items-center gap-3">
-                        <button class="btn position-relative p-2">
-                            <i data-lucide="bell"></i>
-                            <span class="position-absolute top-0 end-0 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
-                        </button>
+                <div class="container-fluid">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1 class="h4 mb-0 fw-bold">Mentor Dashboard</h1>
+                        
+                        <div class="d-flex align-items-center gap-3">
+                            <button class="btn position-relative p-2">
+                                <i data-lucide="bell"></i>
+                                <span class="position-absolute top-0 end-0 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                            </button>
+                            <div class="search-input-container d-none d-md-block">
+                                <i data-lucide="search" width="18"></i>
+                                <input type="text" class="search-input" placeholder="Search...">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </header>
             
             <!-- Dashboard Content -->
-            <div class="p-4 p-lg-5">
+            <div class="container-fluid p-4">
                 <!-- Hero Section -->
-                <div class="hero-section mb-5">
+                <div class="hero-section mb-4">
                     <div class="row align-items-center">
                         <div class="col-lg-7 position-relative z-1">
                             <h2 class="fw-bold mb-3">Welcome Back, <span id="greetingName">Mentor</span>!</h2>
-                            <p class="mb-4">You have <strong>3 upcoming sessions</strong> this week. Help shape the future of students by sharing your expertise and experience.</p>
-                            <button class="btn btn-light" style="color: var(--green); font-weight: 500;">
-                                View Schedule <i data-lucide="calendar" class="ms-2"></i>
+                            <p class="mb-4 opacity-90">You have <strong>3 upcoming sessions</strong> this week. Help shape the future of students by sharing your expertise and experience.</p>
+                            <button class="btn btn-light-green">
+                                <i data-lucide="calendar" class="me-2" width="18"></i> View Schedule
                             </button>
                         </div>
-                        <div class="col-lg-5 d-none d-lg-block position-relative z-1">
+                        <div class="col-lg-5 d-none d-lg-block position-relative z-1 text-center">
                             <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" 
                                  alt="Mentor guiding students" 
-                                 class="img-fluid rounded floating">
+                                 class="img-fluid rounded floating" style="max-height: 250px; object-fit: cover;">
                         </div>
                     </div>
                 </div>
@@ -425,38 +693,50 @@
                 <div class="row g-4 mb-5">
                     <div class="col-md-6 col-lg-3">
                         <div class="feature-card">
-                            <div class="feature-icon" style="background-color: rgba(59, 130, 246, 0.1); color: var(--blue);">
+                            <div class="feature-icon" style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6;">
                                 <i data-lucide="users"></i>
                             </div>
                             <h3 class="h5 fw-bold mb-2">My Students</h3>
-                            <p class="text-muted small">View and manage your current mentees and their progress.</p>
+                            <p class="text-muted mb-3">View and manage your current mentees and their progress.</p>
+                            <a href="#" class="text-decoration-none" style="color: var(--primary); font-weight: 500;">
+                                View Students <i data-lucide="chevron-right" class="ms-1" width="16"></i>
+                            </a>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-3">
                         <div class="feature-card">
-                            <div class="feature-icon" style="background-color: rgba(252, 209, 22, 0.1); color: var(--yellow);">
-                                <i data-lucide="calendar-clock"></i>
+                            <div class="feature-icon" style="background-color: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                                <i data-lucide="calendar"></i>
                             </div>
                             <h3 class="h5 fw-bold mb-2">Session Management</h3>
-                            <p class="text-muted small">Schedule and track your mentoring sessions.</p>
+                            <p class="text-muted mb-3">Schedule and track your mentoring sessions.</p>
+                            <a href="#" class="text-decoration-none" style="color: var(--primary); font-weight: 500;">
+                                Manage Sessions <i data-lucide="chevron-right" class="ms-1" width="16"></i>
+                            </a>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-3">
                         <div class="feature-card">
-                            <div class="feature-icon" style="background-color: rgba(139, 92, 246, 0.1); color: var(--purple);">
+                            <div class="feature-icon" style="background-color: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
                                 <i data-lucide="book-open"></i>
                             </div>
                             <h3 class="h5 fw-bold mb-2">Resources</h3>
-                            <p class="text-muted small">Access and share career resources with your mentees.</p>
+                            <p class="text-muted mb-3">Access and share career resources with your mentees.</p>
+                            <a href="#" class="text-decoration-none" style="color: var(--primary); font-weight: 500;">
+                                Browse Resources <i data-lucide="chevron-right" class="ms-1" width="16"></i>
+                            </a>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-3">
                         <div class="feature-card">
-                            <div class="feature-icon" style="background-color: rgba(0, 122, 94, 0.1); color: var(--green);">
+                            <div class="feature-icon" style="background-color: rgba(16, 185, 129, 0.1); color: var(--primary);">
                                 <i data-lucide="bar-chart-2"></i>
                             </div>
                             <h3 class="h5 fw-bold mb-2">Performance</h3>
-                            <p class="text-muted small">Track your mentoring impact and feedback.</p>
+                            <p class="text-muted mb-3">Track your mentoring impact and feedback.</p>
+                            <a href="#" class="text-decoration-none" style="color: var(--primary); font-weight: 500;">
+                                View Analytics <i data-lucide="chevron-right" class="ms-1" width="16"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -464,8 +744,10 @@
                 <!-- Students Needing Mentorship Section -->
                 <div class="mb-5">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="h4 fw-semibold">Students Seeking Mentorship</h2>
-                        <a href="#" class="small fw-medium" style="color: var(--green);">View All <i data-lucide="chevron-right" class="ms-1" width="14"></i></a>
+                        <h2 class="h4 fw-bold">Students Seeking Mentorship</h2>
+                        <a href="#" class="text-decoration-none d-flex align-items-center" style="color: var(--primary); font-weight: 500;">
+                            View All <i data-lucide="chevron-right" class="ms-1" width="16"></i>
+                        </a>
                     </div>
                     <div class="row g-4">
                         <div class="col-md-6 col-lg-3">
@@ -474,10 +756,10 @@
                                 <div class="student-card-body">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <h3 class="h6 fw-semibold mb-0">John M.</h3>
-                                        <span class="badge bg-success bg-opacity-10 text-success availability-badge">Available</span>
+                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1" style="font-size: 0.7rem;">Available</span>
                                     </div>
                                     <p class="small text-muted mb-2">Computer Science Student</p>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <span class="expertise-tag">Software Dev</span>
                                         <span class="expertise-tag">AI</span>
                                         <span class="expertise-tag">Web Dev</span>
@@ -491,7 +773,7 @@
                                             <i data-lucide="star" width="14"></i>
                                             <span class="text-muted ms-1">4.0</span>
                                         </span>
-                                        <button class="btn btn-sm" style="background-color: var(--green); color: white;">Connect</button>
+                                        <button class="btn btn-sm btn-primary">Connect</button>
                                     </div>
                                 </div>
                             </div>
@@ -502,10 +784,10 @@
                                 <div class="student-card-body">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <h3 class="h6 fw-semibold mb-0">Sarah K.</h3>
-                                        <span class="badge bg-success bg-opacity-10 text-success availability-badge">Available</span>
+                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1" style="font-size: 0.7rem;">Available</span>
                                     </div>
                                     <p class="small text-muted mb-2">Business Administration</p>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <span class="expertise-tag">Marketing</span>
                                         <span class="expertise-tag">Management</span>
                                     </div>
@@ -518,7 +800,7 @@
                                             <i data-lucide="star" class="fill-current" width="14"></i>
                                             <span class="text-muted ms-1">5.0</span>
                                         </span>
-                                        <button class="btn btn-sm" style="background-color: var(--green); color: white;">Connect</button>
+                                        <button class="btn btn-sm btn-primary">Connect</button>
                                     </div>
                                 </div>
                             </div>
@@ -529,10 +811,10 @@
                                 <div class="student-card-body">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <h3 class="h6 fw-semibold mb-0">David L.</h3>
-                                        <span class="badge bg-warning bg-opacity-10 text-warning availability-badge">Limited</span>
+                                        <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-2 py-1" style="font-size: 0.7rem;">Limited</span>
                                     </div>
                                     <p class="small text-muted mb-2">Engineering Student</p>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <span class="expertise-tag">Mechanical</span>
                                         <span class="expertise-tag">CAD</span>
                                         <span class="expertise-tag">Robotics</span>
@@ -546,7 +828,7 @@
                                             <i data-lucide="star" width="14"></i>
                                             <span class="text-muted ms-1">3.0</span>
                                         </span>
-                                        <button class="btn btn-sm" style="background-color: var(--green); color: white;">Connect</button>
+                                        <button class="btn btn-sm btn-primary">Connect</button>
                                     </div>
                                 </div>
                             </div>
@@ -557,10 +839,10 @@
                                 <div class="student-card-body">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <h3 class="h6 fw-semibold mb-0">Amina B.</h3>
-                                        <span class="badge bg-success bg-opacity-10 text-success availability-badge">Available</span>
+                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1" style="font-size: 0.7rem;">Available</span>
                                     </div>
                                     <p class="small text-muted mb-2">Medical Student</p>
-                                    <div class="mb-2">
+                                    <div class="mb-3">
                                         <span class="expertise-tag">Medicine</span>
                                         <span class="expertise-tag">Research</span>
                                     </div>
@@ -573,7 +855,7 @@
                                             <i data-lucide="star" width="14"></i>
                                             <span class="text-muted ms-1">4.0</span>
                                         </span>
-                                        <button class="btn btn-sm" style="background-color: var(--green); color: white;">Connect</button>
+                                        <button class="btn btn-sm btn-primary">Connect</button>
                                     </div>
                                 </div>
                             </div>
@@ -584,52 +866,103 @@
                 <!-- Upcoming Sessions & Resources Section -->
                 <div class="row g-4 mb-5">
                     <div class="col-lg-6">
-                        <div class="bg-white rounded-lg shadow-sm p-4 h-100 border">
-                            <h3 class="h5 fw-semibold mb-4">Upcoming Sessions</h3>
-                            <div class="list-group list-group-flush">
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">Career Guidance - John M.</h6>
-                                        <small class="text-muted">Tomorrow, 10:00 AM - 11:00 AM</small>
+                        <div class="content-card h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h3 class="h5 fw-bold mb-0">Upcoming Sessions</h3>
+                                <a href="#" class="text-decoration-none" style="color: var(--primary); font-size: 0.875rem;">
+                                    View All
+                                </a>
+                            </div>
+                            <div>
+                                <div class="custom-list-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1 fw-semibold">Career Guidance - John M.</h6>
+                                            <div class="d-flex align-items-center text-muted small">
+                                                <i data-lucide="calendar" class="me-1" width="14"></i>
+                                                <span>Tomorrow</span>
+                                                <i data-lucide="clock" class="ms-3 me-1" width="14"></i>
+                                                <span>10:00 AM - 11:00 AM</span>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-sm btn-light-green">Details</button>
                                     </div>
-                                    <button class="btn btn-sm btn-outline-secondary">Details</button>
                                 </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">Resume Review - Sarah K.</h6>
-                                        <small class="text-muted">Wednesday, 2:00 PM - 2:30 PM</small>
+                                <div class="custom-list-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1 fw-semibold">Resume Review - Sarah K.</h6>
+                                            <div class="d-flex align-items-center text-muted small">
+                                                <i data-lucide="calendar" class="me-1" width="14"></i>
+                                                <span>Wednesday</span>
+                                                <i data-lucide="clock" class="ms-3 me-1" width="14"></i>
+                                                <span>2:00 PM - 2:30 PM</span>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-sm btn-light-green">Details</button>
                                     </div>
-                                    <button class="btn btn-sm btn-outline-secondary">Details</button>
                                 </div>
-                                <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">Interview Prep - David L.</h6>
-                                        <small class="text-muted">Friday, 4:00 PM - 5:00 PM</small>
+                                <div class="custom-list-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1 fw-semibold">Interview Prep - David L.</h6>
+                                            <div class="d-flex align-items-center text-muted small">
+                                                <i data-lucide="calendar" class="me-1" width="14"></i>
+                                                <span>Friday</span>
+                                                <i data-lucide="clock" class="ms-3 me-1" width="14"></i>
+                                                <span>4:00 PM - 5:00 PM</span>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-sm btn-light-green">Details</button>
                                     </div>
-                                    <button class="btn btn-sm btn-outline-secondary">Details</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div class="bg-white rounded-lg shadow-sm p-4 h-100 border">
-                            <h3 class="h5 fw-semibold mb-4">Mentor Resources</h3>
-                            <div class="list-group list-group-flush">
-                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                                    <i data-lucide="file-text" class="text-primary me-3"></i>
-                                    <span>Mentoring Best Practices Guide</span>
+                        <div class="content-card h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h3 class="h5 fw-bold mb-0">Mentor Resources</h3>
+                                <a href="#" class="text-decoration-none" style="color: var(--primary); font-size: 0.875rem;">
+                                    Browse All
                                 </a>
-                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                                    <i data-lucide="video" class="text-danger me-3"></i>
-                                    <span>Effective Communication Techniques</span>
+                            </div>
+                            <div>
+                                <a href="#" class="resource-item">
+                                    <div class="resource-icon" style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                                        <i data-lucide="file-text"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1 fw-semibold">Mentoring Best Practices Guide</h6>
+                                        <p class="mb-0 small text-muted">Comprehensive guide for effective mentoring</p>
+                                    </div>
                                 </a>
-                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                                    <i data-lucide="book-open" class="text-success me-3"></i>
-                                    <span>Career Development Frameworks</span>
+                                <a href="#" class="resource-item">
+                                    <div class="resource-icon" style="background-color: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                                        <i data-lucide="video"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1 fw-semibold">Effective Communication Techniques</h6>
+                                        <p class="mb-0 small text-muted">Video series on mentor-mentee communication</p>
+                                    </div>
                                 </a>
-                                <a href="#" class="list-group-item list-group-item-action d-flex align-items-center">
-                                    <i data-lucide="clipboard" class="text-warning me-3"></i>
-                                    <span>Session Planning Templates</span>
+                                <a href="#" class="resource-item">
+                                    <div class="resource-icon" style="background-color: rgba(16, 185, 129, 0.1); color: var(--primary);">
+                                        <i data-lucide="book-open"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1 fw-semibold">Career Development Frameworks</h6>
+                                        <p class="mb-0 small text-muted">Tools to help guide career planning</p>
+                                    </div>
+                                </a>
+                                <a href="#" class="resource-item">
+                                    <div class="resource-icon" style="background-color: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                                        <i data-lucide="clipboard"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1 fw-semibold">Session Planning Templates</h6>
+                                        <p class="mb-0 small text-muted">Ready-to-use templates for session planning</p>
+                                    </div>
                                 </a>
                             </div>
                         </div>
@@ -638,58 +971,50 @@
             </div>
             
             <!-- Footer -->
-            <footer class="bg-light border-top py-4">
-                <div class="container">
-                    <div class="row">
+            <footer>
+                <div class="container-fluid">
+                    <div class="row g-4">
                         <div class="col-lg-4 mb-4 mb-lg-0">
                             <div class="d-flex align-items-center mb-3">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 2rem; height: 2rem; background-color: var(--green);">
-                                    <span class="text-white small fw-bold">CM</span>
-                                </div>
-                                <span class="ms-2 fw-semibold">CareerMentor</span>
+                                <div class="logo-circle me-2" style="width: 36px; height: 36px;">CM</div>
+                                <span class="fs-5 fw-semibold">CareerMentor</span>
                             </div>
-                            <p class="small text-muted">Connecting experienced professionals with students to guide them toward successful career paths.</p>
-                            <div class="d-flex gap-3 mt-3">
-                                <a href="#" class="text-muted"><i class="fab fa-facebook-f"></i></a>
-                                <a href="#" class="text-muted"><i class="fab fa-twitter"></i></a>
-                                <a href="#" class="text-muted"><i class="fab fa-linkedin-in"></i></a>
-                                <a href="#" class="text-muted"><i class="fab fa-instagram"></i></a>
+                            <p class="text-muted mb-3">Connecting experienced professionals with students to guide them toward successful career paths.</p>
+                            <div class="d-flex">
+                                <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
                             </div>
                         </div>
-                        <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-                            <h5 class="h6 mb-3">Quick Links</h5>
-                            <ul class="list-unstyled small">
-                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Home</a></li>
-                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">About Us</a></li>
-                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">For Mentors</a></li>
-                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Blog</a></li>
-                            </ul>
+                        <div class="col-6 col-md-3 col-lg-2">
+                            <h5 class="h6 fw-bold mb-3">Quick Links</h5>
+                            <a href="#" class="footer-link">Home</a>
+                            <a href="#" class="footer-link">About Us</a>
+                            <a href="#" class="footer-link">For Mentors</a>
+                            <a href="#" class="footer-link">Blog</a>
                         </div>
-                        <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
-                            <h5 class="h6 mb-3">Support</h5>
-                            <ul class="list-unstyled small">
-                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Help Center</a></li>
-                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Contact Us</a></li>
-                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">FAQs</a></li>
-                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Feedback</a></li>
-                            </ul>
+                        <div class="col-6 col-md-3 col-lg-2">
+                            <h5 class="h6 fw-bold mb-3">Support</h5>
+                            <a href="#" class="footer-link">Help Center</a>
+                            <a href="#" class="footer-link">Contact Us</a>
+                            <a href="#" class="footer-link">FAQs</a>
+                            <a href="#" class="footer-link">Feedback</a>
                         </div>
-                        <div class="col-lg-2 col-md-4">
-                            <h5 class="h6 mb-3">Legal</h5>
-                            <ul class="list-unstyled small">
-                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Terms</a></li>
-                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Privacy</a></li>
-                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Cookies</a></li>
-                                <li class="mb-2"><a href="#" class="text-decoration-none text-muted">Licenses</a></li>
-                            </ul>
+                        <div class="col-6 col-md-3 col-lg-2">
+                            <h5 class="h6 fw-bold mb-3">Legal</h5>
+                            <a href="#" class="footer-link">Terms</a>
+                            <a href="#" class="footer-link">Privacy</a>
+                            <a href="#" class="footer-link">Cookies</a>
+                            <a href="#" class="footer-link">Licenses</a>
                         </div>
-                        <div class="col-lg-2">
-                            <h5 class="h6 mb-3">Get the App</h5>
+                        <div class="col-6 col-md-3 col-lg-2">
+                            <h5 class="h6 fw-bold mb-3">Get the App</h5>
                             <a href="#" class="d-block mb-2">
-                                <img src="https://via.placeholder.com/120x40?text=App+Store" alt="App Store" class="img-fluid">
+                                <img src="https://via.placeholder.com/120x40?text=App+Store" alt="App Store" class="img-fluid rounded">
                             </a>
                             <a href="#" class="d-block">
-                                <img src="https://via.placeholder.com/120x40?text=Google+Play" alt="Google Play" class="img-fluid">
+                                <img src="https://via.placeholder.com/120x40?text=Google+Play" alt="Google Play" class="img-fluid rounded">
                             </a>
                         </div>
                     </div>
@@ -711,7 +1036,7 @@
         // Set current year in footer
         document.getElementById('currentYear').textContent = new Date().getFullYear();
         
-        // Firebase configuration (matches your other files)
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBnaxztu3L7DBn4T5s_j_vXaBl_etTbyxQ",
             authDomain: "career-path-c89ed.firebaseapp.com",
@@ -767,17 +1092,18 @@
             }
         });
 
-        // Add this to mentor-homepage.html
-document.addEventListener('DOMContentLoaded', function() {
-    if (localStorage.getItem('hasUnreadMessages')) {
-        const msgIcon = document.getElementById('messagesIcon'); // or your actual icon/button ID
-        if (msgIcon && !msgIcon.querySelector('.unread-dot')) {
-            const dot = document.createElement('span');
-            dot.className = 'unread-dot';
-            msgIcon.appendChild(dot);
-        }
-    }
-});
+        // Check for unread messages
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('hasUnreadMessages')) {
+                const msgIcon = document.querySelector('.sidebar-link[href="mentor-message.html"] .icon');
+                if (msgIcon) {
+                    const dot = document.createElement('span');
+                    dot.className = 'position-absolute top-0 end-0 translate-middle p-1 bg-danger border border-light rounded-circle';
+                    msgIcon.parentNode.style.position = 'relative';
+                    msgIcon.parentNode.appendChild(dot);
+                }
+            }
+        });
     </script>
 </body>
 </html>

@@ -6,6 +6,10 @@
     <title>My Profile | CareerMentor</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Firebase SDK -->
@@ -14,48 +18,144 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <style>
         :root {
-            --green: #007a5e;
-            --red: #ce1126;
-            --yellow: #fcd116;
-            --dark-green: #00593e;
-            --gray-100: #f8f9fa;
-            --gray-200: #e9ecef;
-            --gray-500: #adb5bd;
-            --gray-700: #495057;
-            --gray-900: #212529;
+            /* 2025 Modern Color Palette */
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --primary-light: #e0f2fe;
+            --secondary: #8b5cf6;
+            --secondary-dark: #7c3aed;
+            --secondary-light: #f3e8ff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            
+            /* Glass Effect */
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --glass-blur: blur(10px);
         }
         
         body {
-            background-color: var(--gray-100);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--gray-50);
+            font-family: 'Inter', sans-serif;
+            color: var(--gray-800);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.05) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 30%);
+            background-attachment: fixed;
         }
         
-        .profile-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
         }
         
-        .profile-header {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
-            padding: 2rem;
-            margin-bottom: 2rem;
+        /* Glass Morphism */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
         }
         
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background-color: var(--gray-200);
+        /* Header */
+        .modern-header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            color: var(--gray-700);
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+        }
+        
+        /* Profile Container */
+        .profile-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        
+        /* Profile Header */
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
+            border-radius: 1.25rem;
+            box-shadow: var(--shadow-lg);
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 60%);
+            z-index: 0;
+        }
+        
+        .profile-avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, white 0%, var(--gray-100) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: var(--primary);
             margin: 0 auto 1.5rem;
             overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 4px solid white;
+            position: relative;
+            z-index: 1;
         }
         
         .profile-avatar img {
@@ -64,27 +164,46 @@
             object-fit: cover;
         }
         
+        /* Profile Cards */
         .profile-card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--gray-200);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            padding: 1.75rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
         }
         
         .profile-card h3 {
-            color: var(--green);
-            font-weight: 600;
+            color: var(--primary);
+            font-weight: 700;
             margin-bottom: 1.5rem;
             padding-bottom: 0.75rem;
             border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
         
+        .profile-card h3 i {
+            color: var(--primary);
+        }
+        
+        /* Detail Items */
         .detail-item {
             display: flex;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1.25rem;
             border-bottom: 1px solid var(--gray-100);
         }
         
@@ -95,134 +214,380 @@
         }
         
         .detail-label {
-            font-weight: 500;
+            font-weight: 600;
             color: var(--gray-700);
-            min-width: 150px;
+            min-width: 180px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .detail-label i {
+            color: var(--primary);
         }
         
         .detail-value {
             color: var(--gray-900);
-        }
-        
-        .edit-btn {
-            background-color: var(--green);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
             font-weight: 500;
-            transition: background-color 0.3s;
+            flex: 1;
         }
         
-        .edit-btn:hover {
-            background-color: var(--dark-green);
+        /* Buttons */
+        .btn-primary-gradient {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+        
+        .btn-primary-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
             color: white;
         }
         
-        .section-title {
-            color: var(--green);
+        .btn-outline-primary {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+            padding: 0.7rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-danger-gradient {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-danger-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+            color: white;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--gray-500);
+            background-color: var(--gray-50);
+            border-radius: 1rem;
+            border: 1px dashed var(--gray-300);
+        }
+        
+        .empty-state-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: var(--gray-100);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+        
+        /* Saved Career Cards */
+        .career-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-sm);
+            padding: 1.25rem;
+            transition: all 0.2s ease;
+            height: 100%;
+            border: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .career-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+        
+        .career-title {
             font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .career-description {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+        
+        .career-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+        
+        .career-badge {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+        }
+        
+        /* Footer */
+        .modern-footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0 2rem;
+        }
+        
+        .footer-logo-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+        
+        .footer-link {
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .footer-link:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .text-gray-300 {
+            color: var(--gray-300);
+        }
+        
+        .text-gray-400 {
+            color: var(--gray-400);
+        }
+        
+        /* Assessment Results */
+        .assessment-result {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(14, 165, 233, 0.1) 100%);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
             margin-bottom: 1.5rem;
         }
         
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: var(--gray-500);
+        .assessment-date {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
-        .empty-state i {
-            font-size: 2rem;
+        .assessment-score {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+        
+        .assessment-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
             margin-bottom: 1rem;
+        }
+        
+        .assessment-progress {
+            height: 0.5rem;
+            background-color: var(--gray-200);
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .assessment-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--success) 100%);
+            border-radius: 1rem;
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .detail-item {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .detail-label {
+                min-width: auto;
+            }
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-500);
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="bg-white shadow-sm py-3">
-    <div class="container d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center">
-            <div class="bg-success text-white fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">CM</div>
-            <span class="ms-2 fs-4 fw-bold text-dark">CareerMentor</span>
+    <header class="modern-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="logo-container">
+                    <div class="logo-circle me-2">CM</div>
+                    <span class="fs-4 fw-bold">CareerMentor</span>
+                </div>
+                <div>
+                    <a href="student-homepage.html" class="btn btn-outline-primary me-2">
+                        <i data-lucide="layout-dashboard" class="me-1" width="18"></i> Dashboard
+                    </a>
+                    <button onclick="logout()" class="btn btn-outline-danger rounded-pill">
+                        <i data-lucide="log-out" class="me-1" width="18"></i> Logout
+                    </button>
+                </div>
+            </div>
         </div>
-        <div>
-            <a href="student-homepage.html" class="btn btn-outline-success me-2">Dashboard</a>
-            <button onclick="logout()" class="btn btn-outline-danger">
-                <i data-lucide="log-out" class="me-1"></i> Logout
-            </button>
-        </div>
-    </div>
-</header>
+    </header>
 
     <!-- Main Content -->
     <div class="profile-container">
         <!-- Profile Header -->
-        <div class="profile-header text-center">
+        <div class="profile-header">
             <div class="profile-avatar" id="userAvatar">
                 <i data-lucide="user"></i>
             </div>
-            <h1 class="h3 fw-bold mb-2" id="userName">Loading...</h1>
+            <h1 class="h2 fw-bold mb-2" id="userName">Loading...</h1>
             <p class="text-muted mb-4" id="userRoleMajor">Student • Loading...</p>
-            <button class="edit-btn" id="editProfileBtn">
-                <i data-lucide="edit-2" width="16" class="me-1"></i> Edit Profile
+            <button class="btn btn-primary-gradient" id="editProfileBtn">
+                <i data-lucide="edit-2" width="18" class="me-1"></i> Edit Profile
             </button>
         </div>
         
-        <div class="row">
+        <div class="row g-4">
             <!-- Personal Information -->
-            <div class="col-md-6">
+            <div class="col-lg-6">
                 <div class="profile-card">
-                    <h3><i data-lucide="user" class="me-2"></i> Personal Information</h3>
+                    <h3><i data-lucide="user" width="22"></i> Personal Information</h3>
                     
                     <div class="detail-item">
-                        <div class="detail-label">Full Name</div>
+                        <div class="detail-label">
+                            <i data-lucide="user" width="18"></i> Full Name
+                        </div>
                         <div class="detail-value" id="fullName">Loading...</div>
                     </div>
                     
                     <div class="detail-item">
-                        <div class="detail-label">Date of Birth</div>
+                        <div class="detail-label">
+                            <i data-lucide="calendar" width="18"></i> Date of Birth
+                        </div>
                         <div class="detail-value" id="dob">Loading...</div>
                     </div>
                     
                     <div class="detail-item">
-                        <div class="detail-label">Email</div>
+                        <div class="detail-label">
+                            <i data-lucide="mail" width="18"></i> Email
+                        </div>
                         <div class="detail-value" id="email">Loading...</div>
                     </div>
                     
                     <div class="detail-item">
-                        <div class="detail-label">Phone</div>
+                        <div class="detail-label">
+                            <i data-lucide="phone" width="18"></i> Phone
+                        </div>
                         <div class="detail-value" id="phone">Loading...</div>
                     </div>
                     
                     <div class="detail-item">
-                        <div class="detail-label">Address</div>
+                        <div class="detail-label">
+                            <i data-lucide="map-pin" width="18"></i> Address
+                        </div>
                         <div class="detail-value" id="address">Loading...</div>
                     </div>
                 </div>
             </div>
             
             <!-- Academic Information -->
-            <div class="col-md-6">
+            <div class="col-lg-6">
                 <div class="profile-card">
-                    <h3><i data-lucide="book-open" class="me-2"></i> Academic Information</h3>
+                    <h3><i data-lucide="book-open" width="22"></i> Academic Information</h3>
                     
                     <div class="detail-item">
-                        <div class="detail-label">Educational Level</div>
+                        <div class="detail-label">
+                            <i data-lucide="award" width="18"></i> Educational Level
+                        </div>
                         <div class="detail-value" id="educationalLevel">Loading...</div>
                     </div>
                     
                     <div class="detail-item">
-                        <div class="detail-label">Institution</div>
+                        <div class="detail-label">
+                            <i data-lucide="building" width="18"></i> Institution
+                        </div>
                         <div class="detail-value" id="institution">Loading...</div>
                     </div>
                     
                     <div class="detail-item">
-                        <div class="detail-label">Major/Field</div>
+                        <div class="detail-label">
+                            <i data-lucide="book" width="18"></i> Major/Field
+                        </div>
                         <div class="detail-value" id="major">Loading...</div>
                     </div>
                     
                     <div class="detail-item">
-                        <div class="detail-label">Expected Graduation</div>
+                        <div class="detail-label">
+                            <i data-lucide="graduation-cap" width="18"></i> Expected Graduation
+                        </div>
                         <div class="detail-value" id="graduationYear">Loading...</div>
                     </div>
                 </div>
@@ -231,52 +596,93 @@
         
         <!-- Career Assessment Results -->
         <div class="profile-card">
-            <h3><i data-lucide="clipboard-list" class="me-2"></i> Career Assessment Results</h3>
+            <h3><i data-lucide="clipboard-list" width="22"></i> Career Assessment Results</h3>
             
             <div id="careerResults">
                 <div class="empty-state">
-                    <i data-lucide="clipboard-list"></i>
-                    <p>You haven't completed the career assessment yet.</p>
-                    <a href="career-assessment.html" class="btn btn-success">Take Assessment</a>
+                    <div class="empty-state-icon">
+                        <i data-lucide="clipboard-list"></i>
+                    </div>
+                    <h4 class="mb-3">No Assessment Results</h4>
+                    <p class="text-muted mb-4">You haven't completed the career assessment yet. Take the assessment to discover careers that match your skills and interests.</p>
+                    <a href="career-assessment.html" class="btn btn-primary-gradient">
+                        <i data-lucide="clipboard-check" class="me-2" width="18"></i> Take Assessment
+                    </a>
                 </div>
             </div>
         </div>
         
         <!-- Saved Careers -->
-        <!-- In student-profile.html, replace the Saved Careers section with: -->
-<div class="profile-card">
-    <h3><i data-lucide="bookmark" class="me-2"></i> Saved Careers</h3>
-    
-    <div id="savedCareers">
-        <div class="empty-state" id="noSavedCareers">
-            <i data-lucide="bookmark"></i>
-            <p>You haven't saved any careers yet.</p>
-            <a href="career-recommendations.html" class="btn btn-success">Get Recommendations</a>
+        <div class="profile-card">
+            <h3><i data-lucide="bookmark" width="22"></i> Saved Careers</h3>
+            
+            <div id="savedCareers">
+                <div class="empty-state" id="noSavedCareers">
+                    <div class="empty-state-icon">
+                        <i data-lucide="bookmark"></i>
+                    </div>
+                    <h4 class="mb-3">No Saved Careers</h4>
+                    <p class="text-muted mb-4">You haven't saved any careers yet. Explore our recommendations to find careers that match your interests and skills.</p>
+                    <a href="career-recommendations.html" class="btn btn-primary-gradient">
+                        <i data-lucide="sparkles" class="me-2" width="18"></i> Get Recommendations
+                    </a>
+                </div>
+                <div class="row g-4" id="savedCareersList" style="display: none;"></div>
+            </div>
         </div>
-        <div class="row g-3" id="savedCareersList" style="display: none;"></div>
-    </div>
-</div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
+    <footer class="modern-footer mt-5">
         <div class="container">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-                <div class="mb-3 mb-md-0">
-                    <div class="footer-logo mb-1">
-                        <div class="footer-logo-box">CM</div>
-                        <span class="ms-2 fs-5 fw-bold">CareerMentor</span>
+            <div class="row">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="footer-logo-box me-2">CM</div>
+                        <span class="fs-5 fw-bold">CareerMentor</span>
                     </div>
-                    <p class="small text-gray-300 mb-0">Empowering careers across Cameroon</p>
+                    <p class="text-gray-300 mb-4">Empowering students to discover and pursue their ideal career paths through personalized guidance and AI-powered tools.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="footer-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="footer-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="footer-link"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="footer-link"><i class="fab fa-instagram"></i></a>
+                    </div>
                 </div>
-                <div class="d-flex gap-4">
-                    <a href="#" class="footer-link">About</a>
-                    <a href="#" class="footer-link">Privacy</a>
-                    <a href="#" class="footer-link">Terms</a>
-                    <a href="#" class="footer-link">Contact</a>
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="col-md-4 mb-4 mb-md-0">
+                            <h5 class="h6 fw-bold mb-3">Quick Links</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><a href="#" class="footer-link">Home</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">About Us</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Careers</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Blog</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4 mb-4 mb-md-0">
+                            <h5 class="h6 fw-bold mb-3">Support</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><a href="#" class="footer-link">Help Center</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Contact Us</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">FAQs</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Feedback</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="h6 fw-bold mb-3">Legal</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><a href="#" class="footer-link">Terms</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Privacy</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Cookies</a></li>
+                                <li class="mb-2"><a href="#" class="footer-link">Licenses</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="mt-4 text-center small text-gray-400">
+            <hr class="my-4" style="border-color: rgba(255, 255, 255, 0.1);">
+            <div class="text-center text-gray-400">
                 © <span id="currentYear"></span> CareerMentor. All rights reserved.
             </div>
         </div>
@@ -284,6 +690,8 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome for footer icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
@@ -319,6 +727,74 @@
             });
         }
 
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            // Create toast container if it doesn't exist
+            let toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.style.position = 'fixed';
+                toastContainer.style.bottom = '20px';
+                toastContainer.style.right = '20px';
+                toastContainer.style.zIndex = '9999';
+                document.body.appendChild(toastContainer);
+            }
+            
+            // Create toast
+            const toast = document.createElement('div');
+            toast.style.minWidth = '250px';
+            toast.style.margin = '0.5rem 0';
+            toast.style.padding = '1rem 1.5rem';
+            toast.style.borderRadius = '0.75rem';
+            toast.style.boxShadow = 'var(--shadow-lg)';
+            toast.style.display = 'flex';
+            toast.style.alignItems = 'center';
+            toast.style.animation = 'slideIn 0.3s ease-out forwards';
+            
+            // Set background color based on type
+            if (type === 'success') {
+                toast.style.backgroundColor = 'rgba(16, 185, 129, 0.9)';
+                toast.style.color = 'white';
+                toast.innerHTML = `<i data-lucide="check-circle" class="me-2"></i> ${message}`;
+            } else if (type === 'error') {
+                toast.style.backgroundColor = 'rgba(239, 68, 68, 0.9)';
+                toast.style.color = 'white';
+                toast.innerHTML = `<i data-lucide="alert-circle" class="me-2"></i> ${message}`;
+            } else {
+                toast.style.backgroundColor = 'rgba(14, 165, 233, 0.9)';
+                toast.style.color = 'white';
+                toast.innerHTML = `<i data-lucide="info" class="me-2"></i> ${message}`;
+            }
+            
+            // Add toast to container
+            toastContainer.appendChild(toast);
+            lucide.createIcons();
+            
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out forwards';
+                setTimeout(() => {
+                    toastContainer.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        // Add animations for toast
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
         // Load user data
         auth.onAuthStateChanged((user) => {
             if (user) {
@@ -343,6 +819,7 @@
                             'Not specified';
                         document.getElementById('institution').textContent = userData.institution || 'Not specified';
                         document.getElementById('major').textContent = userData.major || 'Not specified';
+                        document.getElementById('graduationYear').textContent = userData.graduationYear || 'Not specified';
                         
                         // Update role and major display
                         document.getElementById('userRoleMajor').textContent = 
@@ -358,19 +835,91 @@
                         if (userData.careerAssessment) {
                             const resultsContainer = document.getElementById('careerResults');
                             resultsContainer.innerHTML = `
-                                <div class="alert alert-success">
-                                    <p>You completed the career assessment on ${formatDate(userData.careerAssessment.completedAt)}</p>
-                                    <a href="career-assessment-results.html" class="btn btn-sm btn-success">
-                                        View Full Results
-                                    </a>
+                                <div class="assessment-result">
+                                    <div class="assessment-date">
+                                        <i data-lucide="calendar" width="16"></i>
+                                        Completed on ${formatDate(userData.careerAssessment.completedAt)}
+                                    </div>
+                                    
+                                    <div class="row g-4 mb-4">
+                                        <div class="col-md-4">
+                                            <div class="text-center">
+                                                <div class="assessment-score">87%</div>
+                                                <div class="assessment-label">Career Clarity</div>
+                                                <div class="assessment-progress">
+                                                    <div class="assessment-progress-bar" style="width: 87%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="text-center">
+                                                <div class="assessment-score">92%</div>
+                                                <div class="assessment-label">Skill Match</div>
+                                                <div class="assessment-progress">
+                                                    <div class="assessment-progress-bar" style="width: 92%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="text-center">
+                                                <div class="assessment-score">78%</div>
+                                                <div class="assessment-label">Interest Alignment</div>
+                                                <div class="assessment-progress">
+                                                    <div class="assessment-progress-bar" style="width: 78%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-center">
+                                        <a href="career-assessment-results.html" class="btn btn-primary-gradient">
+                                            <i data-lucide="bar-chart-2" class="me-2" width="18"></i> View Full Results
+                                        </a>
+                                    </div>
                                 </div>
                             `;
+                            lucide.createIcons();
+                        }
+                        
+                        // Load saved careers if they exist
+                        if (userData.savedCareers && userData.savedCareers.length > 0) {
+                            document.getElementById('noSavedCareers').style.display = 'none';
+                            const container = document.getElementById('savedCareersList');
+                            container.style.display = 'flex';
+                            container.innerHTML = '';
+                            
+                            userData.savedCareers.forEach(career => {
+                                const col = document.createElement('div');
+                                col.className = 'col-md-6 col-lg-4';
+                                
+                                col.innerHTML = `
+                                    <div class="career-card">
+                                        <h5 class="career-title">${career.title}</h5>
+                                        <p class="career-description">${career.description ? career.description.substring(0, 100) + '...' : 'No description available'}</p>
+                                        <div class="career-actions">
+                                            <span class="career-badge">${career.matchLevel || 'Good Match'}</span>
+                                            <div>
+                                                <a href="career-details.html?id=${career.id}" class="btn btn-sm btn-outline-primary me-1">
+                                                    <i data-lucide="info" width="16"></i>
+                                                </a>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="removeCareer('${career.id}')">
+                                                    <i data-lucide="trash-2" width="16"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                
+                                container.appendChild(col);
+                            });
+                            
+                            lucide.createIcons();
                         }
                     }
                 });
             } else {
                 // User is signed out - redirect to login
-                window.location.href = 'login.html';
+                window.location.href = 'log-in.html';
             }
         });
 
@@ -379,69 +928,39 @@
             window.location.href = 'edit-student-profile.html';
         });
 
-        // Add this to your existing JavaScript section
-function logout() {
-    auth.signOut().then(() => {
-        // Sign-out successful
-        window.location.href = 'log-in.html';
-    }).catch((error) => {
-        // An error happened
-        console.error('Logout error:', error);
-        alert('Error signing out. Please try again.');
-    });
-}
-    
-    // Add to the existing auth.onAuthStateChanged callback
-if (userData.savedCareers && userData.savedCareers.length > 0) {
-    document.getElementById('noSavedCareers').style.display = 'none';
-    const container = document.getElementById('savedCareersList');
-    container.style.display = 'flex';
-    container.innerHTML = '';
-    
-    userData.savedCareers.forEach(career => {
-        const col = document.createElement('div');
-        col.className = 'col-md-6';
+        // Logout function
+        function logout() {
+            auth.signOut().then(() => {
+                // Sign-out successful
+                window.location.href = 'log-in.html';
+            }).catch((error) => {
+                // An error happened
+                console.error('Logout error:', error);
+                showToast('Error signing out. Please try again.', 'error');
+            });
+        }
         
-        col.innerHTML = `
-            <div class="bg-light p-3 rounded d-flex justify-content-between align-items-center">
-                <div>
-                    <h5 class="h6 mb-1">${career.title}</h5>
-                    <p class="small text-muted mb-0">${career.description.substring(0, 50)}...</p>
-                </div>
-                <button class="btn btn-sm btn-outline-danger" onclick="removeCareer('${career.id}')">
-                    <i data-lucide="trash-2" width="16"></i>
-                </button>
-            </div>
-        `;
-        
-        container.appendChild(col);
-    });
-    
-    lucide.createIcons();
-}
-
-// Add this function to handle career removal
-function removeCareer(careerId) {
-    const user = auth.currentUser;
-    if (!user) return;
-    
-    if (confirm('Are you sure you want to remove this career from your saved list?')) {
-        const userRef = database.ref('users/' + user.uid + '/savedCareers');
-        
-        userRef.transaction((currentData) => {
-            if (currentData) {
-                return currentData.filter(career => career.id !== careerId);
+        // Function to handle career removal
+        function removeCareer(careerId) {
+            const user = auth.currentUser;
+            if (!user) return;
+            
+            if (confirm('Are you sure you want to remove this career from your saved list?')) {
+                const userRef = database.ref('users/' + user.uid + '/savedCareers');
+                
+                userRef.transaction((currentData) => {
+                    if (currentData) {
+                        return currentData.filter(career => career.id !== careerId);
+                    }
+                    return currentData;
+                }).then(() => {
+                    showToast('Career removed successfully', 'success');
+                }).catch(error => {
+                    console.error('Error removing career:', error);
+                    showToast('Failed to remove career. Please try again.', 'error');
+                });
             }
-            return currentData;
-        }).then(() => {
-            alert('Career removed successfully');
-            window.location.reload();
-        }).catch(error => {
-            console.error('Error removing career:', error);
-            alert('Failed to remove career. Please try again.');
-        });
-    }
-}
+        }
     </script>
 </body>
 </html>

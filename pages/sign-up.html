@@ -6,6 +6,10 @@
     <title>CareerMentor - Register</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Firebase SDK -->
@@ -13,45 +17,162 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <style>
         :root {
-            --green: #007a5e;
-            --red: #ce1126;
-            --yellow: #fcd116;
-            --dark-green: #00593e;
+            /* 2025 Modern Color Palette */
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --primary-light: #e0f2fe;
+            --secondary: #8b5cf6;
+            --secondary-dark: #7c3aed;
+            --secondary-light: #f3e8ff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            
+            /* Glass Effect */
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --glass-blur: blur(10px);
         }
         
         body {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            background-color: #f8f9fa;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-800);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.05) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 30%);
+            background-attachment: fixed;
         }
         
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+        }
+        
+        /* Header */
+        .app-header {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
+            padding: 1rem 0;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .logo-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+        }
+        
+        /* Main Content */
         .main-content {
             flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
-            background-image: url('https://via.placeholder.com/1200x800');
-            background-size: cover;
-            background-position: center;
+            padding: 3rem 1rem;
+            position: relative;
         }
         
-        .register-card {
-            max-width: 28rem;
+        .main-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            border-radius: 1rem;
+            height: 100%;
+            background-image: url('https://via.placeholder.com/1920x1080');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.05;
+            z-index: -1;
+        }
+        
+        /* Register Card */
+        .register-card {
+            max-width: 30rem;
+            width: 100%;
+            border-radius: 1.25rem;
             overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-xl);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .register-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl), 0 20px 40px rgba(14, 165, 233, 0.1);
         }
         
         .register-header {
-            background-color: var(--green);
-            padding: 2rem 2rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 2.5rem 2rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .register-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+            z-index: 0;
+        }
+        
+        .register-header h2, .register-header p {
+            position: relative;
+            z-index: 1;
         }
         
         .register-body {
-            padding: 2rem;
+            padding: 2.5rem;
+        }
+        
+        /* Role Selector */
+        .role-options {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2.5rem;
         }
         
         .role-option {
@@ -60,38 +181,54 @@
             align-items: center;
             justify-content: center;
             padding: 0.75rem;
-            border-radius: 0.5rem;
+            border-radius: 1rem;
             transition: all 0.3s ease;
             cursor: pointer;
-            color: #6b7280;
-            border: none;
-            background-color: transparent;
+            color: var(--gray-600);
+            border: 1px solid var(--gray-200);
+            background-color: white;
+            min-width: 80px;
+            box-shadow: var(--shadow-sm);
         }
         
         .role-option.selected {
-            background-color: var(--green);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+            transform: translateY(-3px);
         }
         
         .role-option:hover:not(.selected) {
-            background-color: #f3f4f6;
+            background-color: var(--gray-100);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
         
+        .role-option .icon {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Form Controls */
         .input-group-icon {
             display: flex;
             align-items: center;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            padding: 0.5rem;
-            margin-bottom: 1rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.25rem;
+            background-color: white;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
         }
         
         .input-group-icon:focus-within {
-            border-color: var(--green);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
         }
         
         .input-group-icon .icon {
-            color: #9ca3af;
+            color: var(--gray-500);
             margin-right: 0.75rem;
         }
         
@@ -100,36 +237,94 @@
             outline: none;
             width: 100%;
             padding: 0.5rem 0;
+            font-size: 1rem;
+            background-color: transparent;
         }
         
+        /* Password Strength */
+        .password-strength {
+            height: 4px;
+            border-radius: 2px;
+            margin-top: -0.75rem;
+            margin-bottom: 1.25rem;
+            background-color: var(--gray-200);
+            overflow: hidden;
+        }
+        
+        .password-strength-meter {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+        
+        .strength-weak {
+            width: 33.33%;
+            background-color: var(--danger);
+        }
+        
+        .strength-medium {
+            width: 66.66%;
+            background-color: var(--warning);
+        }
+        
+        .strength-strong {
+            width: 100%;
+            background-color: var(--success);
+        }
+        
+        /* Buttons */
         .btn-register {
-            background-color: var(--green);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             width: 100%;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
+            padding: 0.875rem;
+            border-radius: 0.75rem;
             border: none;
             font-weight: 500;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-register::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.6s ease;
         }
         
         .btn-register:hover {
-            background-color: var(--dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.3);
         }
         
-        .link-green {
-            color: var(--green);
+        .btn-register:hover::before {
+            left: 100%;
+        }
+        
+        /* Links */
+        .link-primary {
+            color: var(--primary);
             text-decoration: none;
+            transition: all 0.2s ease;
+            font-weight: 500;
         }
         
-        .link-green:hover {
+        .link-primary:hover {
+            color: var(--primary-dark);
             text-decoration: underline;
         }
         
+        /* Footer */
         footer {
-            background-color: #1f2937;
+            background-color: var(--dark);
             color: white;
-            padding: 1.5rem;
+            padding: 2rem 0;
         }
         
         .footer-logo {
@@ -138,33 +333,42 @@
         }
         
         .footer-logo-box {
-            width: 2rem;
-            height: 2rem;
+            width: 2.5rem;
+            height: 2.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: white;
-            color: #1f2937;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
             font-weight: bold;
-            border-radius: 50%;
+            border-radius: 0.75rem;
         }
         
         .footer-link {
-            color: #d1d5db;
+            color: var(--gray-300);
             text-decoration: none;
             transition: color 0.3s ease;
+            padding: 0.5rem;
         }
         
         .footer-link:hover {
             color: white;
         }
         
+        /* Alert Messages */
         .alert-message {
             display: none;
-            padding: 0.75rem 1rem;
-            margin-bottom: 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-sm);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .alert-error {
@@ -178,44 +382,64 @@
             color: #166534;
             border: 1px solid #86efac;
         }
+        
+        /* Responsive */
+        @media (max-width: 576px) {
+            .register-header {
+                padding: 2rem 1.5rem 1.5rem;
+            }
+            
+            .register-body {
+                padding: 2rem 1.5rem;
+            }
+            
+            .role-options {
+                flex-wrap: wrap;
+            }
+            
+            .role-option {
+                min-width: 70px;
+                padding: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="bg-white shadow-sm py-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-                <div class="bg-success text-white fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">CM</div>
-                <span class="ms-2 fs-4 fw-bold text-dark">CareerMentor</span>
+    <header class="app-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="logo-circle me-2">CM</div>
+                    <span class="fs-5 fw-semibold">CareerMentor</span>
+                </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="register-card bg-white">
+        <div class="register-card">
             <div class="register-header text-center">
-                <h2 class="text-white fw-bold mb-2">Join CareerMentor</h2>
-                <p class="text-white mb-0">Start your professional journey with us</p>
+                <h2 class="text-white fw-bold mb-2">Create Your Account</h2>
+                <p class="text-white opacity-90 mb-0">Join CareerMentor and start your journey</p>
             </div>
             
             <div class="register-body">
                 <!-- Role selector -->
-                <div class="mb-4">
-                    <div class="d-flex justify-content-center gap-3">
-                        <button type="button" class="role-option selected" data-role="student">
-                            <i data-lucide="book-open" class="icon"></i>
-                            <span class="mt-1 small">Student</span>
-                        </button>
-                        <button type="button" class="role-option" data-role="mentor">
-                            <i data-lucide="users" class="icon"></i>
-                            <span class="mt-1 small">Mentor</span>
-                        </button>
-                        <button type="button" class="role-option" data-role="educator">
-                            <i data-lucide="graduation-cap" class="icon"></i>
-                            <span class="mt-1 small">Educator</span>
-                        </button>
-                    </div>
+                <div class="role-options">
+                    <button type="button" class="role-option selected" data-role="student">
+                        <i data-lucide="book-open" class="icon" width="24" height="24"></i>
+                        <span class="mt-1 small">Student</span>
+                    </button>
+                    <button type="button" class="role-option" data-role="mentor">
+                        <i data-lucide="users" class="icon" width="24" height="24"></i>
+                        <span class="mt-1 small">Mentor</span>
+                    </button>
+                    <button type="button" class="role-option" data-role="educator">
+                        <i data-lucide="graduation-cap" class="icon" width="24" height="24"></i>
+                        <span class="mt-1 small">Educator</span>
+                    </button>
                 </div>
 
                 <!-- Alert messages -->
@@ -225,30 +449,36 @@
                 <form id="registerForm">
                     <div class="mb-3">
                         <div class="input-group-icon">
-                            <i data-lucide="mail" class="icon"></i>
-                            <input type="email" id="email" class="form-control-custom" placeholder="Email" required>
+                            <i data-lucide="mail" class="icon" width="20" height="20"></i>
+                            <input type="email" id="email" class="form-control-custom" placeholder="Email address" required>
                         </div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-1">
                         <div class="input-group-icon">
-                            <i data-lucide="key" class="icon"></i>
+                            <i data-lucide="lock" class="icon" width="20" height="20"></i>
                             <input type="password" id="password" class="form-control-custom" placeholder="Password" required minlength="6">
                         </div>
                     </div>
+                    
+                    <!-- Password strength indicator -->
+                    <div class="password-strength">
+                        <div class="password-strength-meter" id="passwordStrength"></div>
+                    </div>
+                    
                     <div class="mb-4">
                         <div class="input-group-icon">
-                            <i data-lucide="key" class="icon"></i>
+                            <i data-lucide="check-circle" class="icon" width="20" height="20"></i>
                             <input type="password" id="confirmPassword" class="form-control-custom" placeholder="Confirm Password" required minlength="6">
                         </div>
                     </div>
 
-                    <button type="submit" class="btn-register mb-3" id="registerButton">
-                        <span id="registerText">Register</span>
-                        <span id="registerSpinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                    <button type="submit" class="btn-register mb-4" id="registerButton">
+                        <span id="registerText">Create Account</span>
+                        <span id="registerSpinner" class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true" style="display: none;"></span>
                     </button>
-                    <div class="text-center small text-muted">
-                        <span>Already have an account? </span>
-                        <a href="log-in.html" class="small fw-medium link-green">Login</a>
+                    <div class="text-center">
+                        <span class="text-muted">Already have an account?</span>
+                        <a href="log-in.html" class="link-primary ms-1">Sign in</a>
                     </div>
                 </form>
             </div>
@@ -258,22 +488,25 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-                <div class="mb-3 mb-md-0">
-                    <div class="footer-logo mb-1">
+            <div class="row align-items-center">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="footer-logo mb-2">
                         <div class="footer-logo-box">CM</div>
                         <span class="ms-2 fs-5 fw-bold">CareerMentor</span>
                     </div>
                     <p class="small text-gray-300 mb-0">Empowering careers across Cameroon</p>
                 </div>
-                <div class="d-flex gap-4">
-                    <a href="#" class="footer-link">About</a>
-                    <a href="#" class="footer-link">Privacy</a>
-                    <a href="#" class="footer-link">Terms</a>
-                    <a href="#" class="footer-link">Contact</a>
+                <div class="col-md-8">
+                    <div class="d-flex flex-wrap justify-content-md-end gap-3">
+                        <a href="#" class="footer-link">About</a>
+                        <a href="#" class="footer-link">Privacy Policy</a>
+                        <a href="#" class="footer-link">Terms of Service</a>
+                        <a href="#" class="footer-link">Contact Us</a>
+                    </div>
                 </div>
             </div>
-            <div class="mt-4 text-center small text-gray-400">
+            <hr class="my-4 border-gray-700">
+            <div class="text-center small text-gray-400">
                 © <span id="currentYear"></span> CareerMentor. All rights reserved.
             </div>
         </div>
@@ -291,13 +524,13 @@
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBnaxztu3L7DBn4T5s_j_vXaBl_etTbyxQ",
-  authDomain: "career-path-c89ed.firebaseapp.com",
-  databaseURL: "https://career-path-c89ed-default-rtdb.firebaseio.com",
-  projectId: "career-path-c89ed",
-  storageBucket: "career-path-c89ed.firebasestorage.app",
-  messagingSenderId: "157237328572",
-  appId: "1:157237328572:web:7c1fbe078f33e5c48b2eb9",
-  measurementId: "G-P3N70T5RY2"
+            authDomain: "career-path-c89ed.firebaseapp.com",
+            databaseURL: "https://career-path-c89ed-default-rtdb.firebaseio.com",
+            projectId: "career-path-c89ed",
+            storageBucket: "career-path-c89ed.firebasestorage.app",
+            messagingSenderId: "157237328572",
+            appId: "1:157237328572:web:7c1fbe078f33e5c48b2eb9",
+            measurementId: "G-P3N70T5RY2"
         };
 
         // Initialize Firebase
@@ -316,6 +549,49 @@
                 roleOptions.forEach(opt => opt.classList.remove('selected'));
                 this.classList.add('selected');
             });
+        });
+        
+        // Password strength meter
+        const passwordInput = document.getElementById('password');
+        const passwordStrength = document.getElementById('passwordStrength');
+        
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            
+            // Remove previous classes
+            passwordStrength.classList.remove('strength-weak', 'strength-medium', 'strength-strong');
+            
+            if (password.length === 0) {
+                passwordStrength.style.width = '0';
+                return;
+            }
+            
+            // Calculate password strength
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 8) {
+                strength += 1;
+            }
+            
+            // Character variety check
+            if (/[A-Z]/.test(password) && /[a-z]/.test(password)) {
+                strength += 1;
+            }
+            
+            // Special character or number check
+            if (/[0-9]/.test(password) || /[^A-Za-z0-9]/.test(password)) {
+                strength += 1;
+            }
+            
+            // Update strength meter
+            if (strength === 1) {
+                passwordStrength.classList.add('strength-weak');
+            } else if (strength === 2) {
+                passwordStrength.classList.add('strength-medium');
+            } else if (strength === 3) {
+                passwordStrength.classList.add('strength-strong');
+            }
         });
         
         // Form submission
@@ -355,18 +631,23 @@
                     
                     // Send email verification
                     return user.sendEmailVerification().then(() => {
-                        // Redirect to appropriate profile completion page
-                        switch(selectedRole) {
-                            case 'student':
-                                window.location.href = `complete-student-profile.html?uid=${user.uid}`;
-                                break;
-                            case 'mentor':
-                                window.location.href = `complete-mentor-profile.html?uid=${user.uid}`;
-                                break;
-                            case 'educator':
-                                window.location.href = `complete-educator-profile.html?uid=${user.uid}`;
-                                break;
-                        }
+                        // Show success message
+                        showSuccess('Account created successfully! Please check your email to verify your account.');
+                        
+                        // Redirect to appropriate profile completion page after a short delay
+                        setTimeout(() => {
+                            switch(selectedRole) {
+                                case 'student':
+                                    window.location.href = `complete-student-profile.html?uid=${user.uid}`;
+                                    break;
+                                case 'mentor':
+                                    window.location.href = `complete-mentor-profile.html?uid=${user.uid}`;
+                                    break;
+                                case 'educator':
+                                    window.location.href = `complete-educator-profile.html?uid=${user.uid}`;
+                                    break;
+                            }
+                        }, 2000);
                     });
                 })
                 .catch((error) => {
@@ -402,12 +683,14 @@
             const errorElement = document.getElementById('errorMessage');
             errorElement.textContent = message;
             errorElement.style.display = 'block';
+            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         
         function showSuccess(message) {
             const successElement = document.getElementById('successMessage');
             successElement.textContent = message;
             successElement.style.display = 'block';
+            successElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     </script>
 </body>

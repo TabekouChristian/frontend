@@ -6,6 +6,10 @@
     <title>Mentorship Requests | CareerMentor</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Firebase SDK -->
@@ -14,60 +18,128 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <style>
         :root {
-            --green: #007a5e;
-            --red: #ce1126;
-            --yellow: #fcd116;
-            --blue: #3b82f6;
-            --purple: #8b5cf6;
-            --dark-green: #00593e;
-            --gray-100: #f8f9fa;
-            --gray-200: #e9ecef;
-            --gray-500: #adb5bd;
-            --gray-700: #495057;
-            --gray-900: #212529;
+            /* 2025 Modern Color Palette - Green Theme */
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --primary-light: #d1fae5;
+            --secondary: #14b8a6;
+            --secondary-dark: #0f766e;
+            --secondary-light: #ccfbf1;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --accent-light: #fef3c7;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            
+            /* Glass Effect */
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --glass-blur: blur(10px);
         }
         
         body {
-            background-color: var(--gray-100);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-800);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(20, 184, 166, 0.05) 0%, transparent 30%);
+            background-attachment: fixed;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
         }
         
         /* Header */
-        .header {
-            background-color: white;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
-            padding: 1rem 1.5rem;
+        .app-header {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
+            padding: 1rem 0;
             position: sticky;
             top: 0;
-            z-index: 5;
+            z-index: 10;
+        }
+        
+        .logo-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            padding: 3rem 0;
         }
         
         /* Request Cards */
         .request-card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid var(--gray-200);
-            cursor: pointer;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
             height: 100%;
             position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            padding: 1.5rem;
         }
         
         .request-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
         }
         
         .request-avatar {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            background-color: var(--gray-200);
+            background-color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            box-shadow: var(--shadow-md);
+            border: 3px solid white;
         }
         
         .request-avatar img {
@@ -77,22 +149,24 @@
         }
         
         .status-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
             font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 1rem;
+            font-weight: 600;
+            padding: 0.35rem 0.85rem;
+            border-radius: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.3s ease;
         }
         
         .status-pending {
-            background-color: rgba(251, 191, 36, 0.1);
-            color: #d97706;
+            background-color: var(--accent-light);
+            color: var(--accent-dark);
         }
         
         .status-accepted {
-            background-color: rgba(16, 185, 129, 0.1);
-            color: #047857;
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
         }
         
         .status-rejected {
@@ -100,80 +174,10 @@
             color: #b91c1c;
         }
         
-        /* Modal Styles */
-        .request-modal .modal-content {
-            border-radius: 0.75rem;
-            border: none;
-        }
-        
-        .request-modal .modal-header {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-        
-        .request-modal .modal-body {
-            padding-top: 0;
-        }
-        
-        .modal-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: var(--gray-200);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            overflow: hidden;
-        }
-        
-        .modal-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .detail-item {
-            margin-bottom: 1rem;
-        }
-        
-        .detail-label {
-            font-weight: 500;
-            color: var(--gray-700);
-        }
-        
-        .detail-value {
-            color: var(--gray-900);
-        }
-        
-        .btn-accept {
-            background-color: var(--green);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-        
-        .btn-accept:hover {
-            background-color: var(--dark-green);
-            color: white;
-        }
-        
-        .btn-reject {
-            background-color: var(--red);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: background-color 0.3s;
-        }
-        
-        .btn-reject:hover {
-            background-color: #b91c1c;
-            color: white;
+        .card-status-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
         }
         
         .message-preview {
@@ -182,29 +186,240 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
+            line-height: 1.5;
+        }
+        
+        /* Modal Styles */
+        .request-modal .modal-content {
+            border-radius: 1.25rem;
+            border: none;
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+        }
+        
+        .request-modal .modal-header {
+            border-bottom: none;
+            padding: 1.5rem 1.5rem 0;
+        }
+        
+        .request-modal .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            border: 4px solid white;
+        }
+        
+        .modal-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-card {
+            background-color: var(--gray-50);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            height: 100%;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .profile-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            color: var(--gray-800);
+        }
+        
+        .detail-item {
+            margin-bottom: 1.25rem;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 0.35rem;
+        }
+        
+        .detail-value {
+            color: var(--gray-900);
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+        }
+        
+        .btn-outline-primary {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            background-color: transparent;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .btn-accept {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-accept:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+        }
+        
+        .btn-reject {
+            background-color: white;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-reject:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .footer-logo-box {
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            font-weight: bold;
+            border-radius: 0.75rem;
+        }
+        
+        .footer-link {
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            padding: 0.5rem;
+        }
+        
+        .footer-link:hover {
+            color: white;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
         }
         
         /* Responsive */
         @media (max-width: 768px) {
             .request-card {
-                margin-bottom: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            .modal-avatar {
+                width: 100px;
+                height: 100px;
             }
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
+    <header class="app-header">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="d-flex align-items-center">
-                    <div class="bg-success text-white fw-bold rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">CM</div>
-                    <span class="ms-2 fs-4 fw-bold text-dark">CareerMentor</span>
+                    <div class="logo-circle me-2">CM</div>
+                    <span class="fs-5 fw-semibold">CareerMentor</span>
                 </div>
                 <div>
-                    <a href="mentor-homepage.html" class="btn btn-outline-success me-2">Back to Dashboard</a>
+                    <a href="mentor-homepage.html" class="btn btn-outline-primary me-2">
+                        <i data-lucide="arrow-left" class="me-1" width="18"></i> Back to Dashboard
+                    </a>
                     <button onclick="logout()" class="btn btn-outline-danger">
-                        <i data-lucide="log-out" class="me-1"></i> Logout
+                        <i data-lucide="log-out" class="me-1" width="18"></i> Logout
                     </button>
                 </div>
             </div>
@@ -212,23 +427,21 @@
     </header>
 
     <!-- Main Content -->
-    <main class="py-5">
+    <main class="main-content">
         <div class="container">
-            <div class="row">
-                <div class="col-12 mb-4">
-                    <h2 class="h4 fw-semibold">Mentorship Requests</h2>
-                    <p class="text-muted">Review and respond to mentorship requests from students</p>
-                </div>
-                
-                <!-- Requests will be loaded here -->
-                <div class="row" id="requestsContainer">
-                    <!-- Loading placeholder -->
-                    <div class="col-12 text-center py-5">
-                        <div class="spinner-border text-success" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <p class="mt-3">Loading requests...</p>
+            <div class="mb-5">
+                <h1 class="h3 fw-bold mb-2">Mentorship Requests</h1>
+                <p class="text-muted">Review and respond to mentorship requests from students</p>
+            </div>
+            
+            <!-- Requests will be loaded here -->
+            <div class="row g-4" id="requestsContainer">
+                <!-- Loading placeholder -->
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
                     </div>
+                    <p class="mt-3">Loading requests...</p>
                 </div>
             </div>
         </div>
@@ -241,20 +454,22 @@
                 <div class="modal-header">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body p-4">
+                <div class="modal-body">
                     <div class="text-center">
                         <div class="modal-avatar" id="modalStudentAvatar">
-                            <i data-lucide="user"></i>
+                            <i data-lucide="user" width="48" height="48"></i>
                         </div>
-                        <h3 class="mb-1" id="modalStudentName">Loading...</h3>
+                        <h3 class="h4 fw-bold mb-1" id="modalStudentName">Loading...</h3>
                         <p class="text-muted mb-3" id="modalStudentDetails">Loading...</p>
-                        <div id="modalRequestStatus" class="status-badge status-pending mb-3">Pending</div>
+                        <div id="modalRequestStatus" class="status-badge status-pending mb-3">
+                            <i data-lucide="clock" width="14" height="14"></i> Pending
+                        </div>
                     </div>
                     
-                    <div class="row mt-4">
+                    <div class="row g-4 mt-3">
                         <div class="col-md-6">
-                            <div class="profile-card mb-4">
-                                <h4><i data-lucide="user" class="me-2"></i> Student Information</h4>
+                            <div class="profile-card h-100">
+                                <h4><i data-lucide="user" class="me-2" width="20" height="20"></i> Student Information</h4>
                                 
                                 <div class="detail-item">
                                     <div class="detail-label">Education Level</div>
@@ -279,17 +494,17 @@
                         </div>
                         
                         <div class="col-md-6">
-                            <div class="profile-card mb-4">
-                                <h4><i data-lucide="message-square" class="me-2"></i> Request Details</h4>
+                            <div class="profile-card h-100">
+                                <h4><i data-lucide="message-square" class="me-2" width="20" height="20"></i> Request Details</h4>
                                 
                                 <div class="detail-item">
                                     <div class="detail-label">Request Date</div>
                                     <div class="detail-value" id="modalRequestDate">Loading...</div>
                                 </div>
                                 
-                                <div class="detail-item">
+                                <div class="detail-item mb-0">
                                     <div class="detail-label">Student's Message</div>
-                                    <div class="p-3 bg-light rounded" id="modalRequestMessage">
+                                    <div class="p-3 bg-white rounded-3 border" id="modalRequestMessage" style="max-height: 200px; overflow-y: auto;">
                                         Loading...
                                     </div>
                                 </div>
@@ -300,19 +515,21 @@
                     <!-- Action Buttons -->
                     <div class="d-flex gap-3 mt-4" id="actionButtons">
                         <button type="button" class="btn-accept flex-grow-1" onclick="respondToRequest('accepted')">
-                            <i data-lucide="check" class="me-1"></i> Accept Request
+                            <i data-lucide="check" class="me-1" width="18" height="18"></i> Accept Request
                         </button>
                         <button type="button" class="btn-reject flex-grow-1" onclick="respondToRequest('rejected')">
-                            <i data-lucide="x" class="me-1"></i> Reject Request
+                            <i data-lucide="x" class="me-1" width="18" height="18"></i> Reject Request
                         </button>
                     </div>
                     
-                    <div class="d-none" id="statusMessage">
-                        <div class="alert alert-success mt-3" id="successMessage" style="display: none;">
-                            <i data-lucide="check-circle" class="me-1"></i> Request accepted successfully. A chat has been created.
+                    <div id="statusMessage">
+                        <div class="alert alert-success mt-3 d-flex align-items-center" id="successMessage" style="display: none !important;">
+                            <i data-lucide="check-circle" class="me-2" width="18" height="18"></i> 
+                            <span>Request accepted successfully. A chat has been created.</span>
                         </div>
-                        <div class="alert alert-danger mt-3" id="errorMessage" style="display: none;">
-                            <i data-lucide="alert-circle" class="me-1"></i> Error processing request. Please try again.
+                        <div class="alert alert-danger mt-3 d-flex align-items-center" id="errorMessage" style="display: none !important;">
+                            <i data-lucide="alert-circle" class="me-2" width="18" height="18"></i> 
+                            <span>Error processing request. Please try again.</span>
                         </div>
                     </div>
                 </div>
@@ -321,31 +538,33 @@
     </div>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white py-4">
+    <footer>
         <div class="container">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-                <div class="mb-3 mb-md-0">
-                    <div class="footer-logo mb-1">
+            <div class="row align-items-center">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <div class="footer-logo mb-2">
                         <div class="footer-logo-box">CM</div>
                         <span class="ms-2 fs-5 fw-bold">CareerMentor</span>
                     </div>
                     <p class="small text-gray-300 mb-0">Empowering careers across Cameroon</p>
                 </div>
-                <div class="d-flex gap-4">
-                    <a href="#" class="footer-link">About</a>
-                    <a href="#" class="footer-link">Privacy</a>
-                    <a href="#" class="footer-link">Terms</a>
-                    <a href="#" class="footer-link">Contact</a>
+                <div class="col-md-8">
+                    <div class="d-flex flex-wrap justify-content-md-end gap-3">
+                        <a href="#" class="footer-link">About</a>
+                        <a href="#" class="footer-link">Privacy Policy</a>
+                        <a href="#" class="footer-link">Terms of Service</a>
+                        <a href="#" class="footer-link">Contact Us</a>
+                    </div>
                 </div>
             </div>
-            <div class="mt-4 text-center small text-gray-400">
+            <hr class="my-4 border-gray-700">
+            <div class="text-center small text-gray-400">
                 © <span id="currentYear"></span> CareerMentor. All rights reserved.
             </div>
         </div>
     </footer>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         lucide.createIcons();
@@ -397,12 +616,21 @@
                 
                 const requests = snapshot.val();
                 let requestsFound = false;
+                let pendingCount = 0;
+                let acceptedCount = 0;
                 
                 Object.keys(requests).forEach(requestId => {
                     const request = requests[requestId];
                     if (request.status === 'rejected') return;
                     
                     requestsFound = true;
+                    
+                    if (request.status === 'pending') {
+                        pendingCount++;
+                    } else if (request.status === 'accepted') {
+                        acceptedCount++;
+                    }
+                    
                     // Get student details
                     database.ref('users/' + request.studentId).once('value').then(studentSnapshot => {
                         const student = studentSnapshot.val();
@@ -418,7 +646,25 @@
                     });
                 });
                 
-                if (!requestsFound) showNoRequestsMessage();
+                if (!requestsFound) {
+                    showNoRequestsMessage();
+                } else {
+                    // Add request summary at the top
+                    const summaryEl = document.createElement('div');
+                    summaryEl.className = 'col-12 mb-4';
+                    summaryEl.innerHTML = `
+                        <div class="d-flex gap-4 flex-wrap">
+                            <div class="status-badge status-pending">
+                                <i data-lucide="clock" width="14" height="14"></i> ${pendingCount} Pending
+                            </div>
+                            <div class="status-badge status-accepted">
+                                <i data-lucide="check" width="14" height="14"></i> ${acceptedCount} Accepted
+                            </div>
+                        </div>
+                    `;
+                    requestsContainer.prepend(summaryEl);
+                    lucide.createIcons();
+                }
             }, error => {
                 console.error('Error loading requests:', error);
                 showNoRequestsMessage();
@@ -427,25 +673,31 @@
 
         function createRequestCard(requestId, request, student) {
             const col = document.createElement('div');
-            col.className = 'col-md-6 col-lg-4 mb-4';
+            col.className = 'col-md-6 col-lg-4 fade-in';
             
             const statusClass = request.status === 'accepted' ? 'status-accepted' : 'status-pending';
+            const statusIcon = request.status === 'accepted' ? 'check' : 'clock';
             const statusText = request.status === 'accepted' ? 'Accepted' : 'Pending';
             
             col.innerHTML = `
-                <div class="request-card p-3" data-request-id="${requestId}">
-                    <div class="status-badge ${statusClass}">${statusText}</div>
+                <div class="request-card" data-request-id="${requestId}">
+                    <div class="card-status-badge status-badge ${statusClass}">
+                        <i data-lucide="${statusIcon}" width="14" height="14"></i> ${statusText}
+                    </div>
                     <div class="d-flex align-items-start">
                         <div class="request-avatar me-3">
                             ${student.profilePicture 
                                 ? `<img src="${student.profilePicture}" alt="${request.studentName || student.fullName || 'Student'}">` 
-                                : `<i data-lucide="user" class="text-secondary"></i>`}
+                                : `<i data-lucide="user" class="text-secondary" width="32" height="32"></i>`}
                         </div>
                         <div>
-                            <h5 class="mb-1">${request.studentName || student.fullName || 'Student'}</h5>
+                            <h5 class="mb-1 fw-semibold">${request.studentName || student.fullName || 'Student'}</h5>
                             <p class="text-muted small mb-2">${student.educationalLevel || student.educationLevel || 'Student'}</p>
-                            <p class="text-muted small message-preview mb-0">${request.message || 'No message provided'}</p>
-                            <p class="text-muted small mt-2 mb-0">${formatDate(request.timestamp)}</p>
+                            <p class="text-muted small message-preview mb-3">${request.message || 'No message provided'}</p>
+                            <div class="d-flex align-items-center text-muted small">
+                                <i data-lucide="calendar" class="me-1" width="14" height="14"></i>
+                                <span>${formatDate(request.timestamp)}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -466,21 +718,21 @@
             const modalAvatar = document.getElementById('modalStudentAvatar');
             modalAvatar.innerHTML = student.profilePicture 
                 ? `<img src="${student.profilePicture}" alt="${request.studentName || student.fullName || 'Student'}">` 
-                : '<i data-lucide="user"></i>';
+                : '<i data-lucide="user" width="48" height="48"></i>';
             
             // Set status badge
             const statusBadge = document.getElementById('modalRequestStatus');
             statusBadge.className = 'status-badge mb-3 ';
             if (request.status === 'accepted') {
                 statusBadge.classList.add('status-accepted');
-                statusBadge.textContent = 'Accepted';
+                statusBadge.innerHTML = '<i data-lucide="check" width="14" height="14"></i> Accepted';
             } else {
                 statusBadge.classList.add('status-pending');
-                statusBadge.textContent = 'Pending';
+                statusBadge.innerHTML = '<i data-lucide="clock" width="14" height="14"></i> Pending';
             }
             
             document.getElementById('modalEducationLevel').textContent = student.educationalLevel || student.educationLevel || 'Not specified';
-            document.getElementById('modalInterests').textContent = student.major || 'Not specified';
+            document.getElementById('modalInterests').textContent = student.major || student.interests || 'Not specified';
             document.getElementById('modalStudentEmail').textContent = student.email || 'Not provided';
             document.getElementById('modalStudentPhone').textContent = student.phone || 'Not provided';
             document.getElementById('modalRequestDate').textContent = formatDate(request.timestamp);
@@ -528,7 +780,14 @@
                     const statusBadge = document.getElementById('modalRequestStatus');
                     statusBadge.className = 'status-badge mb-3 ' + 
                         (newStatus === 'accepted' ? 'status-accepted' : 'status-rejected');
-                    statusBadge.textContent = newStatus === 'accepted' ? 'Accepted' : 'Rejected';
+                    
+                    if (newStatus === 'accepted') {
+                        statusBadge.innerHTML = '<i data-lucide="check" width="14" height="14"></i> Accepted';
+                    } else {
+                        statusBadge.innerHTML = '<i data-lucide="x" width="14" height="14"></i> Rejected';
+                    }
+                    
+                    lucide.createIcons();
                     
                     // Reload requests after a short delay
                     setTimeout(loadRequests, 2000);
@@ -581,10 +840,17 @@
         function showNoRequestsMessage() {
             const requestsContainer = document.getElementById('requestsContainer');
             requestsContainer.innerHTML = `
-                <div class="col-12 text-center py-5">
-                    <i data-lucide="inbox" width="48" height="48" class="text-muted"></i>
-                    <h5 class="mt-3">No requests found</h5>
-                    <p class="text-muted">You don't have any mentorship requests yet.</p>
+                <div class="col-12">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i data-lucide="inbox" width="32" height="32"></i>
+                        </div>
+                        <h3 class="h4 fw-bold mb-2">No Requests Found</h3>
+                        <p class="text-muted mb-4">You don't have any mentorship requests yet.</p>
+                        <a href="mentor-homepage.html" class="btn btn-primary">
+                            <i data-lucide="arrow-left" class="me-2" width="18" height="18"></i> Back to Dashboard
+                        </a>
+                    </div>
                 </div>
             `;
             lucide.createIcons();

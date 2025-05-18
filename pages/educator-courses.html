@@ -6,6 +6,10 @@
     <title>Manage Courses | CareerMentor</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Firebase SDK -->
@@ -14,31 +18,72 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <style>
         :root {
-            --green: #007a5e;
-            --red: #ce1126;
-            --yellow: #fcd116;
-            --blue: #3b82f6;
-            --purple: #8b5cf6;
-            --dark-green: #00593e;
-            --gray-100: #f8f9fa;
-            --gray-200: #e9ecef;
-            --gray-500: #adb5bd;
-            --gray-700: #495057;
-            --gray-900: #212529;
+            /* 2025 Modern Color Palette - Yellow Theme */
+            --primary: #f59e0b;
+            --primary-dark: #d97706;
+            --primary-light: #fef3c7;
+            --secondary: #eab308;
+            --secondary-dark: #ca8a04;
+            --secondary-light: #fef9c3;
+            --accent: #10b981;
+            --accent-dark: #059669;
+            --accent-light: #d1fae5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            
+            /* Glass Effect */
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --glass-blur: blur(10px);
         }
         
         body {
-            background-color: var(--gray-100);
-            height: 100vh;
-            overflow: hidden;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--gray-50);
+            color: var(--gray-800);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(234, 179, 8, 0.05) 0%, transparent 30%);
+            background-attachment: fixed;
         }
         
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+        }
+        
+        /* Sidebar */
         .sidebar {
-            width: 260px;
+            width: 280px;
             height: 100vh;
-            background-color: white;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-right: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
             transition: all 0.3s ease;
             position: fixed;
             z-index: 10;
@@ -47,40 +92,44 @@
         }
         
         .sidebar.collapsed {
-            left: -260px;
+            left: -280px;
         }
         
         .main-content {
-            margin-left: 260px;
-            height: 100vh;
-            overflow-y: auto;
+            margin-left: 280px;
+            min-height: 100vh;
             transition: all 0.3s ease;
+            width: calc(100vw - 280px); /* Ensures main content fills the space next to sidebar */
+            max-width: 100vw;
+            overflow-x: hidden;
         }
         
         .main-content.expanded {
             margin-left: 0;
         }
         
+        /* Sidebar Links */
         .sidebar-link {
             display: flex;
             align-items: center;
-            padding: 0.75rem 1.5rem;
+            padding: 0.85rem 1.5rem;
             color: var(--gray-700);
             text-decoration: none;
             transition: all 0.2s;
-            border-left: 3px solid transparent;
+            border-radius: 0.5rem;
+            margin: 0.2rem 0.75rem;
             font-weight: 500;
         }
         
         .sidebar-link:hover {
-            background-color: var(--gray-100);
-            color: var(--green);
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
         }
         
         .sidebar-link.active {
-            border-left: 3px solid var(--green);
-            background-color: rgba(0, 122, 94, 0.05);
-            color: var(--green);
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
         }
         
         .sidebar-link .icon {
@@ -89,153 +138,323 @@
             height: 20px;
         }
         
-        /* Updated Program Card Styles */
-        .program-card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border: 1px solid var(--gray-200);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            min-width: 350px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .program-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0.5rem 1.5rem rgba(0, 122, 94, 0.15);
-            border-color: rgba(0, 122, 94, 0.3);
-        }
-
-        .program-card-header {
-            padding: 1.5rem 1.5rem 0.75rem;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .program-meta {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.75rem;
-            color: var(--gray-600);
-            margin-top: 0.5rem;
-        }
-
-        .program-meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .program-card-body {
-            padding: 1.25rem 1.5rem;
-            flex-grow: 1;
-        }
-
-        .program-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .program-tag {
-            background-color: rgba(0, 122, 94, 0.1);
-            color: var(--green);
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .program-description {
-            font-size: 0.875rem;
-            color: var(--gray-700);
-            margin: 1rem 0;
-        }
-
-        .program-stats {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            font-size: 0.8rem;
-            color: var(--gray-600);
-        }
-
-        .program-card-footer {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .program-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        /* Header */
+        /* Dashboard Header */
         .dashboard-header {
-            background-color: white;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-sm);
             padding: 1rem 1.5rem;
             position: sticky;
             top: 0;
             z-index: 5;
         }
         
-        /* Mobile Menu */
+        /* Course Cards */
+        .course-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 1.25rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .course-card-body {
+            padding: 1.5rem;
+        }
+        
+        .course-tag {
+            display: inline-block;
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 0.35rem 0.85rem;
+            border-radius: 2rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .course-tag:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .course-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--gray-600);
+        }
+        
+        .course-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        
+        /* User Profile */
+        .user-profile {
+            padding: 1.25rem;
+            border-top: 1px solid var(--gray-200);
+            margin-top: auto;
+        }
+        
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-dark);
+            box-shadow: var(--shadow-sm);
+            border: 2px solid white;
+        }
+        
+        /* Mobile Menu Toggle */
         .mobile-menu-toggle {
             position: fixed;
             top: 1rem;
             left: 1rem;
             z-index: 20;
             display: none;
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            background-color: white;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            color: var(--primary);
+            align-items: center;
+            justify-content: center;
         }
         
-        /* User Profile */
-        .user-profile {
-            padding: 1rem;
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+        }
+        
+        .btn-outline-primary {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            background-color: transparent;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+        
+        /* Modal styles */
+        .modal-content {
+            border-radius: 1rem;
+            border: none;
+            overflow: hidden;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
             border-top: 1px solid var(--gray-200);
-            margin-top: auto;
+            padding: 1.25rem 1.5rem;
         }
         
-        .user-avatar {
-            width: 40px;
-            height: 40px;
+        /* Course Detail Sections */
+        .course-detail-section {
+            margin-bottom: 2rem;
+        }
+        
+        .course-detail-section h5 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        /* Requirements List */
+        .requirements-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .requirements-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .requirements-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: var(--primary);
             border-radius: 50%;
-            background-color: var(--gray-200);
+        }
+        
+        /* Application Status */
+        .status-badge {
+            padding: 0.35rem 0.85rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        
+        .status-approved {
+            background-color: var(--accent-light);
+            color: var(--accent-dark);
+        }
+        
+        .status-rejected {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: var(--primary);
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+        
+        /* Table Styles */
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+        
+        .table th {
+            font-weight: 600;
             color: var(--gray-700);
+            border-bottom: 2px solid var(--gray-200);
+            padding: 1rem;
+        }
+        
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            vertical-align: middle;
+        }
+        
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-500);
         }
         
         /* Responsive */
         @media (max-width: 992px) {
             .mobile-menu-toggle {
                 display: flex;
-                align-items: center;
-                justify-content: center;
             }
             
             .sidebar {
-                left: -260px;
+                left: -280px;
             }
             
             .sidebar.open {
@@ -244,107 +463,16 @@
             
             .main-content {
                 margin-left: 0;
+                width: 100vw;
             }
-        }
-        
-        /* Modal styles */
-        .modal-content {
-            border-radius: 0.75rem;
-            border: none;
-        }
-        
-        .modal-header {
-            background-color: var(--green);
-            color: white;
-            border-radius: 0.75rem 0.75rem 0 0;
-        }
-        
-        /* Application Modal */
-        .application-item {
-            padding: 1rem;
-            border-bottom: 1px solid var(--gray-200);
-            transition: background-color 0.2s;
-        }
-        
-        .application-item:hover {
-            background-color: var(--gray-100);
-        }
-        
-        .application-status {
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        
-        .status-pending {
-            background-color: rgba(252, 209, 22, 0.1);
-            color: var(--yellow);
-        }
-        
-        .status-approved {
-            background-color: rgba(0, 122, 94, 0.1);
-            color: var(--green);
-        }
-        
-        .status-rejected {
-            background-color: rgba(206, 17, 38, 0.1);
-            color: var(--red);
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-        }
-        
-        .empty-state-icon {
-            font-size: 3rem;
-            color: var(--gray-500);
-            margin-bottom: 1rem;
-        }
-
-        #programsContainer {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: flex-start;
-            align-items: stretch;
-        }
-        /* [Keep the same CSS as student-programs.html] */
-        .course-form-section {
-            background-color: white;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
-        }
-        .requirements-list {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        .requirement-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Add this to your style section for extra spacing and card effect */
-        .card {
-            border-radius: 1.25rem;
-            box-shadow: 0 0.25rem 1rem rgba(0,0,0,0.06);
-            transition: box-shadow 0.2s;
-            
-        }
-        .card:hover {
-            box-shadow: 0 0.5rem 1.5rem rgba(0,122,94,0.12);
         }
     </style>
 </head>
 <body>
     <div class="d-flex">
         <!-- Mobile menu toggle -->
-        <button class="mobile-menu-toggle btn btn-light shadow-sm" id="menuToggle">
-            <i data-lucide="menu"></i>
+        <button class="mobile-menu-toggle btn" id="menuToggle">
+            <i data-lucide="menu" width="24" height="24"></i>
         </button>
         
         <!-- Sidebar -->
@@ -352,7 +480,7 @@
             <!-- Logo -->
             <div class="p-4 border-bottom">
                 <div class="d-flex align-items-center">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem; background-color: var(--green);">
+                    <div class="rounded-lg d-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);">
                         <span class="text-white font-bold">CM</span>
                     </div>
                     <span class="ms-2 fs-5 fw-semibold">CareerMentor</span>
@@ -360,12 +488,12 @@
             </div>
             
             <!-- Navigation Links -->
-            <nav class="mt-3">
+            <nav class="mt-4">
                 <a href="educator-homepage.html" class="sidebar-link">
                     <i data-lucide="home" class="icon"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="educator-programs.html" class="sidebar-link ">
+                <a href="educator-programs.html" class="sidebar-link">
                     <i data-lucide="book-open" class="icon"></i>
                     <span>Programs</span>
                 </a>
@@ -399,7 +527,7 @@
             <div class="user-profile">
                 <div class="d-flex align-items-center">
                     <div class="user-avatar me-3">
-                        <i data-lucide="user" class="text-secondary"></i>
+                        <i data-lucide="user" width="20" height="20"></i>
                     </div>
                     <div>
                         <p class="fw-medium mb-0" id="userName">Loading...</p>
@@ -417,8 +545,8 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h1 class="h4 mb-0 fw-semibold">Manage Courses</h1>
                         <div class="d-flex align-items-center gap-2">
-                            <a href="educator-create-course.html" class="btn btn-success">
-                                <i data-lucide="plus" width="16"></i> Create New
+                            <a href="educator-create-course.html" class="btn btn-primary">
+                                <i data-lucide="plus" width="18" height="18" class="me-1"></i> Create New Course
                             </a>
                         </div>
                     </div>
@@ -426,14 +554,15 @@
             </header>
             
             <!-- Courses Content -->
-            <div class="container-fluid p-4">
+            <div class="container-fluid p-4 p-lg-5">
                 <!-- Courses List -->
                 <div class="row g-4" id="coursesContainer">
                     <!-- Courses will be loaded here dynamically -->
                     <div class="col-12 text-center py-5">
-                        <div class="spinner-border text-success" role="status">
+                        <div class="spinner-border text-warning" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
+                        <p class="mt-3">Loading courses...</p>
                     </div>
                 </div>
             </div>
@@ -441,7 +570,7 @@
     </div>
     
     <!-- Course Detail Modal -->
-    <div class="modal fade program-detail-modal" id="courseDetailModal" tabindex="-1" aria-labelledby="courseDetailModalLabel" aria-hidden="true">
+    <div class="modal fade" id="courseDetailModal" tabindex="-1" aria-labelledby="courseDetailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -449,35 +578,35 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="program-detail-section">
+                    <div class="course-detail-section">
                         <h5>About This Course</h5>
-                        <p id="courseDetailDescription">Loading course description...</p>
+                        <p id="courseDetailDescription" class="mb-0">Loading course description...</p>
                     </div>
                     
-                    <div class="row">
+                    <div class="row g-4">
                         <div class="col-md-6">
-                            <div class="program-detail-section">
+                            <div class="course-detail-section">
                                 <h5>Course Details</h5>
-                                <div class="d-flex mb-2">
-                                    <i data-lucide="book-open" class="me-2" width="18"></i>
+                                <div class="d-flex align-items-center mb-3">
+                                    <i data-lucide="book-open" class="me-2 text-primary" width="18" height="18"></i>
                                     <span id="courseDetailType">Type: Loading...</span>
                                 </div>
-                                <div class="d-flex mb-2">
-                                    <i data-lucide="clock" class="me-2" width="18"></i>
+                                <div class="d-flex align-items-center mb-3">
+                                    <i data-lucide="clock" class="me-2 text-primary" width="18" height="18"></i>
                                     <span id="courseDetailDuration">Duration: Loading...</span>
                                 </div>
-                                <div class="d-flex mb-2">
-                                    <i data-lucide="calendar" class="me-2" width="18"></i>
+                                <div class="d-flex align-items-center mb-3">
+                                    <i data-lucide="calendar" class="me-2 text-primary" width="18" height="18"></i>
                                     <span id="courseDetailDate">Posted: Loading...</span>
                                 </div>
-                                <div class="d-flex">
-                                    <i data-lucide="users" class="me-2" width="18"></i>
+                                <div class="d-flex align-items-center">
+                                    <i data-lucide="users" class="me-2 text-primary" width="18" height="18"></i>
                                     <span id="courseDetailStudents">Students: Loading...</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="program-detail-section">
+                            <div class="course-detail-section">
                                 <h5>Requirements</h5>
                                 <ul class="requirements-list" id="courseDetailRequirements">
                                     <li>Loading requirements...</li>
@@ -486,10 +615,10 @@
                         </div>
                     </div>
                     
-                    <div class="program-detail-section">
+                    <div class="course-detail-section">
                         <h5>Applications</h5>
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th>Student</th>
@@ -506,9 +635,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" id="deleteCourseBtn">
-                        <i data-lucide="trash-2" width="16"></i> Delete Course
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-danger" id="deleteCourseBtn">
+                        <i data-lucide="trash-2" width="18" height="18" class="me-1"></i> Delete Course
                     </button>
                 </div>
             </div>
@@ -605,13 +734,17 @@
                     renderCourses();
                 } else {
                     coursesContainer.innerHTML = `
-                        <div class="col-12 text-center py-5">
-                            <i data-lucide="graduation-cap" class="text-muted mb-3" width="48" height="48"></i>
-                            <h5 class="text-muted">No courses created yet</h5>
-                            <p class="text-muted">Create your first course to get started</p>
-                            <a href="educator-create-course.html" class="btn btn-success mt-3">
-                                <i data-lucide="plus" width="16"></i> Create Course
-                            </a>
+                        <div class="col-12">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i data-lucide="graduation-cap" width="32" height="32"></i>
+                                </div>
+                                <h4 class="h5 fw-semibold mb-2">No courses created yet</h4>
+                                <p class="text-muted mb-4">Create your first course to get started</p>
+                                <a href="educator-create-course.html" class="btn btn-primary">
+                                    <i data-lucide="plus" width="18" height="18" class="me-1"></i> Create Course
+                                </a>
+                            </div>
                         </div>
                     `;
                     lucide.createIcons();
@@ -626,13 +759,17 @@
 
             if (allCourses.length === 0) {
                 coursesContainer.innerHTML = `
-                    <div class="col-12 text-center py-5">
-                        <i data-lucide="graduation-cap" class="text-muted mb-3" width="48" height="48"></i>
-                        <h5 class="text-muted">No courses created yet</h5>
-                        <p class="text-muted">Create your first course to get started</p>
-                        <a href="educator-create-course.html" class="btn btn-success mt-3">
-                            <i data-lucide="plus" width="16"></i> Create Course
-                        </a>
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i data-lucide="graduation-cap" width="32" height="32"></i>
+                            </div>
+                            <h4 class="h5 fw-semibold mb-2">No courses created yet</h4>
+                            <p class="text-muted mb-4">Create your first course to get started</p>
+                            <a href="educator-create-course.html" class="btn btn-primary">
+                                <i data-lucide="plus" width="18" height="18" class="me-1"></i> Create Course
+                            </a>
+                        </div>
                     </div>
                 `;
                 lucide.createIcons();
@@ -640,38 +777,55 @@
             }
 
             allCourses.forEach((course) => {
-                const courseCard = document.createElement('div');
-                courseCard.className = 'col-12 col-md-6 col-lg-5 mb-4 d-flex justify-content-center';
-
-                courseCard.innerHTML = `
-                    <div class="card shadow-sm w-100 h-100 border-0 rounded-4">
-                        <div class="card-body d-flex flex-column">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title fw-semibold mb-0">${course.name || 'Unnamed Course'}</h5>
-                                <span class="badge ${course.status === 'active' ? 'bg-success' : 'bg-secondary'}">
+                const courseCol = document.createElement('div');
+                courseCol.className = 'col-md-6 col-lg-4 fade-in';
+                
+                courseCol.innerHTML = `
+                    <div class="course-card h-100">
+                        <div class="course-card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="fw-semibold mb-0">${course.name || 'Unnamed Course'}</h5>
+                                <span class="badge ${course.status === 'active' ? 'bg-success' : 'bg-secondary'} bg-opacity-10 text-${course.status === 'active' ? 'success' : 'secondary'} rounded-pill px-3 py-2">
                                     ${course.status || 'Inactive'}
                                 </span>
                             </div>
-                            <div class="mb-2">
-                                <span class="badge bg-light text-dark me-1">${course.type || 'Type not specified'}</span>
-                                <span class="badge bg-light text-dark">${course.field || 'Field not specified'}</span>
+                            
+                            <div class="mb-3">
+                                <span class="course-tag">${course.type || 'Type not specified'}</span>
+                                <span class="course-tag">${course.field || 'Field not specified'}</span>
                             </div>
-                            <p class="card-text small text-muted mb-2">${course.description ? course.description.substring(0, 120) + (course.description.length > 120 ? '...' : '') : 'No description'}</p>
-                            <ul class="list-unstyled mb-3">
-                                <li><i data-lucide="clock" width="14"></i> <span class="ms-1">${course.duration || 'Duration not specified'}</span></li>
-                                <li><i data-lucide="calendar" width="14"></i> <span class="ms-1">${formatDate(course.createdAt) || 'Date not specified'}</span></li>
-                            </ul>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <div>
-                                    <span class="me-3"><i data-lucide="users" width="16"></i> ${course.studentsEnrolled || 0} Enrolled</span>
-                                    <span><i data-lucide="file-text" width="16"></i> ${course.applications || 0} Applications</span>
+                            
+                            <p class="text-muted mb-3" style="font-size: 0.9rem;">${course.description ? course.description.substring(0, 120) + (course.description.length > 120 ? '...' : '') : 'No description'}</p>
+                            
+                            <div class="course-meta mt-auto mb-3">
+                                <div class="course-meta-item">
+                                    <i data-lucide="clock" width="16" height="16"></i>
+                                    <span>${course.duration || 'Duration not specified'}</span>
                                 </div>
-                                <div>
+                                <div class="course-meta-item">
+                                    <i data-lucide="calendar" width="16" height="16"></i>
+                                    <span>${formatDate(course.createdAt)}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex gap-3">
+                                    <div class="course-meta-item">
+                                        <i data-lucide="users" width="16" height="16"></i>
+                                        <span>${course.studentsEnrolled || 0}</span>
+                                    </div>
+                                    <div class="course-meta-item">
+                                        <i data-lucide="file-text" width="16" height="16"></i>
+                                        <span>${course.applications || 0}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex gap-2">
                                     <button class="btn btn-sm btn-outline-primary view-details" data-course-id="${course.id}">
-                                        <i data-lucide="eye" width="14"></i> View Details
+                                        <i data-lucide="eye" width="14" height="14" class="me-1"></i> View
                                     </button>
-                                    <button class="btn btn-sm btn-outline-secondary ms-2 edit-course" data-course-id="${course.id}">
-                                        <i data-lucide="edit" width="14"></i> Edit
+                                    <button class="btn btn-sm btn-outline-secondary edit-course" data-course-id="${course.id}">
+                                        <i data-lucide="edit" width="14" height="14"></i>
                                     </button>
                                 </div>
                             </div>
@@ -679,20 +833,20 @@
                     </div>
                 `;
 
-                coursesContainer.appendChild(courseCard);
+                coursesContainer.appendChild(courseCol);
 
                 // Add event listeners
-                courseCard.querySelector('.view-details').addEventListener('click', function(e) {
+                courseCol.querySelector('.view-details').addEventListener('click', function(e) {
                     e.stopPropagation();
                     viewCourseDetails(course.id);
                 });
 
-                courseCard.querySelector('.edit-course').addEventListener('click', function(e) {
+                courseCol.querySelector('.edit-course').addEventListener('click', function(e) {
                     e.stopPropagation();
                     window.location.href = `educator-edit-course.html?id=${course.id}`;
                 });
 
-                courseCard.querySelector('.card').addEventListener('click', function() {
+                courseCol.querySelector('.course-card').addEventListener('click', function() {
                     viewCourseDetails(course.id);
                 });
             });
@@ -757,10 +911,17 @@
                         
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${application.studentName || 'Unknown Student'}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle bg-primary-light d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                        <i data-lucide="user" width="16" height="16" class="text-primary"></i>
+                                    </div>
+                                    <span class="fw-medium">${application.studentName || 'Unknown Student'}</span>
+                                </div>
+                            </td>
                             <td>${formatDate(application.appliedAt)}</td>
                             <td>
-                                <span class="badge ${application.status === 'approved' ? 'bg-success' : application.status === 'rejected' ? 'bg-danger' : 'bg-warning'} bg-opacity-10 text-${application.status === 'approved' ? 'success' : application.status === 'rejected' ? 'danger' : 'warning'}">
+                                <span class="status-badge ${application.status === 'approved' ? 'status-approved' : application.status === 'rejected' ? 'status-rejected' : 'status-pending'}">
                                     ${application.status || 'pending'}
                                 </span>
                             </td>
@@ -768,10 +929,10 @@
                                 ${application.status === 'pending' ? `
                                 <div class="btn-group btn-group-sm">
                                     <button class="btn btn-outline-success approve-application" data-student-id="${studentId}">
-                                        <i data-lucide="check" width="14"></i> Approve
+                                        <i data-lucide="check" width="14" height="14" class="me-1"></i> Approve
                                     </button>
                                     <button class="btn btn-outline-danger reject-application" data-student-id="${studentId}">
-                                        <i data-lucide="x" width="14"></i> Reject
+                                        <i data-lucide="x" width="14" height="14" class="me-1"></i> Reject
                                     </button>
                                 </div>
                                 ` : ''}
@@ -790,11 +951,23 @@
                             });
                         }
                     });
+                    
+                    lucide.createIcons();
                 } else {
-                    applicationsTable.innerHTML = '<tr><td colspan="4" class="text-center">No applications yet</td></tr>';
+                    applicationsTable.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center py-4">
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="rounded-circle bg-primary-light d-flex align-items-center justify-content-center mb-3" style="width: 48px; height: 48px;">
+                                        <i data-lucide="file-text" width="24" height="24" class="text-primary"></i>
+                                    </div>
+                                    <p class="mb-0">No applications yet</p>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    lucide.createIcons();
                 }
-                
-                lucide.createIcons();
             });
         }
 
