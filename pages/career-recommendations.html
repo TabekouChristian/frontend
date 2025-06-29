@@ -12,6 +12,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
@@ -335,6 +337,56 @@
         .action-buttons {
             display: flex;
             gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .download-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border-radius: 1rem;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            border: none;
+            color: white;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+            color: white;
+        }
+
+        .btn-download.pdf {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-download.pdf:hover {
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
         }
         
         .btn-primary-gradient {
@@ -563,7 +615,7 @@
             <div id="fileName" class="file-name mt-3">No file selected</div>
             
             <div class="mt-4">
-                <a href="https://career-api-lq6d.onrender.com" 
+                <a href="https://career-api-lq6d.onrender.com"
                    class="btn btn-outline-primary" target="_blank">
                     <i data-lucide="clipboard-list" class="me-2" width="18"></i> Retake Assessment
                 </a>
@@ -581,7 +633,28 @@
             
             <!-- Recommendations -->
             <div class="row g-4" id="recommendationsRow" style="display: none;"></div>
-            
+
+            <!-- Download Section -->
+            <div class="download-section" id="downloadSection" style="display: none;">
+                <div class="text-center">
+                    <h4 class="mb-3">
+                        <i data-lucide="download" class="me-2"></i>
+                        Download Your Career Recommendations
+                    </h4>
+                    <p class="text-muted mb-4">Save your personalized career recommendations for future reference</p>
+                    <div class="download-buttons">
+                        <button onclick="downloadTXT()" class="btn-download txt">
+                            <i data-lucide="file-text" width="18"></i>
+                            Download TXT
+                        </button>
+                        <button onclick="downloadPDF()" class="btn-download pdf">
+                            <i data-lucide="file-type" width="18"></i>
+                            Download PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- No Results State -->
             <div class="empty-state" id="noResults" style="display: none;">
                 <div class="empty-state-icon">
@@ -776,27 +849,170 @@
             return title.toLowerCase().replace(/\s+/g, '-') + '-' + Math.random().toString(36).substr(2, 5);
         }
 
-        // Function to parse TXT file content
+        // Function to parse TXT file content from test_backend.py
         function parseTxtContent(content) {
             const recommendations = [];
             const lines = content.split('\n');
-            
-            // Sample regex to match lines like "1. Career Name (85% match)"
-            const regex = /^\d+\.\s(.+?)\s$$(\d+)% match$$/;
-            
-            for (const line of lines) {
-                const match = line.match(regex);
-                if (match) {
-                    const careerName = match[1];
-                    const confidence = parseInt(match[2]) / 100;
-                    recommendations.push({
-                        career: careerName,
-                        confidence: confidence
-                    });
+
+            console.log('🔍 Parsing TXT content...');
+            console.log('📄 Content preview:', content.substring(0, 300));
+            console.log('📊 Total lines:', lines.length);
+
+            let currentCareer = null;
+            let currentMatch = null;
+            let inRecommendationsSection = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+
+                // Skip empty lines
+                if (!line) continue;
+
+                // Check if we're in the recommendations section
+                if (line.includes('CAREER RECOMMENDATIONS:') || line.includes('==============================')) {
+                    inRecommendationsSection = true;
+                    continue;
+                }
+
+                // Stop parsing at summary section
+                if (line.includes('RECOMMENDATIONS SUMMARY:') || line.includes('=========================')) {
+                    // Save the last career before stopping
+                    if (currentCareer && currentMatch !== null) {
+                        recommendations.push(createCareerObject(currentCareer, currentMatch));
+                        console.log(`✅ Added final career: ${currentCareer} (${currentMatch}%)`);
+                    }
+                    break;
+                }
+
+                // Only parse lines in the recommendations section
+                if (!inRecommendationsSection) continue;
+
+                // Match career lines like "1. Software Developer" or "2. Data Scientist"
+                const careerMatch = line.match(/^(\d+)\.\s+(.+)$/);
+                if (careerMatch) {
+                    // Save previous career if exists
+                    if (currentCareer && currentMatch !== null) {
+                        recommendations.push(createCareerObject(currentCareer, currentMatch));
+                        console.log(`✅ Added career: ${currentCareer} (${currentMatch}%)`);
+                    }
+
+                    currentCareer = careerMatch[2].trim();
+                    currentMatch = null;
+                    console.log(`🎯 Found career: ${currentCareer}`);
+                    continue;
+                }
+
+                // Match percentage lines like "   Match Percentage: 65.3%"
+                const percentageMatch = line.match(/Match Percentage:\s*(\d+\.?\d*)%/);
+                if (percentageMatch && currentCareer) {
+                    currentMatch = parseFloat(percentageMatch[1]);
+                    console.log(`📊 Found percentage: ${currentMatch}% for ${currentCareer}`);
+                    continue;
+                }
+
+                // Alternative format: "Software Developer - 65.3% match"
+                const altMatch = line.match(/^(.+?)\s*-\s*(\d+\.?\d*)%\s*match/i);
+                if (altMatch) {
+                    const career = altMatch[1].trim();
+                    const percentage = parseFloat(altMatch[2]);
+                    recommendations.push(createCareerObject(career, percentage));
+                    console.log(`✅ Added career (alt format): ${career} (${percentage}%)`);
+                    continue;
+                }
+
+                // Another alternative: "1. Career Name (85% match)"
+                const bracketMatch = line.match(/^(\d+)\.\s*(.+?)\s*\((\d+\.?\d*)%\s*match\)/i);
+                if (bracketMatch) {
+                    const career = bracketMatch[2].trim();
+                    const percentage = parseFloat(bracketMatch[3]);
+                    recommendations.push(createCareerObject(career, percentage));
+                    console.log(`✅ Added career (bracket format): ${career} (${percentage}%)`);
+                    continue;
                 }
             }
-            
+
+            console.log(`🎉 Parsing complete! Found ${recommendations.length} careers`);
+            console.log('📋 Final recommendations:', recommendations);
             return recommendations;
+        }
+
+        // Helper function to create career object
+        function createCareerObject(careerName, matchPercentage) {
+            return {
+                title: careerName,
+                career: careerName,
+                confidence: matchPercentage / 100,
+                match_percentage: matchPercentage,
+                description: getCareerDescription(careerName),
+                skills: getCareerSkills(careerName),
+                salary: getCareerSalary(careerName),
+                growth: getCareerGrowth(careerName)
+            };
+        }
+
+        // Helper functions to generate career data
+        function getCareerDescription(careerName) {
+            const descriptions = {
+                "Software Developer": "Design, develop, and maintain software applications and systems. Create efficient code, debug programs, and collaborate with cross-functional teams to deliver high-quality software solutions.",
+                "Data Scientist": "Analyze and interpret complex data to help organizations make better decisions. Apply statistical methods, machine learning, and data visualization to extract insights from large datasets.",
+                "AI Engineer": "Develop artificial intelligence systems and machine learning models. Work on cutting-edge technologies like neural networks, natural language processing, and computer vision.",
+                "Web Developer": "Create and maintain websites and web applications. Work with front-end and back-end technologies to build responsive, user-friendly digital experiences.",
+                "Medical Doctor": "Diagnose and treat patients, provide medical care, and promote health and wellness. Requires extensive medical training and continuous learning.",
+                "Nurse": "Provide patient care, administer medications, and support medical teams. Play a crucial role in healthcare delivery and patient recovery.",
+                "Teacher": "Educate and inspire students, develop curriculum, and create engaging learning environments. Shape the future through education.",
+                "Business Analyst": "Analyze business processes, identify improvement opportunities, and help organizations make data-driven decisions.",
+                "Accountant": "Manage financial records, prepare tax documents, and ensure compliance with financial regulations.",
+                "Marketing Manager": "Develop marketing strategies, manage campaigns, and promote products or services to target audiences."
+            };
+            return descriptions[careerName] || "A rewarding career opportunity that matches your skills and interests.";
+        }
+
+        function getCareerSkills(careerName) {
+            const skills = {
+                "Software Developer": ["Programming", "Problem Solving", "Software Design", "Testing", "Version Control"],
+                "Data Scientist": ["Statistics", "Machine Learning", "Python/R", "Data Visualization", "SQL"],
+                "AI Engineer": ["Machine Learning", "Deep Learning", "Python", "TensorFlow", "Neural Networks"],
+                "Web Developer": ["HTML/CSS", "JavaScript", "React/Vue", "Node.js", "Database Management"],
+                "Medical Doctor": ["Medical Knowledge", "Patient Care", "Diagnosis", "Communication", "Empathy"],
+                "Nurse": ["Patient Care", "Medical Procedures", "Communication", "Compassion", "Attention to Detail"],
+                "Teacher": ["Communication", "Curriculum Development", "Classroom Management", "Patience", "Creativity"],
+                "Business Analyst": ["Data Analysis", "Business Process", "Communication", "Problem Solving", "Excel"],
+                "Accountant": ["Financial Analysis", "Attention to Detail", "Excel", "Tax Knowledge", "Compliance"],
+                "Marketing Manager": ["Marketing Strategy", "Communication", "Creativity", "Analytics", "Brand Management"]
+            };
+            return skills[careerName] || ["Communication", "Problem Solving", "Teamwork", "Adaptability"];
+        }
+
+        function getCareerSalary(careerName) {
+            const salaries = {
+                "Software Developer": "$70,000 - $120,000",
+                "Data Scientist": "$80,000 - $140,000",
+                "AI Engineer": "$90,000 - $160,000",
+                "Web Developer": "$50,000 - $90,000",
+                "Medical Doctor": "$200,000 - $400,000",
+                "Nurse": "$60,000 - $90,000",
+                "Teacher": "$40,000 - $70,000",
+                "Business Analyst": "$60,000 - $100,000",
+                "Accountant": "$45,000 - $80,000",
+                "Marketing Manager": "$55,000 - $95,000"
+            };
+            return salaries[careerName] || "$40,000 - $80,000";
+        }
+
+        function getCareerGrowth(careerName) {
+            const growth = {
+                "Software Developer": "22% (Much faster than average)",
+                "Data Scientist": "35% (Much faster than average)",
+                "AI Engineer": "40% (Much faster than average)",
+                "Web Developer": "13% (Faster than average)",
+                "Medical Doctor": "7% (Faster than average)",
+                "Nurse": "9% (Faster than average)",
+                "Teacher": "8% (As fast as average)",
+                "Business Analyst": "14% (Faster than average)",
+                "Accountant": "6% (As fast as average)",
+                "Marketing Manager": "10% (Faster than average)"
+            };
+            return growth[careerName] || "5-10% (Average growth)";
         }
 
         // Function to display recommendations
@@ -983,24 +1199,40 @@
             reader.onload = function(e) {
                 try {
                     const content = e.target.result;
+                    console.log('File content loaded:', content.substring(0, 200) + '...');
+                    console.log('File size:', content.length, 'characters');
+
                     const recommendations = parseTxtContent(content);
-                    
+                    console.log('Parsed recommendations count:', recommendations.length);
+
                     if (recommendations.length > 0) {
                         displayRecommendations(recommendations);
+                        showToast(`Successfully loaded ${recommendations.length} career recommendations!`, 'success');
                     } else {
                         document.getElementById('loadingState').style.display = 'none';
                         document.getElementById('noResults').style.display = 'block';
-                        showToast('No valid career recommendations found in the file. Please ensure you uploaded the correct file.', 'error');
+                        showToast('No valid career recommendations found in the file. Please make sure you uploaded a TXT file generated by the Career Assessment system.', 'error');
+                        console.log('Full file content for debugging:', content);
                     }
                 } catch (error) {
                     console.error('Error processing file:', error);
                     document.getElementById('loadingState').style.display = 'none';
                     document.getElementById('noResults').style.display = 'block';
-                    showToast('Error processing the file. Please ensure you uploaded the correct file format.', 'error');
+                    showToast('Error processing the file: ' + error.message, 'error');
                 }
             };
+
+            reader.onerror = function(error) {
+                console.error('File reading error:', error);
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('noResults').style.display = 'block';
+                showToast('Error reading the file. Please try again.', 'error');
+            };
+
             reader.readAsText(file);
         });
+
+
 
         // On page load
         document.addEventListener('DOMContentLoaded', () => {
